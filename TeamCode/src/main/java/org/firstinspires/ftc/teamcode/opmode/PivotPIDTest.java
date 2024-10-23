@@ -20,11 +20,11 @@ public class PivotPIDTest extends LinearOpMode {
         waitForStart();
         while (!isStopRequested()) {
             pivot.periodic();
-            pivot.tiltToPos(Math.toRadians(target));
+            pivot.tiltToPos(target);
 
-            telemetry.addData("current pos", Math.toDegrees(pivot.getCurrentPosition()));
-            telemetry.addData("target", (Math.toRadians(target)));
-            telemetry.addData("is there", pivot.isClose((Math.toRadians(target))));
+            telemetry.addData("current pos", pivot.getCurrentPosition());
+            telemetry.addData("target", target);
+            telemetry.addData("is there", pivot.isClose(target));
             telemetry.update();
         }
     }
