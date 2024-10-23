@@ -21,7 +21,7 @@ public class LEDSubsystem extends SubsystemBase {
         }
     }
 
-    public void setServoState(String servoKey, boolean state) {
+    public void setLedState(String servoKey, boolean state) {
         if (state) {
             Objects.requireNonNull(servos.get(servoKey)).setPwmEnable();
         } else {
@@ -30,9 +30,10 @@ public class LEDSubsystem extends SubsystemBase {
     }
 
     /**
+     * Sets multiple LED states at once, using ledPredicate to decide whether the LED is on or off
      * @param ledPredicate A function that accepts the index, the name, and the current state of each LED (servo)
      */
-    public void setServosState(Function3<Integer, String, Boolean, Boolean> ledPredicate) {
+    public void setLedsState(Function3<Integer, String, Boolean, Boolean> ledPredicate) {
         // I put this method inside LEDSubsystem instead of LEDCommand to maintain strict access
         // to `servos`
         int i = 0;

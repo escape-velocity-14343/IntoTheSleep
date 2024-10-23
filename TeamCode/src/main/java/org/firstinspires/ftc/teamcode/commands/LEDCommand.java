@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
-
-import java.util.Map;
 
 import kotlin.jvm.functions.Function3;
 
@@ -21,7 +18,7 @@ public class LEDCommand extends CommandBase {
 
     @Override
     public void execute() {
-        leds.setServosState(ledPredicate);
+        leds.setLedsState(ledPredicate);
     }
 
     @Override
@@ -39,12 +36,32 @@ public class LEDCommand extends CommandBase {
     }
 
     /**
+     * Turns on one LED
+     * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
+     * @param ledName The string name of the LED to set
+     * @return A new LEDCommand
+     */
+    public static LEDCommand on(LEDSubsystem leds, String ledName) {
+        return setState(leds, ledName, true);
+    }
+
+    /**
      * Turns off all LEDs
      * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
      * @return A new LEDCommand
      */
     public static LEDCommand off(LEDSubsystem leds) {
         return setState(leds, false);
+    }
+
+    /**
+     * Turns off one LED
+     * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
+     * @param ledName The string name of the LED to set
+     * @return A new LEDCommand
+     */
+    public static LEDCommand off(LEDSubsystem leds, String ledName) {
+        return setState(leds, ledName, false);
     }
 
     /**
@@ -58,10 +75,29 @@ public class LEDCommand extends CommandBase {
 
     /**
      * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
+     * @param ledName The string name of the LED to set
+     * @param state The state to set all the LEDs to
      * @return A new LEDCommand
      */
-    public static LEDCommand invertState(LEDSubsystem leds) {
+    public static LEDCommand setState(LEDSubsystem leds, String ledName, boolean state) {
+        return new LEDCommand(leds, (i, key, enabled) -> key == ledName ? state : enabled);
+    }
+
+    /**
+     * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
+     * @return A new LEDCommand
+     */
+    public static LEDCommand toggle(LEDSubsystem leds) {
         return new LEDCommand(leds, (i, key, enabled) -> !enabled);
+    }
+
+    /**
+     * @param leds The {@link org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem} to use
+     * @param ledName The string name of the LED to set
+     * @return A new LEDCommand
+     */
+    public static LEDCommand toggle(LEDSubsystem leds, String ledName) {
+        return new LEDCommand(leds, (i, key, enabled) -> key == ledName ? !enabled : enabled);
     }
 
     /**
