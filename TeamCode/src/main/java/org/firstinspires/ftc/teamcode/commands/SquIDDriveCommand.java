@@ -23,8 +23,10 @@ public class SquIDDriveCommand extends CommandBase {
     private final OTOSSubsystem otos;
     private final MecanumDriveSubsystem drive;
     private Pose2D target;
-    private double linearTolerance;
-    private double angularTolerance;
+    // default: 0.1"
+    private double linearTolerance = 0.1;
+    // default: 2°
+    private double angularTolerance = 2;
 
     public SquIDDriveCommand(OTOSSubsystem otos, MecanumDriveSubsystem drive, SquIDController controllerX, SquIDController controllerY, SquIDController controllerH) {
         this.otos = otos;
@@ -59,11 +61,6 @@ public class SquIDDriveCommand extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-
-    }
-
-    @Override
     public void execute() {
         SparkFunOTOS.Pose2D otosPose = otos.getOTOSPose();
 
@@ -72,11 +69,6 @@ public class SquIDDriveCommand extends CommandBase {
                 controllerY.calculate(target.getY(DistanceUnit.INCH), otosPose.y),
                 controllerH.calculate(target.getHeading(AngleUnit.DEGREES), otosPose.h)
         );
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-
     }
 
     @Override
