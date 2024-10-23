@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lib.Localizer;
 
 public class OTOSSubsystem extends SubsystemBase implements Localizer {
+    //guys please use proper case hungarian notation SparkfunOtos
     SparkFunOTOS otos;
     SparkFunOTOS.Pose2D pose = new SparkFunOTOS.Pose2D();
 
