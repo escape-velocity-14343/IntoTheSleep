@@ -20,7 +20,7 @@ public class AnalogEncoder {
         maxVoltage = 3.3;
 
         // default to 2pi
-        maxAngle = Math.PI * 2;
+        maxAngle = 360;
 
         // default to 0
         offset = 0;
@@ -60,7 +60,7 @@ public class AnalogEncoder {
      * @return Radians.
      */
     public double getAngle(){
-        return AngleUnit.normalizeRadians((inverted ? -1 : 1) * (sensor.getVoltage() * maxAngle/maxVoltage) + offset);
+        return (inverted ? -1 : 1) * (sensor.getVoltage() * maxAngle/maxVoltage) + offset;
     }
 
 

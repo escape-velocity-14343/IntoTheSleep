@@ -39,9 +39,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         squid.setPID(SlideConstants.kP);
         //setPower(Math.sqrt(pid.calculate(getCurrentPosition(),ticks)));
         double power = squid.calculate(ticks, getCurrentPosition());
-        if ((currentPos < 0 && power < 0)||currentPos > 27 && power > 0) {
-            power = 0;
-        }
+ 
         setPower(power);
 
     }
