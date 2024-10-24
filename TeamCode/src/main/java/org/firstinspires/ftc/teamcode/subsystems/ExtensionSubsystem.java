@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.SlideConstants;
+import org.firstinspires.ftc.teamcode.commands.ExtendCommand;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
@@ -41,7 +42,9 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void setPower(double power) {
         motor0.setPower(power*SlideConstants.direction);
         motor1.setPower(-power*SlideConstants.direction);
-       manualControl = true;
+    }
+    public void setManualControl(boolean set) {
+        this.manualControl = set;
     }
 
     /***
@@ -80,4 +83,5 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void stop() {
         setPower(0);
     }
+
 }

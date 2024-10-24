@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.IntakePosCommand;
 
-import org.firstinspires.ftc.teamcode.commands.IntakeSuckCommand;
+import org.firstinspires.ftc.teamcode.commands.IntakeEatCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
@@ -33,7 +33,7 @@ public class CommandBaseTest extends CommandOpMode {
         register(pivotSubsystem, extend, wrist, intake);
 
 
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(4000), new IntakeSuckCommand(extend,wrist,intake)));
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new IntakeEatCommand(extend,wrist,intake)));
 
     }
 }

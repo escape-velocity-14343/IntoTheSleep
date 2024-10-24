@@ -45,10 +45,10 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void tiltToPos(double target) {
         double power = squid.calculate(target, getCurrentPosition());
-        if (currentPos > PivotConstants.topLimit && Math.abs(power) > 0) {
+        if (currentPos > PivotConstants.topLimit && power > 0) {
             power = 0;
         }
-        else if (currentPos < PivotConstants.bottomLimit && Math.abs(power) > 0){
+        else if (currentPos < PivotConstants.bottomLimit && power < 0){
             power = 0;
         }
         setPower(power);

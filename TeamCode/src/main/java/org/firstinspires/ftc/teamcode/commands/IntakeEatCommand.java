@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
-public class IntakeSuckCommand extends SequentialCommandGroup {
-    public IntakeSuckCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
+public class IntakeEatCommand extends SequentialCommandGroup {
+    public IntakeEatCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
         addCommands(new ExtendCommand(extension, 4), new WristCommand(wrist, IntakeConstants.openPos), new IntakeSpinCommand(intake, 1));
     }
 }
