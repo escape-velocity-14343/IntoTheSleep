@@ -14,12 +14,12 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     /**
-     * Speeds from -1.0 to 1.0
+     * Speeds from 1.0 to -1.0
      * Positive is outtake
      * Negative is intake
      * @param speed
      */
-    public void setRotation(double speed){
-        intake.setPower(speed);
+    public void setRotation(double speed) {
+        intake.setPower(-speed);
     }
 }

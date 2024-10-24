@@ -15,6 +15,8 @@ public class ExtensionSubsystem extends SubsystemBase {
     private int currentPos = 0;
     private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
+    private double targetInches = 0;
+    private boolean manualControl = true;
 
 
     public ExtensionSubsystem(HardwareMap hMap) {
@@ -26,21 +28,38 @@ public class ExtensionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         currentPos = -motor0.getCurrentPosition();
+        if (!manualControl)
+            extendInches(targetInches);
+
     }
+
+
+    /**
+     *
+     * this will also disable the pid until you turn it back on
+     */
     public void setPower(double power) {
         motor0.setPower(power*SlideConstants.direction);
         motor1.setPower(-power*SlideConstants.direction);
+       manualControl = true;
     }
+
+    /***
+     * this sets the target as well
+     */
     public void extendInches(double inches) {
+        targetInches = inches;
+        manualControl = false;
         extendToPosition((int) (inches*SlideConstants.ticksPerInch));
     }
     public void extendToPosition(int ticks) {
         //pid.setPID(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
         squid.setPID(SlideConstants.kP);
         //setPower(Math.sqrt(pid.calculate(getCurrentPosition(),ticks)));
+
         double power = squid.calculate(ticks, getCurrentPosition());
- 
-        setPower(power);
+        if (ticks>=0)
+            setPower(power);
 
     }
     /**
@@ -59,7 +78,6 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
     public void stop() {
-        motor0.setPower(0);
-        motor1.setPower(0);
+        setPower(0);
     }
 }

@@ -4,7 +4,8 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class IntakeConstants {
-    public static double foldedPos = 0.6;
-    public static double openPos = 0.4;
+    public static double foldedPos = 1;
+    public static double openPos = 0.15;
+    public static double timeMultiplier = 1;
 
 }
