@@ -16,5 +16,5 @@ public class IntakeSpinCommand extends CommandBase {
     public void initialize() {
         intake.setRotation(power);
     }
-    
+
 }

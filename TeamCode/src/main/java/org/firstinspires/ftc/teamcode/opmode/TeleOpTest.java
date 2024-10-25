@@ -22,6 +22,9 @@ public class TeleOpTest extends Robot {
         CommandScheduler.getInstance().setDefaultCommand(mecanum,drive);
         driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(intakePos());
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new SequentialCommandGroup(intakeEat(), new IntakeSpinCommand(intake, 1)));
+        driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
+        driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeSpinCommand(intake, -0.5));
+        driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
         driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(outtake());
         while (!isStopRequested()) {
             telemetry.addData("motorpos", extension.getCurrentPosition());

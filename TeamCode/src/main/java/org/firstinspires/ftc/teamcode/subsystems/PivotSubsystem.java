@@ -29,12 +29,12 @@ public class PivotSubsystem extends SubsystemBase {
         encoder.setPositionOffset(PivotConstants.encoderOffset);
         encoder.setInverted(PivotConstants.encoderInvert);
 
-        squid.setPID(PivotConstants.kP);
+
     }
     @Override
     public void periodic() {
         currentPos = encoder.getAngle();
-
+        squid.setPID(PivotConstants.kP);
         tiltToPos(target);
     }
 

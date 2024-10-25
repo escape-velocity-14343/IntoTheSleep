@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class PivotConstants {
-    public static double kP = 0.008;
+    public static double kP = 0.01;
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
