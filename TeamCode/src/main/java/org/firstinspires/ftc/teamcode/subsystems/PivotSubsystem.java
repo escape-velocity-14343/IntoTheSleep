@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -16,6 +17,7 @@ public class PivotSubsystem extends SubsystemBase {
     private DcMotor motor0, motor1;
     private double currentPos = 0;
     private double target = 0;
+    private boolean manualControl = true;
     private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
     AnalogEncoder encoder;
@@ -35,15 +37,19 @@ public class PivotSubsystem extends SubsystemBase {
     public void periodic() {
         currentPos = encoder.getAngle();
         squid.setPID(PivotConstants.kP);
-        tiltToPos(target);
+        if (manualControl)
+            tiltToPos(target);
     }
 
     public void setPower(double power) {
         motor0.setPower(power*PivotConstants.direction);
         motor1.setPower(-power*PivotConstants.direction);
+        FtcDashboard.getInstance().getTelemetry().addData("pivot motor power", power);
     }
 
     public void tiltToPos(double target) {
+        manualControl = true;
+        setTarget(target);
         double power = squid.calculate(target, getCurrentPosition());
         if (currentPos > PivotConstants.topLimit && power > 0) {
             power = 0;
@@ -55,6 +61,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setTarget(double target){
+        manualControl = true;
         this.target = target;
     }
 

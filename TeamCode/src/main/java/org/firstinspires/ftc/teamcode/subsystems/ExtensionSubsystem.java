@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -28,20 +29,21 @@ public class ExtensionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         currentPos = -motor0.getCurrentPosition();
-        if (!manualControl)
+        if (!manualControl) {
             extendInches(targetInches);
-
+        }
     }
 
 
     /**
      *
-     * this will also disable the pid until you turn it back on
+     *
      */
     public void setPower(double power) {
         motor0.setPower(power*SlideConstants.direction);
         motor1.setPower(-power*SlideConstants.direction);
     }
+
     public void setManualControl(boolean set) {
         this.manualControl = set;
     }
@@ -55,13 +57,15 @@ public class ExtensionSubsystem extends SubsystemBase {
         extendToPosition((int) (inches*SlideConstants.ticksPerInch));
     }
     public void extendToPosition(int ticks) {
-        //pid.setPID(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
         squid.setPID(SlideConstants.kP);
-        //setPower(Math.sqrt(pid.calculate(getCurrentPosition(),ticks)));
 
         double power = squid.calculate(ticks, getCurrentPosition());
-        if (ticks>=0)
+        FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
+        //power = 0;
+
+        if (ticks>=0 && !(getCurrentInches()<=0 && power<0) && !(getCurrentInches()>=SlideConstants.maxExtension)) {
             setPower(power);
+        }
 
     }
     /**

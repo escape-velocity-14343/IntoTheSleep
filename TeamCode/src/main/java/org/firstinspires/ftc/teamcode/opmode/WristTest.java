@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 @TeleOp
@@ -16,8 +17,7 @@ public class WristTest extends LinearOpMode {
         wrist = new WristSubsystem(hardwareMap);
 
         while (!isStopRequested()){
-            wrist.periodic();
-            telemetry.addData("nothing", 0);
+            wrist.setWrist(IntakeConstants.scoringPos);
         }
     }
 }

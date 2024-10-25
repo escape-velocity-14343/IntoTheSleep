@@ -31,4 +31,8 @@ public class PivotCommand extends CommandBase {
         return pivotSubsystem.isClose(target);
     }
 
+    @Override
+    public void end(boolean wasInterrupted) {
+        pivotSubsystem.stop();
+    }
 }

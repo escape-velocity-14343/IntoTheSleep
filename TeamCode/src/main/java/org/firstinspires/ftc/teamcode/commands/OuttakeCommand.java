@@ -14,8 +14,8 @@ public class OuttakeCommand extends SequentialCommandGroup {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.foldedPos),
                 new ExtendCommand(extension, 1),
-                new PivotCommand(pivot, PivotConstants.topLimit),
-                new ExtendCommand(extension, SlideConstants.maxExtension),
-                new WristCommand(wrist, 0.5));
+                new PivotCommand(pivot, 90),
+                new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000),
+                new WristCommand(wrist, IntakeConstants.scoringPos));
     }
 }
