@@ -4,20 +4,18 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 
-import kotlin.jvm.functions.Function3;
-
 public class LEDCommand extends CommandBase {
-    LEDSubsystem ledSubsystem;
-    boolean state = false;
+    protected final LEDSubsystem ledSubsystem;
+    protected final boolean enable;
 
-    private LEDCommand(LEDSubsystem leds, boolean enable) {
+    public LEDCommand(LEDSubsystem leds, boolean enable) {
         ledSubsystem = leds;
-        state = enable;
+        this.enable = enable;
     }
 
     @Override
-    public void initialize(){
-        ledSubsystem.lightSwitch(state);
+    public void initialize() {
+        ledSubsystem.setLightState(enable);
     }
 
     @Override
