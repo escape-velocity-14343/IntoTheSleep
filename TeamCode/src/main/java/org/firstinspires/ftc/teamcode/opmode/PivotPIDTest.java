@@ -19,14 +19,12 @@ public class PivotPIDTest extends LinearOpMode {
         PivotSubsystem pivot = new PivotSubsystem(hardwareMap);
         waitForStart();
         while (!isStopRequested()) {
-//            pivot.periodic();
-//            pivot.tiltToPos(target);
-            pivot.setPower(gamepad1.left_stick_y);
+            pivot.periodic();
+            pivot.tiltToPos(target);
 
-//            telemetry.addData("current pos", pivot.getCurrentPosition());
-//            telemetry.addData("target", target);
-//            telemetry.addData("is there", pivot.isClose(target));
-            telemetry.addLine("from the 💻 to the 💍 to the 🖊 to the 🤴");
+            telemetry.addData("current pos", pivot.getCurrentPosition());
+            telemetry.addData("target", target);
+            telemetry.addData("is there", pivot.isClose(target));
             telemetry.update();
         }
     }
