@@ -15,9 +15,10 @@ public class PivotCommand extends CommandBase {
      * @param target in degrees
      */
 
-    public PivotCommand(PivotSubsystem pivotSubsystem, double target){
+    public PivotCommand(PivotSubsystem pivotSubsystem, double target) {
         this.pivotSubsystem = pivotSubsystem;
         this.target = target;
+        addRequirements(pivotSubsystem);
     }
 
     @Override

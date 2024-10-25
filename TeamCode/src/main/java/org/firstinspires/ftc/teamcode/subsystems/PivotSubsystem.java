@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.PivotConstants;
-import org.firstinspires.ftc.teamcode.SlideConstants;
+import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
+import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.lib.AnalogEncoder;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
@@ -45,10 +45,10 @@ public class PivotSubsystem extends SubsystemBase {
 
     public void tiltToPos(double target) {
         double power = squid.calculate(target, getCurrentPosition());
-        if (currentPos > PivotConstants.topLimit && Math.abs(power) > 0) {
+        if (currentPos > PivotConstants.topLimit && power > 0) {
             power = 0;
         }
-        else if (currentPos < PivotConstants.bottomLimit && Math.abs(power) > 0){
+        else if (currentPos < PivotConstants.bottomLimit && power < 0){
             power = 0;
         }
         setPower(power);
