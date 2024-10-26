@@ -4,31 +4,36 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
 public class ExtensionSubsystem extends SubsystemBase {
-    private DcMotor motor0, motor1;
+    private DcMotorEx motor0, motor1;
     private int currentPos = 0;
     private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
     private double targetInches = 0;
     private boolean manualControl = true;
+    private int resetOffset = 0;
 
 
     public ExtensionSubsystem(HardwareMap hMap) {
-        motor0 = hMap.dcMotor.get("slide0");
+        motor0 = (DcMotorEx) hMap.dcMotor.get("slide0");
         motor0.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor1 = hMap.dcMotor.get("slide1");
+        motor1 = (DcMotorEx) hMap.dcMotor.get("slide1");
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor0.setCurrentAlert(4, CurrentUnit.AMPS);
+        motor1.setCurrentAlert(4, CurrentUnit.AMPS);
     }
     @Override
     public void periodic() {
-        currentPos = -motor0.getCurrentPosition();
+        currentPos = -motor0.getCurrentPosition() - resetOffset;
         if (!manualControl) {
             extendInches(targetInches);
         }
@@ -42,6 +47,9 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void setPower(double power) {
         motor0.setPower(power*SlideConstants.direction);
         motor1.setPower(-power*SlideConstants.direction);
+        if (getCurrentPosition()<10 && motor0.isOverCurrent()&&motor1.isOverCurrent() && power < 0) {
+            resetOffset = getCurrentPosition();
+        }
     }
 
     public void setManualControl(boolean set) {

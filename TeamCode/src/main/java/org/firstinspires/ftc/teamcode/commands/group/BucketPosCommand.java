@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -18,9 +19,9 @@ public class BucketPosCommand extends SequentialCommandGroup {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.scoringPos),
                 new ExtendCommand(extension, 1),
-                new ParallelDeadlineGroup(
+                new ParallelCommandGroup(
                         new PivotCommand(pivot, 90),
-                        new ParallelDeadlineGroup(new WaitCommand(250), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)))
+                        new SequentialCommandGroup(new WaitCommand(250), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)))
         );
     }
 }

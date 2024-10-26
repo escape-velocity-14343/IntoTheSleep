@@ -14,4 +14,5 @@ public class SlideConstants {
     public static double minExtension = 0;
     public static double direction = 1;
     public static double tolerance = 0.5;
+    public static double alertCurrent = 4;
 }
