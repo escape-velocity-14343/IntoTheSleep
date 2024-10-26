@@ -6,9 +6,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.commands.IntakePosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 
-import org.firstinspires.ftc.teamcode.commands.IntakeEatCommand;
+import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
@@ -33,7 +33,7 @@ public class CommandBaseTest extends CommandOpMode {
         register(pivotSubsystem, extend, wrist, intake);
 
 
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new IntakeEatCommand(extend,wrist,intake)));
+        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new SubPosCommand(extend,wrist,intake)));
 
     }
 }

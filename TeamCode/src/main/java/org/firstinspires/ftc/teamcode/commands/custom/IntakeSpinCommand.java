@@ -1,10 +1,10 @@
-package org.firstinspires.ftc.teamcode.commands;
+package org.firstinspires.ftc.teamcode.commands.custom;
 
-import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
-public class IntakeSpinCommand extends CommandBase {
+public class IntakeSpinCommand extends InstantCommand {
     IntakeSubsystem intake;
     double power = 0;
     public IntakeSpinCommand(IntakeSubsystem intake, double power) {
@@ -16,5 +16,4 @@ public class IntakeSpinCommand extends CommandBase {
     public void initialize() {
         intake.setRotation(power);
     }
-
 }

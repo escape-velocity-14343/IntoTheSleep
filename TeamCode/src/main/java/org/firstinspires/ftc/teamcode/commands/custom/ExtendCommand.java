@@ -1,11 +1,10 @@
-package org.firstinspires.ftc.teamcode.commands;
+package org.firstinspires.ftc.teamcode.commands.custom;
 
 import android.util.Log;
 
 import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
 public class ExtendCommand extends CommandBase {
     ExtensionSubsystem extend;

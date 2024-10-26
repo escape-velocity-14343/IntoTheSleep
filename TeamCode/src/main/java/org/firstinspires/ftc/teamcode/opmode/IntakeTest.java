@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,11 +14,11 @@ public class IntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         intakeSubsystem = new IntakeSubsystem(hardwareMap);
-
+        CommandScheduler.getInstance().registerSubsystem(intakeSubsystem);
         waitForStart();
 
         while (!isStopRequested()){
-            intakeSubsystem.periodic();
+            intakeSubsystem.setRotation(-1.0);
             telemetry.addData("nothing", 0);
         }
     }

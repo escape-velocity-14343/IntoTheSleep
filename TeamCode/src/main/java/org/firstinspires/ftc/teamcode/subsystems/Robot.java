@@ -8,9 +8,9 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.commands.IntakeEatCommand;
-import org.firstinspires.ftc.teamcode.commands.IntakePosCommand;
-import org.firstinspires.ftc.teamcode.commands.OuttakeCommand;
+import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 
 import java.util.List;
 
@@ -47,13 +47,14 @@ public abstract class Robot extends LinearOpMode {
         CommandScheduler.getInstance().run();
         telemetry.update();
     }
+
     public Command intakePos() {
         return new IntakePosCommand(extension, pivot, wrist);
     }
-    public Command intakeEat() {
-       return new IntakeEatCommand(extension, wrist, intake);
+    public Command subPos() {
+       return new SubPosCommand(extension, wrist, intake);
     }
-    public Command outtake() {
-        return new OuttakeCommand(extension, pivot, wrist);
+    public Command bucketPos() {
+        return new BucketPosCommand(extension, pivot, wrist);
     }
 }
