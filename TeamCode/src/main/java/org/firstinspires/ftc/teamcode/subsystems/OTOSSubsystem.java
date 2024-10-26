@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.lib.Localizer;
 
 public class OTOSSubsystem extends SubsystemBase implements Localizer {
+    //guys please use proper case hungarian notation SparkfunOtos
     SparkFunOTOS otos;
     SparkFunOTOS.Pose2D pose = new SparkFunOTOS.Pose2D();
 
@@ -23,6 +24,7 @@ public class OTOSSubsystem extends SubsystemBase implements Localizer {
     public OTOSSubsystem(String name, HardwareMap hMap) {
         otos = hMap.get(SparkFunOTOS.class, name);
         otos.setLinearUnit(DistanceUnit.INCH);
+        //TODO: should this be degrees? if we change it to degrees, how many things will break?
         otos.setAngularUnit(AngleUnit.RADIANS);
 
         otos.calibrateImu();
