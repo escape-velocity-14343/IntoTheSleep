@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Constants;
 
 import com.acmerobotics.dashboard.config.Config;
 
@@ -11,6 +11,8 @@ public class SlideConstants {
     public static double kS = 0;
     public static double ticksPerInch = 31.6;
     public static double maxExtension = 27;
+    public static double minExtension = 0;
     public static double direction = 1;
     public static double tolerance = 0.5;
+    public static double alertCurrent = 4;
 }
