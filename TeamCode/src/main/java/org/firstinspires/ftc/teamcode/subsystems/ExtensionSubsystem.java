@@ -15,25 +15,25 @@ import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
 public class ExtensionSubsystem extends SubsystemBase {
-    private final DcMotorEx motor0, motor1;
+    private final DcMotorEx motor0;
+    private final DcMotorEx motor1;
+    private final PivotSubsystem pivotSubsystem;
     private int currentPos = 0;
     private final SquIDController squid = new SquIDController();
     private double targetInches = 0;
     private boolean manualControl = true;
     private int resetOffset = 0;
-    private final AnalogEncoder slideRotationEncoder;
 
 
-    public ExtensionSubsystem(HardwareMap hMap) {
+    public ExtensionSubsystem(HardwareMap hMap, PivotSubsystem pivotSubsystem) {
+        this.pivotSubsystem = pivotSubsystem;
+
         motor0 = (DcMotorEx) hMap.dcMotor.get("slide0");
         motor0.setDirection(DcMotorSimple.Direction.REVERSE);
         motor1 = (DcMotorEx) hMap.dcMotor.get("slide1");
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
         motor0.setCurrentAlert(4, CurrentUnit.AMPS);
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
-        slideRotationEncoder = new AnalogEncoder("sensOrange", hMap);
-        slideRotationEncoder.setPositionOffset(PivotConstants.encoderOffset);
-        slideRotationEncoder.setInverted(PivotConstants.encoderInvert);
     }
 
     @Override
@@ -82,7 +82,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         double power =
                 + squid.calculate(ticks, getCurrentPosition())
                 + SlideConstants.FEEDFORWARD_STATIC
-                + SlideConstants.FEEDFORWARD_DYNAMIC * Math.cos(slideRotationEncoder.getRadians());
+                + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
 
         if (ticks >= 0 && !(getCurrentInches() <= 0 && power < 0) && !(getCurrentInches() >= SlideConstants.maxExtension)) {
             setPower(power);
