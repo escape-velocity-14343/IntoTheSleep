@@ -15,4 +15,12 @@ public class SlideConstants {
     public static double direction = 1;
     public static double tolerance = 0.5;
     public static double alertCurrent = 4;
+    /**
+     * Constant feedforward for the slides (probably don't need)
+     */
+    public static double FEEDFORWARD_STATIC = 0.0;
+    /**
+     * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
+     */
+    public static double FEEDFORWARD_DYNAMIC = 0.1;
 }
