@@ -12,6 +12,6 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 public class SubPosCommand extends SequentialCommandGroup {
     public SubPosCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
-        addCommands(new ExtendCommand(extension, 4), new WristCommand(wrist, IntakeConstants.groundPos));
+        addCommands(new ExtendCommand(extension, 0), new WristCommand(wrist, IntakeConstants.groundPos));
     }
 }

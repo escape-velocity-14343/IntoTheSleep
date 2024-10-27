@@ -10,4 +10,6 @@ public class DriveConstants {
     public static double kD = 0;
     public static double kS = 0;
 
+    public static boolean useFieldCentric = false;
+
 }

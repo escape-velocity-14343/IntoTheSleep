@@ -4,8 +4,10 @@ import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
+import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
@@ -21,7 +23,7 @@ public class BucketPosCommand extends SequentialCommandGroup {
                 new ExtendCommand(extension, 1),
                 new ParallelCommandGroup(
                         new PivotCommand(pivot, 90),
-                        new SequentialCommandGroup(new WaitCommand(250), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)))
+                        new SequentialCommandGroup(new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)))
         );
     }
 }

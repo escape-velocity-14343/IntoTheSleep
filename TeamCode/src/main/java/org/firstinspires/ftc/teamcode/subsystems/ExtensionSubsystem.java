@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -30,6 +31,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
         motor0.setCurrentAlert(4, CurrentUnit.AMPS);
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
+
     }
     @Override
     public void periodic() {
@@ -37,6 +39,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         if (!manualControl) {
             extendInches(targetInches);
         }
+
     }
 
 
@@ -48,12 +51,19 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor0.setPower(power*SlideConstants.direction);
         motor1.setPower(-power*SlideConstants.direction);
         if (getCurrentPosition()<10 && motor0.isOverCurrent()&&motor1.isOverCurrent() && power < 0) {
-            resetOffset = getCurrentPosition();
+            //resetOffset = getCurrentPosition();
         }
+        FtcDashboard.getInstance().getTelemetry().addData("manual control slides", manualControl);
+        FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
+        RobotLog.ii("Extension", "Slide motor power " + power);
     }
 
     public void setManualControl(boolean set) {
         this.manualControl = set;
+    }
+
+    public boolean getManualControl() {
+        return manualControl;
     }
 
     /***
@@ -68,7 +78,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         squid.setPID(SlideConstants.kP);
 
         double power = squid.calculate(ticks, getCurrentPosition());
-        FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
+
         //power = 0;
 
         if (ticks>=0 && !(getCurrentInches()<=0 && power<0) && !(getCurrentInches()>=SlideConstants.maxExtension)) {
