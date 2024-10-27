@@ -10,7 +10,7 @@ public class SlideConstants {
     public static double kD = 0;
     public static double kS = 0;
     public static double ticksPerInch = 31.6;
-    public static double maxExtension = 27;
+    public static double maxExtension = 28;
     public static double minExtension = 0;
     public static double direction = 1;
     public static double tolerance = 0.5;

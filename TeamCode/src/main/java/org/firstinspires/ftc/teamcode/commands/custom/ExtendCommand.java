@@ -22,13 +22,13 @@ public class ExtendCommand extends CommandBase {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         extend.extendInches(target);
         Log.println(Log.VERBOSE, "the lienar slides", "target: " + target);
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return extend.isClose(target);
     }
     @Override
