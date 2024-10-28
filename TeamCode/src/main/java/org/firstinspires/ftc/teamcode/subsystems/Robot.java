@@ -30,8 +30,8 @@ public abstract class Robot extends LinearOpMode {
         }
 
         mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, imu);
-        extension = new ExtensionSubsystem(hardwareMap);
         pivot = new PivotSubsystem(hardwareMap);
+        extension = new ExtensionSubsystem(hardwareMap, pivot);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         imu = new IMULocalizer();
