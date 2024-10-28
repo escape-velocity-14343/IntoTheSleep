@@ -41,7 +41,6 @@ public class PivotSubsystem extends SubsystemBase {
     public void setPower(double power) {
         motor0.setPower(power*PivotConstants.direction);
         motor1.setPower(-power*PivotConstants.direction);
-        FtcDashboard.getInstance().getTelemetry().addData("pivot motor power", power);
     }
 
     public void tiltToPos(double target) {

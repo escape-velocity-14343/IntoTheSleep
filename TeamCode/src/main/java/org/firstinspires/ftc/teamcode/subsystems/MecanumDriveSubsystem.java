@@ -50,6 +50,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         fr.setPower(frontRightPower);
         br.setPower(backRightPower);
 
+        FtcDashboard.getInstance().getTelemetry().addData("fl", frontLeftPower);
+        FtcDashboard.getInstance().getTelemetry().addData("br", backRightPower);
     }
     public void driveFieldCentric(double x, double y, double rx) {
         driveFieldCentric(x, y, rx, odo.getPose().getRotation().getRadians());

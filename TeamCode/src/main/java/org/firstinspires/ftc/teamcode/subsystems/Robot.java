@@ -59,4 +59,5 @@ public abstract class Robot extends LinearOpMode {
     public Command bucketPos() {
         return new BucketPosCommand(extension, pivot, wrist);
     }
+
 }

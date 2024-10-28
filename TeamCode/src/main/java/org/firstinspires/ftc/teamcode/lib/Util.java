@@ -22,4 +22,14 @@ public class Util {
     public static double posmod(double x, double y) {
         return x - Math.floor(x / y) * y;
     }
+
+    public static double clamp(double max, double min, double v){
+        if (v > max){
+            return max;
+        }
+        else if (v < min){
+            return min;
+        }
+        return v;
+    }
 }

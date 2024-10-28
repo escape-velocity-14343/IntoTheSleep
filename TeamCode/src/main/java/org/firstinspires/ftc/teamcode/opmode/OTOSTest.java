@@ -14,7 +14,7 @@ public class OTOSTest extends Robot {
             update();
             telemetry.addData("x", otos.getPose().getX());
             telemetry.addData("y", otos.getPose().getY());
-            telemetry.addData("heading",otos.getPose().getHeading());
+            telemetry.addData("heading", otos.getPose().getRotation().getDegrees());
         }
     }
 }
