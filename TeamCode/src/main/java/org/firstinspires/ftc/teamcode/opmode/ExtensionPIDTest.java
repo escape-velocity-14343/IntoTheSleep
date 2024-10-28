@@ -7,23 +7,24 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
+
 @Config
 @TeleOp
-public class ExtensionPIDTest extends LinearOpMode {
+public class ExtensionPIDTest extends Robot {
     public static double targetInches = 0;
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        ExtensionSubsystem extensionSubsystem = new ExtensionSubsystem(hardwareMap);
         waitForStart();
         while (!isStopRequested()) {
-            extensionSubsystem.periodic();
-            extensionSubsystem.extendInches(targetInches);
+            extension.periodic();
+            extension.extendInches(targetInches);
 
-            telemetry.addData("current pos", extensionSubsystem.getCurrentPosition());
+            telemetry.addData("current pos", extension.getCurrentPosition());
             telemetry.addData("target", targetInches);
-            telemetry.addData("current inches", extensionSubsystem.getCurrentInches());
-            telemetry.addData("is there", extensionSubsystem.isClose(targetInches));
+            telemetry.addData("current inches", extension.getCurrentInches());
+            telemetry.addData("is there", extension.isClose(targetInches));
             telemetry.update();
         }
     }
