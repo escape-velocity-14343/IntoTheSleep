@@ -25,7 +25,7 @@ public class CommandBaseTest extends CommandOpMode {
     @Override
     public void initialize(){
         pivotSubsystem = new PivotSubsystem(hardwareMap);
-        extend = new ExtensionSubsystem(hardwareMap);
+        extend = new ExtensionSubsystem(hardwareMap, pivotSubsystem);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
 
