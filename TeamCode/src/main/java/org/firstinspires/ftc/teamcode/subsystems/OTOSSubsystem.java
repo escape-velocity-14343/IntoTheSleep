@@ -18,11 +18,10 @@ public class OTOSSubsystem extends SubsystemBase implements Localizer {
     @Override
     public void periodic() {
         pose = otos.getPosition();
-
     }
 
-    public OTOSSubsystem(String name, HardwareMap hMap) {
-        otos = hMap.get(SparkFunOTOS.class, name);
+    public OTOSSubsystem(HardwareMap hMap) {
+        otos = hMap.get(SparkFunOTOS.class, "otos");
         otos.setLinearUnit(DistanceUnit.INCH);
         //TODO: should this be degrees? if we change it to degrees, how many things will break?
         otos.setAngularUnit(AngleUnit.RADIANS);

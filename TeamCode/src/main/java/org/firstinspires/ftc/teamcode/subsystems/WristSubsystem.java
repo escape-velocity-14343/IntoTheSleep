@@ -18,10 +18,10 @@ public class WristSubsystem extends SubsystemBase {
         wrist.setPwmRange(new PwmControl.PwmRange(500, 2500));
     }
 
-    /*@Override
-    public void periodic(){
-        wrist.setPosition(debug);
-    }*/
+//    @Override
+//    public void periodic(){
+//        wrist.setPosition(debug);
+//    }
 
     //1.0 to 0.15
     public void setWrist(double rotation) {

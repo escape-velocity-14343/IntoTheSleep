@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
+@Config
 @TeleOp
 public class WristTest extends LinearOpMode {
     public WristSubsystem wrist;
+    public static double pos = 0;
 
     @Override
     public void runOpMode(){
@@ -16,8 +19,9 @@ public class WristTest extends LinearOpMode {
         waitForStart();
         wrist = new WristSubsystem(hardwareMap);
 
+
         while (!isStopRequested()){
-            wrist.setWrist(IntakeConstants.scoringPos);
+            wrist.setWrist(pos);
         }
     }
 }

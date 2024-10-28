@@ -22,6 +22,7 @@ public abstract class Robot extends LinearOpMode {
     public WristSubsystem wrist;
     public IntakeSubsystem intake;
     IMULocalizer imu;
+    public OTOSSubsystem otos;
     public ElapsedTime timer = new ElapsedTime();
     public void initialize() {
         hubs = hardwareMap.getAll(LynxModule.class);
@@ -35,7 +36,8 @@ public abstract class Robot extends LinearOpMode {
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         imu = new IMULocalizer();
-        CommandScheduler.getInstance().registerSubsystem(extension, mecanum, imu);
+        otos = new OTOSSubsystem(hardwareMap);
+        CommandScheduler.getInstance().registerSubsystem(extension, mecanum, imu, otos);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
