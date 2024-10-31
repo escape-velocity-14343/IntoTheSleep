@@ -32,4 +32,10 @@ public class Util {
         }
         return v;
     }
+    public static double signedPower(double value, double power) {
+        return Math.pow(Math.abs(value), power) * Math.signum(value);
+    }
+    public static double signedSqrt(double value) {
+        return signedPower(value, 0.5);
+    }
 }

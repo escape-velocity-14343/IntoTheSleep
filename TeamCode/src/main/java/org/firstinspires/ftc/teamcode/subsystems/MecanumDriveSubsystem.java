@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -54,7 +56,7 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         FtcDashboard.getInstance().getTelemetry().addData("br", backRightPower);
     }
     public void driveFieldCentric(double x, double y, double rx) {
-        driveFieldCentric(x, y, rx, odo.getPose().getRotation().getRadians());
+        driveFieldCentric(x, y, rx, odo.getPose().getRotation().getDegrees());
     }
 
 

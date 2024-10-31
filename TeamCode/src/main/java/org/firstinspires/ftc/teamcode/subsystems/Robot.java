@@ -24,19 +24,20 @@ public abstract class Robot extends LinearOpMode {
     IMULocalizer imu;
     public OTOSSubsystem otos;
     public ElapsedTime timer = new ElapsedTime();
+    public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
-
-        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, imu);
+        otos = new OTOSSubsystem(hardwareMap);
+        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, otos);
         pivot = new PivotSubsystem(hardwareMap);
         extension = new ExtensionSubsystem(hardwareMap, pivot);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         imu = new IMULocalizer();
-        otos = new OTOSSubsystem(hardwareMap);
+
         CommandScheduler.getInstance().registerSubsystem(extension, mecanum, imu, otos);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

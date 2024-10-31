@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.custom;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -21,5 +23,6 @@ public class IntakeSpinCommand extends InstantCommand {
     @Override
     public void initialize() {
         intake.setRotation(power);
+        Log.i("8", "Intake to " + power);
     }
 }

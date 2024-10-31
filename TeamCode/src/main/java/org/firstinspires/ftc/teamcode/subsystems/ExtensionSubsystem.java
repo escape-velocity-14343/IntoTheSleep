@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -24,6 +25,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     private boolean manualControl = true;
     private int resetOffset = 0;
 
+    private boolean speedToggle = false;
 
     public ExtensionSubsystem(HardwareMap hMap, PivotSubsystem pivotSubsystem) {
         this.pivotSubsystem = pivotSubsystem;
@@ -49,14 +51,16 @@ public class ExtensionSubsystem extends SubsystemBase {
      *
      */
     public void setPower(double power) {
+        if (speedToggle){
+            power *= 0.5;
+        }
         motor0.setPower(power * SlideConstants.direction);
         motor1.setPower(-power * SlideConstants.direction);
         if (getCurrentPosition() < 10 && motor0.isOverCurrent() && motor1.isOverCurrent() && power < 0) {
             // resetOffset = getCurrentPosition();
         }
-        FtcDashboard.getInstance().getTelemetry().addData("manual control slides", manualControl);
+        FtcDashboard.getInstance().getTelemetry().addData("slide position", this.getCurrentInches());
         FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
-        RobotLog.ii("Extension", "Slide motor power " + power);
     }
 
     public void setManualControl(boolean set) {
@@ -109,4 +113,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         setPower(0);
     }
 
+    public void reset() {
+        motor0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        resetOffset = 0;
+    }
 }

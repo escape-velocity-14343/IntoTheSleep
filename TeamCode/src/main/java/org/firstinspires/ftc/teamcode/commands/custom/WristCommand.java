@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.custom;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -25,6 +27,12 @@ public class WristCommand extends CommandBase {
         wrist.setWrist(target);
 
     }
+
+    @Override
+    public void end(boolean wasInterrupted){
+        Log.i("3", "Wrist set to " + target);
+    }
+
     @Override
     public boolean isFinished() {
         return timer.seconds()>timeNeeded;

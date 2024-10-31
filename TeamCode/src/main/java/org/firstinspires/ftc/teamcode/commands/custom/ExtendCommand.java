@@ -24,16 +24,17 @@ public class ExtendCommand extends CommandBase {
     @Override
     public void initialize() {
         extend.extendInches(target);
-        Log.println(Log.VERBOSE, "the lienar slides", "target: " + target);
+        Log.i("9", "Extension to " + target);
     }
 
     @Override
     public boolean isFinished() {
         return extend.isClose(target);
     }
+
     @Override
     public void end(boolean wasInterrupted) {
-        extend.stop();
+        extend.fast();
     }
 
 }

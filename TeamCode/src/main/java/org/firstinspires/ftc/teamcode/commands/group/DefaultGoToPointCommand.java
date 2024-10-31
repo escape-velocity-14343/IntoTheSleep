@@ -1,17 +1,14 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
-import static org.firstinspires.ftc.teamcode.lib.Util.clamp;
-
 import android.util.Log;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
@@ -19,7 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
 import java.util.function.DoubleSupplier;
 
 @Config
-public class GoToPointCommand extends CommandBase {
+public class DefaultGoToPointCommand extends CommandBase {
     public PIDController xPID = new PIDController(0,0,0);
     public PIDController yPID = new PIDController(0, 0,0);
     public PIDController headingPID = new PIDController(0,0,0);
@@ -44,12 +41,14 @@ public class GoToPointCommand extends CommandBase {
     private DoubleSupplier ySpeedSupplier;
     private DoubleSupplier rotSpeedSupplier;
 
-    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, double hTol){
+    private boolean shouldLog = true;
+
+    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, double hTol){
         this(driveSubsystem, otosSubsystem, targetPose);
         this.hTol = hTol;
     }
 
-    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose) {
+    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose) {
         drive = driveSubsystem;
         otos = otosSubsystem;
         target = targetPose;
@@ -69,10 +68,6 @@ public class GoToPointCommand extends CommandBase {
         yPID.setPID(translationkP,translationkI,translationkD);
         headingPID.setPID(headingkP,headingkI,headingkD);
 
-
-
-        /*xSpeedSupplier = () -> xPID.calculate(currentPose.getX(), target.getX());
-        ySpeedSupplier = () -> yPID.calculate(currentPose.getY(), target.getY());*/
         rotSpeedSupplier = () -> Util.signedSqrt(headingPID.calculate(currentPose.getRotation().getDegrees(), target.getRotation().getDegrees()));
     }
 
@@ -89,15 +84,18 @@ public class GoToPointCommand extends CommandBase {
 
         drive.driveFieldCentric(-xMove, -yMove, -rotSpeedSupplier.getAsDouble());
     }
-    @Override
-    public void end(boolean wasInterrupted) {
-        drive.driveFieldCentric(0,0,0,0);
-        Log.i("1", "gtp finished");
-    }
 
     @Override
     public boolean isFinished() {
-        return (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
+        return false;
+    }
+
+    public boolean isDone() {
+        return shouldLog && (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
+    }
+
+    public void setTarget(Pose2d target){
+        this.target = target;
     }
 }
 

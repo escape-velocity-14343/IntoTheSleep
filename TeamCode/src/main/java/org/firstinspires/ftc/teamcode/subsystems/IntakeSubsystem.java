@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class IntakeSubsystem extends SubsystemBase {
     private CRServo intake;
+    private double speed = 0;
 
     public IntakeSubsystem(HardwareMap hardwareMap){
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -20,6 +21,11 @@ public class IntakeSubsystem extends SubsystemBase {
      * @param speed
      */
     public void setRotation(double speed) {
+        this.speed = speed;
+    }
+
+    @Override
+    public void periodic(){
         intake.setPower(-speed);
     }
 }

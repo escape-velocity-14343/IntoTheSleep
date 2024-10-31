@@ -10,7 +10,7 @@ public class SlideConstants {
     public static double kD = 0;
     public static double kS = 0;
     public static double ticksPerInch = 31.6;
-    public static double maxExtension = 29.5;
+    public static double maxExtension = 28.5;
     public static double minExtension = 0;
     public static double direction = 1;
     public static double tolerance = 0.5;
@@ -22,5 +22,8 @@ public class SlideConstants {
     /**
      * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
      */
-    public static double FEEDFORWARD_DYNAMIC = 0.1;
+    public static double FEEDFORWARD_DYNAMIC = 0.2;
+
+
+    public static double autonPiece1Extension = 22;
 }

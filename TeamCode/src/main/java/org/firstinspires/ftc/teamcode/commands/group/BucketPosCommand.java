@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
+import android.util.Log;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -22,8 +26,9 @@ public class BucketPosCommand extends SequentialCommandGroup {
                 new WristCommand(wrist, IntakeConstants.scoringPos),
                 new ExtendCommand(extension, 1),
                 new ParallelCommandGroup(
-                        new PivotCommand(pivot, 90),
-                        new SequentialCommandGroup(new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)))
+                        new PivotCommand(pivot, PivotConstants.topLimit-2),
+                        new SequentialCommandGroup(new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000))),
+                new InstantCommand(() -> Log.i("2", "BucketPos End"))
         );
     }
 }

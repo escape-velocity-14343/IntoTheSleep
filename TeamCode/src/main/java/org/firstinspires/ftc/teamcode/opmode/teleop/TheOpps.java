@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -15,16 +13,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @TeleOp
 @Config
-public class TeleOpTest extends Robot {
+public class TheOpps extends Robot {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -54,7 +50,7 @@ public class TeleOpTest extends Robot {
 //                driverPad::getRightX,
 //                () -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
 //        ));
-        driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(intakePos());
+        driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new SequentialCommandGroup(subPos(),
                 new IntakeSpinCommand(intake, 1),
                 new InstantCommand(() -> extension.setManualControl(true), extension)));
@@ -63,7 +59,7 @@ public class TeleOpTest extends Robot {
                 .whenReleased(new SequentialCommandGroup(new IntakeSpinCommand(intake, 0),
                         new InstantCommand(() -> extension.setManualControl(false), extension),
                         new RetractCommand(wrist, pivot, extension)));
-        new Trigger(extension::getManualControl).toggleWhenActive(new RunCommand(() -> extension.setPower(gamepad2.right_trigger - gamepad2.left_trigger), extension));
+        new Trigger(extension::getManualControl).toggleWhenActive(new RunCommand(() -> extension.setPower(gamepad2.right_trigger + gamepad1.right_trigger - gamepad2.left_trigger - gamepad1.left_trigger), extension));
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeSpinCommand(intake, -0.2));
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
         driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());

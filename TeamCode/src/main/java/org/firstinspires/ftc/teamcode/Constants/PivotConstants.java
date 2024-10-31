@@ -9,13 +9,14 @@ public class PivotConstants {
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
-    //Degrees
-    public static double bottomLimit = 0;
-    public static double topLimit = 90;
-    public static double tolerance = 0.5;
+
+    public static double bottomLimit = 2;
+    public static double topLimit = 91.5;
+    public static double tolerance = 1.5;
     public static double direction = -1;
     public static boolean encoderInvert = true;
-    public static double encoderOffset = 40 ;
+    public static double encoderOffset = -128.5;
     public static double outtakeExtendDegrees = 45;
-    //Radians
+
+    public static double neutralPos = 2;
 }
