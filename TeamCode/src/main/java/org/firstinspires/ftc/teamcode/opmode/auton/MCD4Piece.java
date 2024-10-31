@@ -33,12 +33,11 @@ public class MCD4Piece extends Robot {
         initialize();
         otos.setPosition(-65, 39);
         waitForStart();
+
         extension.reset();
 
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
 
-        gtpc = new DefaultGoToPointCommand(mecanum, otos, new Pose2d(-65, 39, new Rotation2d()), imu);
+        gtpc = new DefaultGoToPointCommand(mecanum, otos, new Pose2d(-65, 39, new Rotation2d()));
         cs.schedule(gtpc);
 
         cs.schedule(

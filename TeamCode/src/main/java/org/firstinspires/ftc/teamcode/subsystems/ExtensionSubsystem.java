@@ -55,7 +55,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void setPower(double power) {
 
         if (speedToggle){
-            power *= 0.7;
+            power = 0.4;
         }
         if (pivotSubsystem.getCurrentPosition() < 20 && getCurrentInches() > 20 && power > 0){
             Log.i("A", "past horizontal extension limit");

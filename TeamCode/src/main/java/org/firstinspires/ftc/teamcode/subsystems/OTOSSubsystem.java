@@ -48,4 +48,10 @@ public class OTOSSubsystem extends SubsystemBase implements Localizer {
     public void setPosition(double x, double y) {
         otos.setPosition(new SparkFunOTOS.Pose2D(x, y, pose.h));
     }
+    public int getCalibrationProgress() {
+        return otos.getImuCalibrationProgress();
+    }
+    public boolean isDoneCalibration() {
+        return getCalibrationProgress()<1;
+    }
 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -18,6 +19,7 @@ public class WristTest extends LinearOpMode {
         waitForStart();
         wrist = new WristSubsystem(hardwareMap);
 
+        CommandScheduler.getInstance().registerSubsystem(wrist);
 
         while (!isStopRequested()){
             wrist.setWrist(pos);
