@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
@@ -41,17 +42,20 @@ public class DefaultGoToPointCommand extends CommandBase {
     private DoubleSupplier ySpeedSupplier;
     private DoubleSupplier rotSpeedSupplier;
 
+    IMU imu;
+
     private boolean shouldLog = true;
 
-    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, double hTol){
-        this(driveSubsystem, otosSubsystem, targetPose);
+    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, IMU imu, double hTol){
+        this(driveSubsystem, otosSubsystem, targetPose, imu);
         this.hTol = hTol;
     }
 
-    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose) {
+    public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, IMU imu) {
         drive = driveSubsystem;
         otos = otosSubsystem;
         target = targetPose;
+        this.imu = imu;
 
         addRequirements(drive, otos);
     }
@@ -68,7 +72,7 @@ public class DefaultGoToPointCommand extends CommandBase {
         yPID.setPID(translationkP,translationkI,translationkD);
         headingPID.setPID(headingkP,headingkI,headingkD);
 
-        rotSpeedSupplier = () -> Util.signedSqrt(headingPID.calculate(currentPose.getRotation().getDegrees(), target.getRotation().getDegrees()));
+        rotSpeedSupplier = () -> Util.signedSqrt(headingPID.calculate(imu.getRobotYawPitchRollAngles().getYaw(), target.getRotation().getDegrees()));
     }
 
     @Override
@@ -91,7 +95,7 @@ public class DefaultGoToPointCommand extends CommandBase {
     }
 
     public boolean isDone() {
-        return shouldLog && (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
+        return shouldLog && (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), imu.getRobotYawPitchRollAngles().getYaw(), hTol));
     }
 
     public void setTarget(Pose2d target){

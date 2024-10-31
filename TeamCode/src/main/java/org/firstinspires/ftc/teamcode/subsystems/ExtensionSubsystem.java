@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -51,8 +53,13 @@ public class ExtensionSubsystem extends SubsystemBase {
      *
      */
     public void setPower(double power) {
+
         if (speedToggle){
-            power *= 0.5;
+            power *= 0.7;
+        }
+        if (pivotSubsystem.getCurrentPosition() < 20 && getCurrentInches() > 20 && power > 0){
+            Log.i("A", "past horizontal extension limit");
+            power = 0;
         }
         motor0.setPower(power * SlideConstants.direction);
         motor1.setPower(-power * SlideConstants.direction);
@@ -117,5 +124,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         resetOffset = 0;
+    }
+
+    public void setSpeedToggle(boolean b){
+        speedToggle = b;
     }
 }

@@ -25,5 +25,5 @@ public class SlideConstants {
     public static double FEEDFORWARD_DYNAMIC = 0.2;
 
 
-    public static double autonPiece1Extension = 22;
+    public static double autonPiece1Extension = 19;
 }
