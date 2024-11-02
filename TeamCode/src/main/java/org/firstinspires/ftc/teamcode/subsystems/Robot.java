@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -21,11 +22,11 @@ public abstract class Robot extends LinearOpMode {
     public PivotSubsystem pivot;
     public WristSubsystem wrist;
     public IntakeSubsystem intake;
-    IMULocalizer imu;
     public OTOSSubsystem otos;
     public ElapsedTime timer = new ElapsedTime();
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
+        //cs.reset();
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -36,9 +37,8 @@ public abstract class Robot extends LinearOpMode {
         extension = new ExtensionSubsystem(hardwareMap, pivot);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
-        imu = new IMULocalizer();
 
-        CommandScheduler.getInstance().registerSubsystem(extension, mecanum, imu, otos);
+        CommandScheduler.getInstance().registerSubsystem(extension, mecanum, otos);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -60,5 +60,4 @@ public abstract class Robot extends LinearOpMode {
     public Command bucketPos() {
         return new BucketPosCommand(extension, pivot, wrist);
     }
-
 }

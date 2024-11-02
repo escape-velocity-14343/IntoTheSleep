@@ -4,13 +4,9 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.teamcode.lib.Localizer;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
@@ -68,6 +64,9 @@ public class DefaultGoToPointCommand extends CommandBase {
         headingPID.setTolerance(hTol);
 
         currentPose = otos.getPose();
+        if (currentPose == null) {
+            Log.i("execute", "currentPose was null (why?????)");
+        }
 
         xPID.setPID(translationkP,translationkI,translationkD);
         yPID.setPID(translationkP,translationkI,translationkD);
@@ -79,6 +78,11 @@ public class DefaultGoToPointCommand extends CommandBase {
     @Override
     public void execute() {
         currentPose = otos.getPose();
+        if (currentPose == null) {
+            Log.i("execute", "currentPose was null (why?????)");
+        } else {
+            Log.i("execute", "current pose was NOT null");
+        }
         double xDist = target.getX() - currentPose.getX();
         double yDist = target.getY() - currentPose.getY();
         double angle = Math.atan2(yDist,xDist);
@@ -96,11 +100,33 @@ public class DefaultGoToPointCommand extends CommandBase {
     }
 
     public boolean isDone() {
+        if (target == null) {
+            Log.i("isDone", "target was null");
+            return false;
+        }
+
+        if (currentPose == null) {
+            Log.i("isDone", "currentPose was null");
+            return false;
+        }
+
         return shouldLog && (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
     }
 
     public void setTarget(Pose2d target){
         this.target = target;
+    }
+
+    public double getTargetHeading() {
+        return target.getRotation().getDegrees();
+    }
+
+    public double getTargetX() {
+        return target.getX();
+    }
+
+    public double getTargetY() {
+        return target.getY();
     }
 }
 

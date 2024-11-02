@@ -5,11 +5,16 @@ import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 
-public class StayAtPointCommand extends CommandBase {
+public class GoToPointWithDefaultCommand extends CommandBase {
     private Pose2d target;
     private DefaultGoToPointCommand gtpc;
 
-    public StayAtPointCommand(Pose2d target, DefaultGoToPointCommand gtpc){
+    /**
+     * Sets the target point of the default go to point command
+     * @param target The target to go to
+     * @param gtpc
+     */
+    public GoToPointWithDefaultCommand(Pose2d target, DefaultGoToPointCommand gtpc){
         this.target = target;
         this.gtpc = gtpc;
     }

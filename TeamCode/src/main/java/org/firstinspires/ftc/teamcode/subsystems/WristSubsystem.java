@@ -29,6 +29,7 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setWrist(double rotation) {
+        wrist.setPosition(rotation);
         this.rotation = rotation;
     }
 

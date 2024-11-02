@@ -17,6 +17,7 @@ public class PivotSubsystem extends SubsystemBase {
     private DcMotor motor0, motor1;
     private double currentPos = 0;
     private double target = 0;
+    private boolean manualControl = false;
     private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
     AnalogEncoder encoder;
@@ -35,7 +36,9 @@ public class PivotSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         currentPos = encoder.getAngle();
-        tiltToPos(target);
+        if (!manualControl) {
+            tiltToPos(target);
+        }
     }
 
     public void setPower(double power) {
@@ -44,6 +47,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void tiltToPos(double target) {
+        manualControl = false;
         setTarget(target);
         double power = squid.calculate(target, getCurrentPosition());
         if (currentPos > PivotConstants.topLimit && power > 0) {
@@ -56,6 +60,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
 
     public void setTarget(double target){
+        manualControl = false;
         this.target = target;
     }
 
@@ -68,6 +73,14 @@ public class PivotSubsystem extends SubsystemBase {
 
     public double getCurrentPosition() {
         return currentPos;
+    }
+
+    public void setManualControl(boolean manualControl) {
+        this.manualControl = manualControl;
+    }
+
+    public boolean getManualControl() {
+        return manualControl;
     }
 
     public void stop() {

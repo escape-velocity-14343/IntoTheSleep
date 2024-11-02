@@ -25,5 +25,11 @@ public class SlideConstants {
     public static double FEEDFORWARD_DYNAMIC = 0.2;
 
 
-    public static double autonPiece1Extension = 19;
+    public static double autonPiece1Extension = 10;
+    public static double autonPiece3Extension = 6;
+
+    public static double submersibleIntakeMaxExtension = 16;
+
+    public static double autonPiecee3ExtensionPower = 0.3;
+    public static double autoRetractionPower = 1.0;
 }

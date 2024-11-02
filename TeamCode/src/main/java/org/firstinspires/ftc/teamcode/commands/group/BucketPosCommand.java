@@ -24,10 +24,15 @@ public class BucketPosCommand extends SequentialCommandGroup {
     public BucketPosCommand(ExtensionSubsystem extension, PivotSubsystem pivot, WristSubsystem wrist) {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.scoringPos),
-                new ExtendCommand(extension, 1),
+                //new ExtendCommand(extension, 1),
                 new ParallelCommandGroup(
-                        new PivotCommand(pivot, PivotConstants.topLimit-2),
-                        new SequentialCommandGroup(new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees), new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000))),
+                        // minus two to prevent it from overshooting
+                        new PivotCommand(pivot, PivotConstants.topLimit - 2),
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees),
+                                new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)
+                        )
+                ),
                 new InstantCommand(() -> Log.i("2", "BucketPos End"))
         );
     }
