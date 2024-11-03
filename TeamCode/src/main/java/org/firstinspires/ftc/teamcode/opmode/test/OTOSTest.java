@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.subsystems.IMULocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp
+@TeleOp(group="1")
 public class OTOSTest extends Robot {
     @Override
     public void runOpMode() throws InterruptedException {

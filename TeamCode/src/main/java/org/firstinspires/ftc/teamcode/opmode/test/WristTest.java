@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 @Config
-@TeleOp
+@TeleOp(group="1")
 public class WristTest extends LinearOpMode {
     public WristSubsystem wrist;
     public static double pos = 0;

@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -19,8 +20,8 @@ import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
-
-@Config
+@Disabled
+//@Config
 @Autonomous
 public class KFC4Piece extends Robot {
 

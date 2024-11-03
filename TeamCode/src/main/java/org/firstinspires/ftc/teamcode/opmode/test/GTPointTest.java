@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp
+@TeleOp(group="1")
 @Config
 public class GTPointTest extends Robot {
     public static double x = -65;

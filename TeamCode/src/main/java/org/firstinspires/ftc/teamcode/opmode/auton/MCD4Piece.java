@@ -25,13 +25,13 @@ import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Config
-@Autonomous
+@Autonomous(name = "Macca's 4 Piece Nuggets")
 public class MCD4Piece extends Robot {
     private DefaultGoToPointCommand gtpc;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d scorePos = new Pose2d(-56, 54, Rotation2d.fromDegrees(-45));
+        Pose2d scorePos = new Pose2d(-60, 55, Rotation2d.fromDegrees(-45));
         initialize();
         otos.setPosition(-65, 39);
         wrist.setWrist(1);
@@ -124,7 +124,7 @@ public class MCD4Piece extends Robot {
 
                                     @Override
                                     public void execute() {
-                                        heading -= 0.1;
+                                        heading -= 0.025;
                                         gtpc.setTarget(new Pose2d(gtpc.getTargetX(), gtpc.getTargetY(), Rotation2d.fromDegrees(heading)));
                                     }
                                 }

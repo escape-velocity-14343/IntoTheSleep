@@ -41,8 +41,10 @@ public class ExtensionSubsystem extends SubsystemBase {
 
         motor0 = (DcMotorEx) hMap.dcMotor.get("slide0");
         motor0.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor0.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1 = (DcMotorEx) hMap.dcMotor.get("slide1");
         motor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor0.setCurrentAlert(4, CurrentUnit.AMPS);
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
     }
@@ -64,13 +66,20 @@ public class ExtensionSubsystem extends SubsystemBase {
         if (speedToggle){
             power = 0.4;
         }
-        motor0.setPower(power * SlideConstants.direction);
-        motor1.setPower(-power * SlideConstants.direction);
+        if (manualControl&&getCurrentInches()>SlideConstants.submersibleIntakeMaxExtension&&power>0) {
+            motor0.setPower(0);
+            motor1.setPower(0);
+        }
+        else {
+            motor0.setPower(power * SlideConstants.direction);
+            motor1.setPower(-power * SlideConstants.direction);
+        }
         if (getCurrentPosition() < 10 && motor0.isOverCurrent() && motor1.isOverCurrent() && power < 0) {
             // resetOffset = getCurrentPosition();
         }
         FtcDashboard.getInstance().getTelemetry().addData("slide position", this.getCurrentInches());
         FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
+
     }
 
     public void setManualControl(boolean set) {
@@ -99,7 +108,7 @@ public class ExtensionSubsystem extends SubsystemBase {
                 + SlideConstants.FEEDFORWARD_STATIC
                 + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
 
-        if (ticks >= 0 && !(getCurrentInches() <= 0 && power < 0) && !(getCurrentInches() >= SlideConstants.maxExtension)) {
+        if (ticks >= 0 && !(getCurrentInches() <= 0 && power < 0) && !(getCurrentInches() >= SlideConstants.maxExtension && power > 0)) {
             setPower(power);
         }
         else{

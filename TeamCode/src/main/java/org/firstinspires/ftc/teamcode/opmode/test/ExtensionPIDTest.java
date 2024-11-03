@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
 @Config
-@TeleOp
+@TeleOp(group="1")
 public class ExtensionPIDTest extends LinearOpMode {
     public PivotSubsystem pivot;
     public ExtensionSubsystem extension;

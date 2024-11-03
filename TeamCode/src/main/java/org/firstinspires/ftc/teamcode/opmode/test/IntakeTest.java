@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
-@TeleOp
+@TeleOp(group="1")
 public class IntakeTest extends LinearOpMode {
     private IntakeSubsystem intakeSubsystem;
 

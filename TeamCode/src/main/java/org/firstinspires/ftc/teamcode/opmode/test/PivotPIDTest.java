@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
 @Config
-@TeleOp
+@TeleOp(group="1")
 public class PivotPIDTest extends LinearOpMode {
     public static double target = 0;
     @Override

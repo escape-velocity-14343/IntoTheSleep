@@ -53,9 +53,9 @@ public class PivotSubsystem extends SubsystemBase {
         if (currentPos > PivotConstants.topLimit && power > 0) {
             power = 0;
         }
-        else if (currentPos < PivotConstants.bottomLimit && power < 0){
-            power = 0;
-        }
+        //else if (currentPos < PivotConstants.bottomLimit && power < 0){
+        //    power = 0;
+        //}
         setPower(power);
     }
 
@@ -68,7 +68,7 @@ public class PivotSubsystem extends SubsystemBase {
     * @param target in inches, use the same one as the pid target
     */
     public boolean isClose(double target) {
-        return Util.inRange(target, currentPos, PivotConstants.tolerance);
+        return Util.inRange(target, currentPos, PivotConstants.tolerance) || currentPos < PivotConstants.bottomLimit;
     }
 
     public double getCurrentPosition() {

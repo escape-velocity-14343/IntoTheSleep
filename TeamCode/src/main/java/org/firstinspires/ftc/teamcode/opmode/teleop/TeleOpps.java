@@ -14,18 +14,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
-import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
+import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@TeleOp
+@TeleOp(group="0", name="TeleOpp")
 @Config
-public class TheOpps extends Robot {
+public class TeleOpps extends Robot {
     @Override
     public void runOpMode() throws InterruptedException {
 
@@ -62,7 +62,7 @@ public class TheOpps extends Robot {
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(new SequentialCommandGroup(
                 new InstantCommand(() -> inHang.set(false)),
                 subPos(),
-                new IntakeSpinCommand(intake, 1),
+                new IntakeSpinCommand(intake, 1).interruptOn(()->operatorPad.isDown(GamepadKeys.Button.LEFT_BUMPER)),
                 new InstantCommand(() -> extension.setManualControl(true), extension))
         );
         //driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
@@ -70,7 +70,7 @@ public class TheOpps extends Robot {
                 .whenReleased(new SequentialCommandGroup(
                         new IntakeSpinCommand(intake, 0),
                         new InstantCommand(() -> extension.setManualControl(false), extension),
-                        new RetractCommand(wrist, pivot, extension))
+                        new IntakeRetractCommand(wrist, pivot, extension))
                 );
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeSpinCommand(intake, -0.15));
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
@@ -79,7 +79,7 @@ public class TheOpps extends Robot {
                 .andThen(new PivotCommand(pivot, PivotConstants.topLimit),
                         new InstantCommand(() -> inHang.set(true))));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ConditionalCommand(
-            new PivotCommand(pivot, PivotConstants.hangDegrees  ), new InstantCommand(), inHang::get));
+            new PivotCommand(pivot, PivotConstants.hangDegrees), new InstantCommand(), inHang::get));
 
 
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(extension::reset));
@@ -94,7 +94,9 @@ public class TheOpps extends Robot {
         operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(new IntakeSpinCommand(intake, -1))
                 .whenReleased(new IntakeSpinCommand(intake, 0));
 
-        new Trigger(extension::getManualControl).toggleWhenActive(new ConditionalCommand(new RunCommand(() -> extension.setPower(gamepad2.right_trigger + gamepad1.right_trigger - gamepad2.left_trigger - gamepad1.left_trigger), extension), new InstantCommand(), () -> extension.getCurrentPosition() / SlideConstants.ticksPerInch < SlideConstants.submersibleIntakeMaxExtension));
+        new Trigger(extension::getManualControl).toggleWhenActive(new RunCommand(() -> extension.setPower(gamepad2.right_trigger + gamepad1.right_trigger - gamepad2.left_trigger - gamepad1.left_trigger), extension));
+                /*new RunCommand(() -> extension.setPower(- gamepad2.left_trigger - gamepad1.left_trigger), extension),
+                () -> extension.getCurrentPosition() / SlideConstants.ticksPerInch < SlideConstants.submersibleIntakeMaxExtension))*/
 
         new Trigger(pivot::getManualControl).toggleWhenActive(new RunCommand(() -> pivot.setPower(gamepad2.right_stick_x), pivot));
 
