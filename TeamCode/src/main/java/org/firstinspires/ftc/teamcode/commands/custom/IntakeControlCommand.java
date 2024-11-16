@@ -6,23 +6,26 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 
-public class IntakeSpinCommand extends InstantCommand {
+public class IntakeControlCommand extends InstantCommand {
     IntakeSubsystem intake;
-    double power = 0;
+    double position = 0;
+    double speed = 0;
 
     /**
      * Positive is outtake, negative is intake
      * @param intake
-     * @param power
+     * @param position
      */
-    public IntakeSpinCommand(IntakeSubsystem intake, double power) {
+    public IntakeControlCommand(IntakeSubsystem intake, double position, double speed) {
         addRequirements(intake);
         this.intake = intake;
-        this.power = power;
+        this.position = position;
+        this.speed = speed;
     }
     @Override
     public void initialize() {
-        intake.setIntakeSpeed(power);
-        Log.i("8", "Intake spin: " + power);
+        intake.setClawer(position);
+        intake.setIntakeSpeed(speed);
+        Log.i("8", "Intake pos: " + position);
     }
 }

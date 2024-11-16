@@ -43,7 +43,7 @@ public class OTOSSubsystem extends SubsystemBase implements Localizer {
         }
     }
 
-    public SparkFunOTOS.Pose2D getOTOSPose() {
+    private SparkFunOTOS.Pose2D getOTOSPose() {
         return pose;
     }
 

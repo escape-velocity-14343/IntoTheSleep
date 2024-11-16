@@ -10,7 +10,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
@@ -18,6 +20,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     private final DcMotorEx motor0;
     private final DcMotorEx motor1;
     private final PivotSubsystem pivotSubsystem;
+    private final CachingVoltageSensor voltage;
     private int currentPos = 0;
     private final SquIDController squid = new SquIDController();
     private double targetInches = 0;
@@ -25,6 +28,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     private int resetOffset = 0;
 
     private boolean speedToggle = false;
+    private boolean superSpeedToggle = false;
 
     private double extensionPowerMul = 1.0;
 
@@ -36,8 +40,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         this.extensionPowerMul = extensionPowerMul;
     }
 
-    public ExtensionSubsystem(HardwareMap hMap, PivotSubsystem pivotSubsystem) {
+    public ExtensionSubsystem(HardwareMap hMap, PivotSubsystem pivotSubsystem, CachingVoltageSensor voltage) {
         this.pivotSubsystem = pivotSubsystem;
+        this.voltage = voltage;
 
         motor0 = (DcMotorEx) hMap.dcMotor.get("slide0");
         motor0.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -66,6 +71,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         if (speedToggle){
             power = 0.4;
         }
+        if (superSpeedToggle) {
+            power = 0.25;
+        }
         if (manualControl&&getCurrentInches()>SlideConstants.submersibleIntakeMaxExtension&&power>0) {
             motor0.setPower(0);
             motor1.setPower(0);
@@ -76,6 +84,9 @@ public class ExtensionSubsystem extends SubsystemBase {
         }
         if (getCurrentPosition() < 10 && motor0.isOverCurrent() && motor1.isOverCurrent() && power < 0) {
             // resetOffset = getCurrentPosition();
+        }
+        if (getCurrentPosition()<0) {
+            reset();
         }
         FtcDashboard.getInstance().getTelemetry().addData("slide position", this.getCurrentInches());
         FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
@@ -108,6 +119,15 @@ public class ExtensionSubsystem extends SubsystemBase {
                 + SlideConstants.FEEDFORWARD_STATIC
                 + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
 
+        power *= voltage.getVoltageNormalized();
+
+        if (power < -0.5 && pivotSubsystem.getCurrentPosition() > PivotConstants.specimenTopBarAngle + 5) {
+            power = -0.5;
+        }
+        else if (power < 0) {
+            power *= 0.9;
+        }
+
         if (ticks >= 0 && !(getCurrentInches() <= 0 && power < 0) && !(getCurrentInches() >= SlideConstants.maxExtension && power > 0)) {
             setPower(power);
         }
@@ -137,6 +157,10 @@ public class ExtensionSubsystem extends SubsystemBase {
         setPower(0);
     }
 
+    public long getReasonableExtensionMillis(double targetInches) {
+        return (long) (Math.abs(targetInches - getCurrentInches()) * SlideConstants.millisPerInch);
+    }
+
     public void reset() {
         motor0.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor0.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -145,5 +169,8 @@ public class ExtensionSubsystem extends SubsystemBase {
 
     public void setSpeedToggle(boolean b){
         speedToggle = b;
+    }
+    public void setSuperSpeedToggle(boolean set) {
+        superSpeedToggle = set;
     }
 }

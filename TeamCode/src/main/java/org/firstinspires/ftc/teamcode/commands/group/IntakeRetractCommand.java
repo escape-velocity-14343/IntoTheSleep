@@ -26,7 +26,7 @@ public class IntakeRetractCommand extends SequentialCommandGroup {
                 new WristCommand(wrist, IntakeConstants.foldedPos),
                 new ParallelCommandGroup(
                         new PivotCommand(pivot, PivotConstants.retractDegrees),
-                        new ExtendCommand(extend, SlideConstants.minExtension)
+                        new ExtendCommand(extend, SlideConstants.minExtension).withTimeout(extend.getReasonableExtensionMillis(0))
                 )
 
         );
@@ -36,7 +36,7 @@ public class IntakeRetractCommand extends SequentialCommandGroup {
         return new IntakeRetractCommand(
                 new ParallelCommandGroup(
                         new PivotCommand(pivot, PivotConstants.retractDegrees),
-                        new ExtendCommand(extend, SlideConstants.minExtension)
+                        new ExtendCommand(extend, SlideConstants.minExtension).withTimeout(extend.getReasonableExtensionMillis(0))
                 ),
                 new WristCommand(wrist, wristPos).whenFinished(() -> Log.i("5", "Retract command"))
         );

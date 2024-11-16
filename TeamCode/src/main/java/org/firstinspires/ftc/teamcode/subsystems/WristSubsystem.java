@@ -29,8 +29,8 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public void setWrist(double rotation) {
-        wrist.setPosition(rotation);
-        this.rotation = rotation;
+        wrist.setPosition(rotation + IntakeConstants.wristOffset);
+        this.rotation = rotation + IntakeConstants.wristOffset;
     }
 
     //TODO: if we use analog thing make it return actual position

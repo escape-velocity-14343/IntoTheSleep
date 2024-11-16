@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
@@ -18,8 +19,9 @@ public class ExtensionPIDTest extends LinearOpMode {
     public static double targetDegrees = 0;
     @Override
     public void runOpMode() throws InterruptedException {
-        pivot = new PivotSubsystem(hardwareMap);
-        extension = new ExtensionSubsystem(hardwareMap, pivot);
+        CachingVoltageSensor voltage = new CachingVoltageSensor(hardwareMap);
+        pivot = new PivotSubsystem(hardwareMap, voltage);
+        extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         waitForStart();
         while (!isStopRequested()) {

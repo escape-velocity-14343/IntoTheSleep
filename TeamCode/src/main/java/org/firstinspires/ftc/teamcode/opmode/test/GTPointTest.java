@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
-import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @TeleOp(group="1")
@@ -26,7 +18,7 @@ public class GTPointTest extends Robot {
     public void runOpMode() throws InterruptedException {
 
         initialize();
-        otos.setPosition(-65, 39);
+        pinpoint.setPosition(-65, 39);
         waitForStart();
 
         //cs.schedule(
@@ -40,14 +32,14 @@ public class GTPointTest extends Robot {
         //                new IntakePosCommand(extension, pivot, wrist)
         //        ));
 
-        cs.schedule(new GoToPointCommand(mecanum, otos, new Pose2d(x, y, Rotation2d.fromDegrees(rot))));
+        cs.schedule(new GoToPointCommand(mecanum, pinpoint, new Pose2d(x, y, Rotation2d.fromDegrees(rot))));
 
         while (!isStopRequested()){
             update();
 
-            telemetry.addData("x", otos.getPose().getX());
-            telemetry.addData("y", otos.getPose().getY());
-            telemetry.addData("heading",otos.getPose().getHeading());
+            telemetry.addData("x", pinpoint.getPose().getX());
+            telemetry.addData("y", pinpoint.getPose().getY());
+            telemetry.addData("heading", pinpoint.getPose().getHeading());
 
         }
         cs.reset();

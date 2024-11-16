@@ -6,7 +6,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 
-public class AutonExtendCommand extends CommandBase {
+public class SlowerAutonExtendCommand extends CommandBase {
     ExtensionSubsystem extend;
     double target;
 
@@ -15,7 +15,7 @@ public class AutonExtendCommand extends CommandBase {
      * @param subsystem
      * @param target in inches
      */
-    public AutonExtendCommand(ExtensionSubsystem subsystem, double target) {
+    public SlowerAutonExtendCommand(ExtensionSubsystem subsystem, double target) {
         this.extend = subsystem;
         this.target = target;
         addRequirements(subsystem);
@@ -25,7 +25,7 @@ public class AutonExtendCommand extends CommandBase {
     @Override
     public void initialize() {
         extend.extendInches(target);
-        extend.setSpeedToggle(true);
+        extend.setSuperSpeedToggle(true);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class AutonExtendCommand extends CommandBase {
     @Override
     public void end(boolean wasInterrupted) {
         Log.i("9", "Extension to " + target);
-        extend.setSpeedToggle(false);
+        extend.setSuperSpeedToggle(false);
     }
 
 }

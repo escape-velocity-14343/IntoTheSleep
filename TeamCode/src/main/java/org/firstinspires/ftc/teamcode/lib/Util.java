@@ -1,5 +1,9 @@
 package org.firstinspires.ftc.teamcode.lib;
 
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
+
 public class Util {
     public static boolean inRange(double a, double b, double thres) {
         return Math.abs(a-b)<thres;
@@ -37,5 +41,17 @@ public class Util {
     }
     public static double signedSqrt(double value) {
         return signedPower(value, 0.5);
+    }
+    public static Rotation2d angleToPoint(Pose2d current, Pose2d target) {
+        Translation2d translation = target.getTranslation().minus(current.getTranslation());
+        return new Rotation2d(Math.atan2(translation.getY(), translation.getX()));
+    }
+    public static Rotation2d angleToPoint(Translation2d current, Translation2d target) {
+        Translation2d translation = target.minus(current);
+        return new Rotation2d(Math.atan2(translation.getY(), translation.getX()));
+    }
+
+    public static double halfLinearHalfCubic(double input) {
+        return (Math.pow(input, 3) + input) / 2;
     }
 }

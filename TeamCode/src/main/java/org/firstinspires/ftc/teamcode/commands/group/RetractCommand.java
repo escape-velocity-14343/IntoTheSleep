@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -28,7 +29,7 @@ public class RetractCommand extends SequentialCommandGroup {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new ParallelCommandGroup(
-                        new PivotCommand(pivot, PivotConstants.retractDegrees),
+                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees)),
                         new ExtendCommand(extend, SlideConstants.minExtension)
                 ),
                 new WristCommand(wrist, IntakeConstants.foldedPos).whenFinished(() -> Log.i("5", "Retract command"))

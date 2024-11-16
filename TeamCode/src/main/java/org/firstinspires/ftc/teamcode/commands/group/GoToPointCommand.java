@@ -15,6 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 
 import java.util.function.DoubleSupplier;
 
@@ -35,7 +36,7 @@ public class GoToPointCommand extends CommandBase {
     public double hTol = 2;
 
     MecanumDriveSubsystem drive;
-    OTOSSubsystem otos;
+    PinpointSubsystem otos;
 
     Pose2d target;
     Pose2d currentPose;
@@ -44,12 +45,12 @@ public class GoToPointCommand extends CommandBase {
     private DoubleSupplier ySpeedSupplier;
     private DoubleSupplier rotSpeedSupplier;
 
-    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose, double hTol){
+    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, PinpointSubsystem otosSubsystem, Pose2d targetPose, double hTol){
         this(driveSubsystem, otosSubsystem, targetPose);
         this.hTol = hTol;
     }
 
-    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, OTOSSubsystem otosSubsystem, Pose2d targetPose) {
+    public GoToPointCommand(MecanumDriveSubsystem driveSubsystem, PinpointSubsystem otosSubsystem, Pose2d targetPose) {
         drive = driveSubsystem;
         otos = otosSubsystem;
         target = targetPose;
@@ -99,5 +100,6 @@ public class GoToPointCommand extends CommandBase {
     public boolean isFinished() {
         return (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
     }
+
 }
 

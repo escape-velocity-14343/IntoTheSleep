@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.lib.AnalogEncoder;
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
@@ -21,8 +22,9 @@ public class PivotSubsystem extends SubsystemBase {
     private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
     AnalogEncoder encoder;
+    private CachingVoltageSensor voltage;
 
-    public PivotSubsystem(HardwareMap hMap) {
+    public PivotSubsystem(HardwareMap hMap, CachingVoltageSensor voltage) {
         motor0 = hMap.dcMotor.get("tilt0");
         motor0.setDirection(DcMotorSimple.Direction.REVERSE);
         motor1 = hMap.dcMotor.get("tilt1");
@@ -30,6 +32,8 @@ public class PivotSubsystem extends SubsystemBase {
         encoder = new AnalogEncoder("sensOrange", hMap);
         encoder.setPositionOffset(PivotConstants.encoderOffset);
         encoder.setInverted(PivotConstants.encoderInvert);
+
+        this.voltage = voltage;
 
         squid.setPID(PivotConstants.kP);
     }
@@ -49,7 +53,7 @@ public class PivotSubsystem extends SubsystemBase {
     public void tiltToPos(double target) {
         manualControl = false;
         setTarget(target);
-        double power = squid.calculate(target, getCurrentPosition());
+        double power = squid.calculate(target, getCurrentPosition()) * voltage.getVoltageNormalized();
         if (currentPos > PivotConstants.topLimit && power > 0) {
             power = 0;
         }

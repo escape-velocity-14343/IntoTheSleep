@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.arcrobotics.ftclib.command.LogCatCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
@@ -20,8 +21,8 @@ public class IntakePosCommand extends SequentialCommandGroup {
         addCommands(
                 //new ParallelCommandGroup(
                 new ExtendCommand(extend,0),
-                new WristCommand(wrist, IntakeConstants.foldedPos),
-                new PivotCommand(pivot, PivotConstants.neutralPos),
+                new WristCommand(wrist, IntakeConstants.halfFoldPos).alongWith(
+                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees))),
                 new WristCommand(wrist, IntakeConstants.groundPos).whenFinished(() -> Log.i("4", "intake pos command")));
     }
 }

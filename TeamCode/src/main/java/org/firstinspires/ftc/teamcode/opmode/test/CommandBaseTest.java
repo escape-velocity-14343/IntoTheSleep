@@ -24,16 +24,16 @@ public class CommandBaseTest extends CommandOpMode {
 
     @Override
     public void initialize(){
-        pivotSubsystem = new PivotSubsystem(hardwareMap);
-        extend = new ExtensionSubsystem(hardwareMap, pivotSubsystem);
+        //pivotSubsystem = new PivotSubsystem(hardwareMap);
+        //extend = new ExtensionSubsystem(hardwareMap, pivotSubsystem);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
 
 
-        register(pivotSubsystem, extend, wrist, intake);
+        //register(pivotSubsystem, extend, wrist, intake);
 
 
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new SubPosCommand(extend,wrist,intake)));
+        //CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new SubPosCommand(extend,wrist,intake)));
 
     }
 }

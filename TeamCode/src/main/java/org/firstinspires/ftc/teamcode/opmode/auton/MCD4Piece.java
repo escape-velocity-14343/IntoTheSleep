@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.auton;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -14,6 +13,8 @@ import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.AutonExtendCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
@@ -31,62 +32,69 @@ public class MCD4Piece extends Robot {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d scorePos = new Pose2d(-60, 55, Rotation2d.fromDegrees(-45));
+        Pose2d scorePos = new Pose2d(-59, 55, Rotation2d.fromDegrees(-45));
         initialize();
-        otos.setPosition(-65, 39);
+
+        pinpoint.reset();
+
         wrist.setWrist(1);
         waitForStart();
 
+        imu.resetYaw();
         extension.reset();
+        gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 38, new Rotation2d()));
 
-
-        gtpc = new DefaultGoToPointCommand(mecanum, otos, new Pose2d(-65, 39, new Rotation2d()));
+        pinpoint.setPosition(-65, 39);
 
         cs.schedule(new SequentialCommandGroup(
                 // preload sample
                 //new StayAtPointCommand(new Pose2d(-48, 48, Rotation2d.fromDegrees(-45)), gtpc),
                 new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                         new BucketPosCommand(extension, pivot, wrist)
-                ),
-                new IntakeSpinCommand(intake, IntakeConstants.autoOuttakeSpeed),
-                new WaitCommand(1000),
+                ).withTimeout(3000),
+                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                new WaitCommand(500),
                 new IntakeSpinCommand(intake, 0),
                 new WristCommand(wrist, IntakeConstants.bucketRetractPos),
+                new IntakeClawCommand(intake, IntakeConstants.closedPos),
+
 
 
                 // first sample
-                new GoToPointWithDefaultCommand(new Pose2d(-44, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-44, 46.5, Rotation2d.fromDegrees(0)), gtpc).alongWith(
                         new IntakePosCommand(extension, pivot, wrist)
                 ).withTimeout(3000),
-                new IntakeSpinCommand(intake, IntakeConstants.autoIntakeSpeed),
+                new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension),
-                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.scoringPos).alongWith(
+                new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
+                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
                 ),
-                new IntakeSpinCommand(intake, 0),
                 new WaitCommand(100),
                 new BucketPosCommand(extension, pivot, wrist),
-                new IntakeSpinCommand(intake, IntakeConstants.autoOuttakeSpeed),
-                new WaitCommand(1000),
+                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                new WaitCommand(500),
                 new IntakeSpinCommand(intake, 0),
                 new WristCommand(wrist, IntakeConstants.bucketRetractPos),
+                new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 // second sample
-                new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-44, 56, Rotation2d.fromDegrees(0)), gtpc).alongWith(
                         new IntakePosCommand(extension, pivot, wrist)
                 ).withTimeout(3000),
-                new IntakeSpinCommand(intake, IntakeConstants.autoIntakeSpeed),
+                new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension),
-                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.scoringPos).alongWith(
+                new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
+                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ).withTimeout(4000),
-                new IntakeSpinCommand(intake, 0),
+                ),
                 new WaitCommand(100),
                 new BucketPosCommand(extension, pivot, wrist),
-                new IntakeSpinCommand(intake, IntakeConstants.autoOuttakeSpeed),
-                new WaitCommand(1000),
+                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                new WaitCommand(500),
                 new IntakeSpinCommand(intake, 0),
                 new WristCommand(wrist, IntakeConstants.bucketRetractPos),
+                new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 // front wall sample
                 /*new StayAtPointCommand(new Pose2d(-44, 57.5, Rotation2d.fromDegrees(28)), gtpc).alongWith(
@@ -107,10 +115,11 @@ public class MCD4Piece extends Robot {
 
                 // third sample
                 //new GoToPointWithDefaultCommand(new Pose2d(scorePos.getX(), 50, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500),
-                new GoToPointWithDefaultCommand(new Pose2d(-38, 50, Rotation2d.fromDegrees(60)), gtpc)
+
+                /*new GoToPointWithDefaultCommand(new Pose2d(-38, 50, Rotation2d.fromDegrees(60)), gtpc)
                         .alongWith(new IntakePosCommand(extension, pivot, wrist))
                         .withTimeout(3000),
-                new IntakeSpinCommand(intake, IntakeConstants.autoIntakeSpeed),
+                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, IntakeConstants.autoIntakeSpeed),
                 new ParallelDeadlineGroup(
                         new WaitCommand(1500).alongWith(
                                 new InstantCommand(() -> {
@@ -130,24 +139,29 @@ public class MCD4Piece extends Robot {
                                 }
                         )
                         //new DrivebasePowerCommand(mecanum, 0.0, 0.0, 0.1)
-                ),
-                new IntakeSpinCommand(intake, 0),
-                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.scoringPos).alongWith(
+                ),*/
+
+                new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(18)), gtpc).alongWith(
+                        new IntakePosCommand(extension, pivot, wrist)
+                ).withTimeout(3000),
+                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos - 0.02, 1),
+                new AutonExtendCommand(extension, SlideConstants.autonPiece3Extension).withTimeout(1500),
+                new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
+                RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
                 ),
-                new IntakeSpinCommand(intake, 0),
-                new WaitCommand(100),
                 new BucketPosCommand(extension, pivot, wrist),
-                new IntakeSpinCommand(intake, IntakeConstants.autoOuttakeSpeed),
-                new WaitCommand(1000),
+                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                new WaitCommand(500),
                 new IntakeSpinCommand(intake, 0),
                 new WristCommand(wrist, IntakeConstants.groundPos),
+                new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 // park
                 new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc).alongWith(
                         new RetractCommand(wrist, pivot, extension)
                 ),
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 22, Rotation2d.fromDegrees(90)), gtpc).withTimeout(3000),
+                new GoToPointWithDefaultCommand(new Pose2d(-12, 17, Rotation2d.fromDegrees(90)), gtpc).withTimeout(3000),
                 new PivotCommand(pivot, PivotConstants.parkDegrees)
 
 
@@ -172,9 +186,9 @@ public class MCD4Piece extends Robot {
         while (!isStopRequested()) {
             update();
 
-            telemetry.addData("x", otos.getPose().getX());
-            telemetry.addData("y", otos.getPose().getY());
-            telemetry.addData("heading", otos.getPose().getRotation().getDegrees());
+            telemetry.addData("x", pinpoint.getPose().getX());
+            telemetry.addData("y", pinpoint.getPose().getY());
+            telemetry.addData("heading", pinpoint.getPose().getRotation().getDegrees());
 
         }
         cs.reset();

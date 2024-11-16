@@ -18,23 +18,29 @@ public class GoToPointWithDefaultCommand extends CommandBase {
         this.target = target;
         this.gtpc = gtpc;
     }
+    public GoToPointWithDefaultCommand(Pose2d target, DefaultGoToPointCommand gtpc, double tol, double hTol) {
+        this.target = target;
+        this.gtpc = gtpc;
+        gtpc.setTolerances(tol, hTol);
+    }
 
     public void initialize(){
         gtpc.setTarget(target);
     }
 
     @Override
-    public void execute(){
+    public void execute() {
 
     }
 
     @Override
-    public void end(boolean wasInterrupted){
+    public void end(boolean wasInterrupted) {
         Log.i("1", "gtp finished " + target.getX() + " " + target.getY() + " " + target.getRotation().getDegrees());
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
+        gtpc.setTolerances(2, 2);
         return gtpc.isDone();
     }
 }
