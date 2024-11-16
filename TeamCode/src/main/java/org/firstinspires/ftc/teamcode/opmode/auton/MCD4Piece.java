@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -25,8 +26,9 @@ import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@Config
-@Autonomous(name = "Macca's 4 Piece Nuggets")
+//@Config
+@Disabled
+//@Autonomous(name = "Macca's 4 Piece Nuggets")
 public class MCD4Piece extends Robot {
     private DefaultGoToPointCommand gtpc;
 

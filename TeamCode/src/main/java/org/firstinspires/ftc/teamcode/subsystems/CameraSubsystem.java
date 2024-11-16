@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorRange;
@@ -60,8 +61,15 @@ public class CameraSubsystem extends SubsystemBase {
             List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
 
             ColorBlobLocatorProcessor.Util.filterByArea(10, 20000, blobs);
-            if (blobs.size()>0)
-                pixelPos = 160-blobs.get(0).getBoxFit().center.x;
+            int dist = 10000;
+            if (!blobs.isEmpty()) {
+                for (int i = 0; i < Math.min(blobs.size(),10); i++) {
+                    if (Math.abs(160-blobs.get(i).getBoxFit().center.x)<Math.abs(dist)) {
+                        dist = (int) (160-blobs.get(i).getBoxFit().center.x);
+                    }
+                }
+                pixelPos = dist;
+            }
         }
         if (portal.getProcessorEnabled(colorSensor)) {
             yellow = colorSensor.getAnalysis().closestSwatch == PredominantColorProcessor.Swatch.YELLOW;

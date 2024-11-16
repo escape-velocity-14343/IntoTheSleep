@@ -70,7 +70,7 @@ public class CFA5Piece extends Robot {
                 new SubClearCommand(extension, pivot, wrist),
                 new SubClearCommand(extension, pivot, wrist),
                 new WristCommand(wrist, IntakeConstants.groundPos),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1),
+                new IntakeControlCommand(intake, IntakeConstants.openPos+0.025, 1),
 
                 new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
                 new SlowerAutonExtendCommand(extension, 16)).withTimeout(2000),
@@ -90,10 +90,10 @@ public class CFA5Piece extends Robot {
 
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
                 // park
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc, 10, 20).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20).alongWith(
                         new RetractCommand(wrist, pivot, extension)
                 ),
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(1500),
+                new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500),
                 new PivotCommand(pivot, PivotConstants.parkDegrees)
 
         ));

@@ -6,12 +6,9 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
-import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.AutonExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
@@ -23,14 +20,12 @@ import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
-import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-//@Config
-@Disabled
-//@Autonomous(name = "Macca's Combo Meal (4 Nuggets + 1 Fry)")
-public class MCD5Piece extends Robot {
+@Config
+@Autonomous(name = "Chick-Fil-A Combo Meal (4 Cows, No Pickles Please))")
+public class CFA4Piece extends Robot {
     private DefaultGoToPointCommand gtpc;
 
     @Override
@@ -45,22 +40,28 @@ public class MCD5Piece extends Robot {
 
         imu.resetYaw();
         extension.reset();
-        gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 8, new Rotation2d()));
+        gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 40, new Rotation2d()));
 
-        pinpoint.setPosition(-65, 8);
+        pinpoint.setPosition(-65, 40);
 
         cs.schedule(new SequentialCommandGroup(
-                new GoToPointWithDefaultCommand(new Pose2d(-32,5, new Rotation2d()),gtpc).alongWith(new SpecimenRaiseCommand(pivot, extension, wrist)),
-                new SpecimenHookCommand(pivot, extension, wrist,intake).withTimeout(4000),
-                new GoToPointWithDefaultCommand(new Pose2d(-40,10,new Rotation2d(0)),gtpc).deadlineWith(new RetractCommand(wrist, pivot, extension)),
+
+                new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
+                        new BucketPosCommand(extension, pivot, wrist)
+                ).withTimeout(3000),
+                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                new WaitCommand(500),
+                new IntakeSpinCommand(intake, 0),
+                new WristCommand(wrist, IntakeConstants.bucketRetractPos),
+                new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
 
                 // park
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20).alongWith(
                         new RetractCommand(wrist, pivot, extension)
                 ),
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 17, Rotation2d.fromDegrees(90)), gtpc).withTimeout(3000),
+                new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500),
                 new PivotCommand(pivot, PivotConstants.parkDegrees)
         ));
 

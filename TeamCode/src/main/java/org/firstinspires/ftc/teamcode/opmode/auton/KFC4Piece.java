@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 @Disabled
 //@Config
-@Autonomous
+//@Autonomous
 public class KFC4Piece extends Robot {
 
     @Override
