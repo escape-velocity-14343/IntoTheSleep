@@ -27,6 +27,7 @@ public class CameraSubsystem extends SubsystemBase {
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
+    private PredominantColorProcessor.Swatch swatch;
 
     public CameraSubsystem(HardwareMap hardwareMap) {
         colorLocator = new ColorBlobLocatorProcessor.Builder()
@@ -56,6 +57,7 @@ public class CameraSubsystem extends SubsystemBase {
     public void periodic() {
         pixelPos = 0;
         yellow = false;
+        swatch = PredominantColorProcessor.Swatch.BLACK;
         if (portal.getProcessorEnabled(colorLocator)) {
 
             List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
@@ -72,7 +74,9 @@ public class CameraSubsystem extends SubsystemBase {
             }
         }
         if (portal.getProcessorEnabled(colorSensor)) {
-            yellow = colorSensor.getAnalysis().closestSwatch == PredominantColorProcessor.Swatch.YELLOW;
+            swatch = colorSensor.getAnalysis().closestSwatch;
+            yellow = swatch == PredominantColorProcessor.Swatch.YELLOW;
+
             Log.i("camera", "yellow: " + yellow);
         }
     }
@@ -86,6 +90,9 @@ public class CameraSubsystem extends SubsystemBase {
     }
     public boolean getYellow() {
         return yellow;
+    }
+    public PredominantColorProcessor.Swatch getSwatch() {
+        return swatch;
     }
 
 

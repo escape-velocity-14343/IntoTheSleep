@@ -16,12 +16,12 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 public class SubClearCommand extends SequentialCommandGroup {
     public SubClearCommand(ExtensionSubsystem extend, PivotSubsystem pivot, WristSubsystem wrist) {
         addCommands(
-                new ExtendCommand(extend, 0.5).alongWith(
+                new ExtendCommand(extend, 2).withTimeout(250).alongWith(
                         new WristCommand(wrist, IntakeConstants.halfFoldPos)),
                 new WaitCommand(50),
                 new ExtendCommand(extend, 8),
                 new WristCommand(wrist, IntakeConstants.groundPos),
-                new ExtendCommand(extend, 2).withTimeout(500));
+                new ExtendCommand(extend, 2).withTimeout(300));
 
     }
 }

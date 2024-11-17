@@ -30,7 +30,7 @@ public class CFA4Piece extends Robot {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d scorePos = new Pose2d(-59, 55, Rotation2d.fromDegrees(-45));
+        Pose2d scorePos = new Pose2d(-57, 57, Rotation2d.fromDegrees(-45));
         initialize();
 
         pinpoint.reset();
