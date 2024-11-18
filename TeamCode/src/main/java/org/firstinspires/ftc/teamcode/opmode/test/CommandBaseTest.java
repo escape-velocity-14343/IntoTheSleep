@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
-@TeleOp
+@TeleOp(group="1")
 public class CommandBaseTest extends CommandOpMode {
 
     private PivotSubsystem pivotSubsystem;
@@ -24,16 +24,16 @@ public class CommandBaseTest extends CommandOpMode {
 
     @Override
     public void initialize(){
-        pivotSubsystem = new PivotSubsystem(hardwareMap);
-        extend = new ExtensionSubsystem(hardwareMap, pivotSubsystem);
+        //pivotSubsystem = new PivotSubsystem(hardwareMap);
+        //extend = new ExtensionSubsystem(hardwareMap, pivotSubsystem);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
 
 
-        register(pivotSubsystem, extend, wrist, intake);
+        //register(pivotSubsystem, extend, wrist, intake);
 
 
-        CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new SubPosCommand(extend,wrist,intake)));
+        //CommandScheduler.getInstance().schedule(new SequentialCommandGroup(new IntakePosCommand(extend, pivotSubsystem, wrist), new WaitCommand(1000), new SubPosCommand(extend,wrist,intake)));
 
     }
 }
