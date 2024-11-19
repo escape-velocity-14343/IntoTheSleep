@@ -41,6 +41,7 @@ public class AutoAlignTest extends Robot {
         pinpoint.reset();
         wrist.setWrist(IntakeConstants.groundPos);
         intake.setClawer(IntakeConstants.singleIntakePos);
+        while (!cam.setExposure());
         waitForStart();
 
         imu.resetYaw();

@@ -111,7 +111,7 @@ public class VisionTest extends LinearOpMode
          *                                    "pixels" in the range of 2-4 are suitable for low res images.
          */
         ColorBlobLocatorProcessor colorLocator = new ColorBlobLocatorProcessor.Builder()
-                .setTargetColorRange(new ColorRange(ColorSpace.HSV, new Scalar(13, 60, 100), new Scalar(50, 255, 255)))         // use a predefined color match
+                .setTargetColorRange(new ColorRange(ColorSpace.HSV, new Scalar(13, 60, 60), new Scalar(50, 255, 255)))         // use a predefined color match
                 .setContourMode(ColorBlobLocatorProcessor.ContourMode.EXTERNAL_ONLY)    // exclude blobs inside blob
                 .setRoi(ImageRegion.asImageCoordinates(40,170,310,200))
                 .setDrawContours(true)                        // Show contours on the Stream Preview

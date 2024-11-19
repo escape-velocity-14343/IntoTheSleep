@@ -12,6 +12,8 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
+import com.arcrobotics.ftclib.geometry.Pose2d;
+import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -25,6 +27,8 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
+import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
@@ -40,11 +44,13 @@ public class TeleOpps extends Robot {
     public static double manualMultiplier = 0.5;
     public static double robotMovementMultiplier = 0.5;
 
+
     @Override
     public void runOpMode() throws InterruptedException {
 
 
         initialize();
+        DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
         GamepadEx driverPad = new GamepadEx(gamepad1);
         GamepadEx operatorPad = new GamepadEx(gamepad2);
 
@@ -74,7 +80,20 @@ public class TeleOpps extends Robot {
 //                driverPad::getRightX,
 //                () -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
 //        ));
-        driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
+        //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
+
+        driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+                gtpc.alongWith(
+                        /*new ConditionalCommand(
+                                new BucketPosCommand(extension, pivot, wrist),
+                                new IntakeRetractCommand(wrist, pivot, extension),
+                                () -> pinpoint.getPose().getX() < 36 && pinpoint.getPose().getY() > 36
+                        ).perpetually()*/
+                        new BucketPosCommand(extension, pivot, wrist)
+                ).interruptOn(
+                        () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) < 0.05)
+        );
+
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(subPos())
                 .whenReleased(new SequentialCommandGroup(

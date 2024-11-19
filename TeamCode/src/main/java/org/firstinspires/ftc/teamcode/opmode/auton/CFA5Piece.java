@@ -56,12 +56,12 @@ public class CFA5Piece extends Robot {
         intake.setClawer(IntakeConstants.singleIntakePos+0.015);
         while (opModeInInit()) {
             cam.periodic();
-            alliance = cam.getSwatch();
+
             telemetry.addData("alliance", alliance);
             telemetry.update();
         }
         waitForStart();
-        alliance = cam.getSwatch();
+
 
         imu.resetYaw();
         extension.reset();
@@ -89,7 +89,7 @@ public class CFA5Piece extends Robot {
                 new ConditionalCommand(
                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
                         new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
-                        () -> (cam.getSwatch()==alliance || cam.getYellow())),
+                        () -> (cam.getYellow())),
                 //new WaitCommand(1000),
                 new IntakeRetractCommand(wrist, pivot, extension).alongWith(new GoToPointWithDefaultCommand(new Pose2d(-42, 5, new Rotation2d()),gtpc,8,20)),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
@@ -98,7 +98,7 @@ public class CFA5Piece extends Robot {
                 new BucketPosCommand(extension, pivot, wrist),
                 new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
                 new WaitCommand(500),
-                
+
                 new IntakeSpinCommand(intake, 0),
                 new WristCommand(wrist, IntakeConstants.bucketRetractPos),
                 new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
