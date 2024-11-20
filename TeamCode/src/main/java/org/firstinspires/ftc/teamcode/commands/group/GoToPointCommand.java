@@ -59,7 +59,7 @@ public class GoToPointCommand extends CommandBase {
     }
 
     @Override
-    public void initialize(){
+    public void initialize() {
         xPID.setTolerance(tol);
         yPID.setTolerance(tol);
         headingPID.setTolerance(hTol);

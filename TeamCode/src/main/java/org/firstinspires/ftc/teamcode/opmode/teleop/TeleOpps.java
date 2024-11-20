@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
@@ -29,6 +30,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
+import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
@@ -50,7 +52,7 @@ public class TeleOpps extends Robot {
 
 
         initialize();
-        DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
+        GoToPointCommand gtpc = new GoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
         GamepadEx driverPad = new GamepadEx(gamepad1);
         GamepadEx operatorPad = new GamepadEx(gamepad2);
 
@@ -61,8 +63,8 @@ public class TeleOpps extends Robot {
                     () -> Util.halfLinearHalfCubic(Math.abs(driverPad.getLeftY() / driverPad.getLeftX()) < 0.05 ? 0 : driverPad.getLeftY()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
                     () -> Util.halfLinearHalfCubic(Math.abs(driverPad.getLeftX() / driverPad.getLeftY()) < 0.05 ? 0 : driverPad.getLeftX()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
                     () -> Util.halfLinearHalfCubic(driverPad.getRightX()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
-                    () -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
-                    //() -> pinpoint.getPose().getRotation().getDegrees()
+                    //() -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
+                    () -> pinpoint.getPose().getRotation().getDegrees()
             ));
         } else {
             DefaultDriveCommand drive = new DefaultDriveCommand(mecanum,
@@ -73,25 +75,17 @@ public class TeleOpps extends Robot {
             CommandScheduler.getInstance().setDefaultCommand(mecanum, drive);
         }
 
-//        CommandScheduler.getInstance().setDefaultCommand(mecanum, new DefaultDriveCommand(
-//                mecanum,
-//                driverPad::getLeftY,
-//                driverPad::getLeftX,
-//                driverPad::getRightX,
-//                () -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
-//        ));
         //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
 
         driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 gtpc.alongWith(
-                        /*new ConditionalCommand(
-                                new BucketPosCommand(extension, pivot, wrist),
-                                new IntakeRetractCommand(wrist, pivot, extension),
-                                () -> pinpoint.getPose().getX() < 36 && pinpoint.getPose().getY() > 36
-                        ).perpetually()*/
-                        new BucketPosCommand(extension, pivot, wrist)
-                ).interruptOn(
-                        () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) < 0.05)
+                        new IntakeRetractCommand(wrist, pivot, extension).andThen(
+                                new WaitUntilCommand(() -> pinpoint.getPose().getX() < 36 && pinpoint.getPose().getY() > 36).andThen(
+                                        new BucketPosCommand(extension, pivot, wrist)
+                                )
+                        ).interruptOn(
+                                () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) > 0.05)
+                )
         );
 
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)

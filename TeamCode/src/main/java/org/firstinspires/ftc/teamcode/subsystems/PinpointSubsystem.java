@@ -48,7 +48,7 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
                 flipY ? GoBildaPinpoint.EncoderDirection.REVERSED : GoBildaPinpoint.EncoderDirection.FORWARD
         );
         pinpoint.setOffsets(xEncOffset, yEncOffset);
-        reset();
+        //reset();
 
     }
 

@@ -61,6 +61,7 @@ public abstract class Robot extends LinearOpMode {
         voltage = new CachingVoltageSensor(hardwareMap);
 
         pinpoint = new PinpointSubsystem(hardwareMap);
+
         mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint);
         pivot = new PivotSubsystem(hardwareMap, voltage);
         extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
