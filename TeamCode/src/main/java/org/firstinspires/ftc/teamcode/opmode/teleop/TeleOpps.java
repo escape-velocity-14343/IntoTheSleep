@@ -52,7 +52,7 @@ public class TeleOpps extends Robot {
 
 
         initialize();
-        GoToPointCommand gtpc = new GoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
+        DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
         GamepadEx driverPad = new GamepadEx(gamepad1);
         GamepadEx operatorPad = new GamepadEx(gamepad2);
 
@@ -80,12 +80,11 @@ public class TeleOpps extends Robot {
         driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 gtpc.alongWith(
                         new IntakeRetractCommand(wrist, pivot, extension).andThen(
-                                new WaitUntilCommand(() -> pinpoint.getPose().getX() < 36 && pinpoint.getPose().getY() > 36).andThen(
-                                        new BucketPosCommand(extension, pivot, wrist)
-                                )
-                        ).interruptOn(
-                                () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) > 0.05)
-                )
+                                //new WaitUntilCommand(() -> pinpoint.getPose().getX() < -24 && pinpoint.getPose().getY() > 24),
+                                new BucketPosCommand(extension, pivot, wrist)
+                        )
+                ).interruptOn(
+                        () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) > 0.05 || pinpoint.getPose().getX() < -55 && pinpoint.getPose().getY() > 55)
         );
 
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
