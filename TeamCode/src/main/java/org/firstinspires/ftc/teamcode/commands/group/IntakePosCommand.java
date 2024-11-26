@@ -16,13 +16,16 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
+// AUTO ONLY
 public class IntakePosCommand extends SequentialCommandGroup {
     public IntakePosCommand(ExtensionSubsystem extend, PivotSubsystem pivot, WristSubsystem wrist) {
         addCommands(
                 //new ParallelCommandGroup(
-                new ExtendCommand(extend,0),
-                new WristCommand(wrist, IntakeConstants.halfFoldPos).alongWith(
-                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees))),
+                new ExtendCommand(extend,0)
+                        .alongWith(
+                                new WaitUntilCommand(() -> extend.getCurrentInches() < 25).andThen(
+                                        new WristCommand(wrist, IntakeConstants.halfFoldPos),
+                                        new PivotCommand(pivot, PivotConstants.retractDegrees))),
                 new WristCommand(wrist, IntakeConstants.groundPos).whenFinished(() -> Log.i("4", "intake pos command")));
     }
 }

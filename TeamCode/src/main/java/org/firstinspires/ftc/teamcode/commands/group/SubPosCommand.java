@@ -17,8 +17,12 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 public class SubPosCommand extends SequentialCommandGroup {
-    private SubPosCommand(Command... commands) {
+    ExtensionSubsystem extension;
+
+    private SubPosCommand(ExtensionSubsystem extension, Command... commands) {
         super(commands);
+        this.extension = extension;
+
     }
 
     public SubPosCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
@@ -27,19 +31,22 @@ public class SubPosCommand extends SequentialCommandGroup {
                         .withTimeout(extension.getReasonableExtensionMillis(0)),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                         .alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1))
-                        .andThen(new InstantCommand(() -> extension.setManualControl(true)))
-                        .whenFinished(() -> Log.i("6", "Sub Pos Command"))
         );
+        this.extension = extension;
     }
 
-    public static SubPosCommand newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, double inches) {
-        return new SubPosCommand(
+    @Override
+    public void end(boolean interrupted) {
+        extension.setManualControl(true);
+        Log.i("6", "Sub Pos Command, Interrupted: " + interrupted);
+    }
+
+    public static Command newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, double inches) {
+        return new SubPosCommand(extension,
                 new ExtendCommand(extension, inches)
                         .withTimeout(extension.getReasonableExtensionMillis(inches)),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                         .alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1))
-                        .andThen(new InstantCommand(() -> extension.setManualControl(true)))
-                        .whenFinished(() -> Log.i("6", "Sub Pos Command"))
         );
     }
 }

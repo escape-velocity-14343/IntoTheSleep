@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -52,7 +54,6 @@ public class TeleOpps extends Robot {
 
 
         initialize();
-        DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-57, 57, Rotation2d.fromDegrees(-45)));
         GamepadEx driverPad = new GamepadEx(gamepad1);
         GamepadEx operatorPad = new GamepadEx(gamepad2);
 
@@ -78,20 +79,19 @@ public class TeleOpps extends Robot {
         //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
 
         driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                gtpc.alongWith(
+                new DefaultGoToPointCommand(mecanum, pinpoint, scorePos).interruptOn(
+                        () -> (Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX())) > 0.05).alongWith(
                         new IntakeRetractCommand(wrist, pivot, extension).andThen(
                                 //new WaitUntilCommand(() -> pinpoint.getPose().getX() < -24 && pinpoint.getPose().getY() > 24),
                                 new BucketPosCommand(extension, pivot, wrist)
                         )
-                ).interruptOn(
-                        () -> Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX()) > 0.05 || pinpoint.getPose().getX() < -55 && pinpoint.getPose().getY() > 55)
+                )
         );
 
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(subPos())
                 .whenReleased(new SequentialCommandGroup(
-                        new InstantCommand(() -> setState(FSMStates.FOLD)),
-                        new InstantCommand(() -> extension.setManualControl(false), extension),
+                        new InstantCommand(() -> {setState(FSMStates.FOLD); extension.setManualControl(false);}),
                         new ConditionalCommand(
                                 new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
@@ -213,10 +213,11 @@ public class TeleOpps extends Robot {
         new Trigger(pivot::getManualControl).toggleWhenActive(new RunCommand(() -> pivot.setPower(gamepad2.right_stick_x), pivot));
 
 
-        new Trigger(() -> gamepad1.options).whileActiveOnce(new InstantCommand(imu::resetYaw)); // pinpoint.resetYaw()));
+        new Trigger(() -> gamepad1.options).whileActiveOnce(new InstantCommand(pinpoint::resetYaw)); // pinpoint.resetYaw()));
         waitForStart();
         while (!isStopRequested()) {
-            telemetry.addData("motorpos", extension.getCurrentPosition());
+            telemetry.addData("motorpos", extension.getCurrentInches());
+            telemetry.addData("pivotpos", pivot.getCurrentPosition());
             telemetry.addData("time", timer.milliseconds());
             telemetry.addData("hi", CommandScheduler.getInstance().getDefaultCommand(mecanum));
             telemetry.addData("intake flipped?", reverseClaw.get());

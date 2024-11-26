@@ -18,33 +18,37 @@ import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 public class SubPosReversedCommand extends SequentialCommandGroup {
-    private SubPosReversedCommand(Command... commands) {
+    ExtensionSubsystem extension;
+
+    private SubPosReversedCommand(ExtensionSubsystem extension, Command... commands) {
         super(commands);
+        this.extension = extension;
     }
+
+
 
     public SubPosReversedCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, PivotSubsystem pivot) {
         addCommands(
                 new ExtendCommand(extension, 10),
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new IntakeControlCommand(intake, IntakeConstants.backSinglePos, -1),
-                new InstantCommand(() -> extension.setManualControl(true)).alongWith(
-                        new PivotCommand(pivot, PivotConstants.retractDegrees))
-                .andThen(new InstantCommand(() -> extension.setManualControl(true)))
-                .whenFinished(() -> Log.i("6", "Sub Pos Command"))
+                new PivotCommand(pivot, PivotConstants.retractDegrees)
         );
+        this.extension = extension;
     }
 
-    public static SubPosReversedCommand newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, PivotSubsystem pivot, double inches) {
-        return new SubPosReversedCommand(
-                new ExtendCommand(extension, inches),
+    @Override
+    public void end(boolean interrupted) {
+        extension.setManualControl(true);
+        Log.i("6", "Sub Pos Command, Interrupted: " + interrupted);
+    }
+
+    public static Command newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, PivotSubsystem pivot, double inches) {
+        return new SubPosReversedCommand(extension,
+                new ExtendCommand(extension, 10),
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new IntakeControlCommand(intake, IntakeConstants.backSinglePos, -1),
-                new InstantCommand(() -> extension.setManualControl(true))
-                        .alongWith(
-                            new PivotCommand(pivot, PivotConstants.retractDegrees))
-                            .andThen(new InstantCommand(() -> extension.setManualControl(true)))
-                            .whenFinished(() -> Log.i("6", "Sub Pos Command")
-                        )
+                new PivotCommand(pivot, PivotConstants.retractDegrees)
         );
     }
 }

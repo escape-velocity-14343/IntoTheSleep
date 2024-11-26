@@ -2,12 +2,12 @@ repositories {
     mavenCentral()
     google() // Needed for androidx
     maven { url = 'https://maven.brott.dev/'}
-    maven {
+    /*maven {
         url = "https://repo.dairy.foundation/releases"
     }
     maven {
         url = "https://repo.dairy.foundation/snapshots"
-    }
+    }*/
     }
 
 dependencies {
@@ -21,7 +21,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:10.1.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
-    implementation 'dev.frozenmilk.sinister.sloth:DashFix:0.0.0'
-    implementation "dev.frozenmilk.sinister:Sloth:0.0.1"
+    //implementation 'dev.frozenmilk.sinister.sloth:DashFix:0.0.0'
+    //implementation "dev.frozenmilk.sinister:Sloth:0.0.1"
 }
 

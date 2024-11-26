@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.auton;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
+
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -11,9 +12,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
-import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.AutonExtendCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.ExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
@@ -25,17 +23,15 @@ import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
-import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlign;
-import org.firstinspires.ftc.teamcode.commands.group.SubClearCommand;
-import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
+import org.firstinspires.ftc.teamcode.commands.group.SubClearSlidesCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
+// 4+1 Sub Auto LM2
 @Config
 @Autonomous(name = "Chick-fil-a Combo Meal (4 Cows + 1 Pickle)")
 public class CFA5Piece extends Robot {
@@ -44,8 +40,8 @@ public class CFA5Piece extends Robot {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d scorePos = new Pose2d(-57, 57, Rotation2d.fromDegrees(-45));
-        CameraSubsystem cam = new CameraSubsystem(hardwareMap);
+
+        //CameraSubsystem cam = new CameraSubsystem(hardwareMap);
         cs.registerSubsystem(cam);
         cam.setEnabled(true);
 
@@ -78,8 +74,8 @@ public class CFA5Piece extends Robot {
                 new GoToPointWithDefaultCommand(new Pose2d(-38,5,new Rotation2d(0)),gtpc).alongWith(new RetractCommand(wrist, pivot, extension)),
 
                 new GoToPointWithDefaultCommand(new Pose2d(-32,5, new Rotation2d()),gtpc),
-                new SubClearCommand(extension, pivot, wrist),
-                new SubClearCommand(extension, pivot, wrist),
+                new SubClearSlidesCommand(extension, pivot, wrist),
+                new SubClearSlidesCommand(extension, pivot, wrist),
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new IntakeControlCommand(intake, IntakeConstants.openPos+0.025, 1),
 

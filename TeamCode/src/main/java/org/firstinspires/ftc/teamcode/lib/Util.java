@@ -54,4 +54,8 @@ public class Util {
     public static double halfLinearHalfCubic(double input) {
         return (Math.pow(input, 3) + input) / 2;
     }
+
+    public static double pose2dToDistance(Pose2d p1, Pose2d p2) {
+        return Math.sqrt(Math.pow(p1.getX() - p2.getX(), 2) + Math.pow(p1.getY() - p2.getY(), 2));
+    }
 }

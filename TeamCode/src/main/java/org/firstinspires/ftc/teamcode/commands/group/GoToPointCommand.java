@@ -1,5 +1,11 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.headingkD;
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.headingkI;
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.headingkP;
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.translationkD;
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.translationkI;
+import static org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand.translationkP;
 import static org.firstinspires.ftc.teamcode.lib.Util.clamp;
 
 import android.util.Log;
@@ -19,18 +25,11 @@ import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 
 import java.util.function.DoubleSupplier;
 
-@Config
+// ONLY FOR TELEOP
 public class GoToPointCommand extends CommandBase {
     public PIDController xPID = new PIDController(0,0,0);
     public PIDController yPID = new PIDController(0, 0,0);
     public PIDController headingPID = new PIDController(0,0,0);
-
-    public static double translationkP = 0.15;
-    public static double translationkI = 0;
-    public static double translationkD = 0;
-    public static double headingkP = 0.002;
-    public static double headingkI = 0;
-    public static double headingkD = 0;
 
     public double tol = 2;
     public double hTol = 2;
@@ -92,7 +91,7 @@ public class GoToPointCommand extends CommandBase {
     }
     @Override
     public void end(boolean wasInterrupted) {
-        drive.driveFieldCentric(0,0,0,0);
+        //drive.driveFieldCentric(0,0,0,0);
         Log.i("1", "gtp finished");
     }
 

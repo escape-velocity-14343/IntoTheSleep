@@ -1,13 +1,11 @@
-package org.firstinspires.ftc.teamcode.opmode.auton;
+package org.firstinspires.ftc.teamcode.opmode.auton.deprecated;
 
-import android.util.Log;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
@@ -26,6 +24,7 @@ import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
+// LM1 4+0
 //@Config
 @Disabled
 //@Autonomous(name = "Macca's 4 Piece Nuggets")
@@ -34,7 +33,6 @@ public class MCD4Piece extends Robot {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d scorePos = new Pose2d(-59, 55, Rotation2d.fromDegrees(-45));
         initialize();
 
         pinpoint.reset();

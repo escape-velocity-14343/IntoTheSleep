@@ -83,24 +83,40 @@ public class DefaultGoToPointCommand extends CommandBase {
     public void execute() {
         currentPose = otos.getPose();
         if (currentPose == null) {
-            //Log.i("execute", "currentPose was null (why?????)");
+            Log.w("execute", "currentPose was null (why?????)");
         } else {
             //Log.i("execute", "current pose was NOT null");
         }
+
+
         double xDist = target.getX() - currentPose.getX();
         double yDist = target.getY() - currentPose.getY();
+        Log.v("GTPC", "xDist: " + xDist + ", yDist: " + yDist);
         double angle = Math.atan2(yDist,xDist);
         double magnitude = Math.pow(Math.hypot(xDist,yDist),0.5);
-        magnitude = xPID.calculate(0,magnitude);
+        Log.v("GTPC", "Magnitude: " + magnitude);
+        magnitude = magnitude*translationkP;
+        Log.v("GTPC", "Output: " + magnitude);
         double xMove = Math.cos(angle)*magnitude;
         double yMove = Math.sin(angle)*magnitude;
+        Log.v("GTPC", "target: (" + getTargetX() + ", " + getTargetY() + ")");
+        Log.v("GTPC", "attempted movement: (" + xMove + ", " + yMove + ")");
 
-        drive.driveFieldCentric(-xMove, -yMove, -rotSpeedSupplier.getAsDouble());
+        drive.driveFieldCentric(-xMove, -yMove*1.2, -rotSpeedSupplier.getAsDouble());
     }
 
     @Override
     public boolean isFinished() {
         return false;
+    }
+    @Override
+    public void end(boolean wasInterrupted) {
+        if (wasInterrupted) {
+            drive.driveFieldCentric(0,0,0);
+            Log.w("Commands", "gtpc was interrupted. This should never happen!");
+        } else {
+            Log.w("GTPC", "this ended without interruption somehow???");
+        }
     }
 
     public boolean isDone() {

@@ -2,30 +2,13 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.ExtendCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
-import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
-import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
-import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
-import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlign;
-import org.firstinspires.ftc.teamcode.commands.group.SubClearCommand;
-import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Config
@@ -35,7 +18,7 @@ public class AutoAlignTest extends Robot {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        CameraSubsystem cam = new CameraSubsystem(hardwareMap);
+        //CameraSubsystem cam = new CameraSubsystem(hardwareMap);
         initialize();
 
         pinpoint.reset();

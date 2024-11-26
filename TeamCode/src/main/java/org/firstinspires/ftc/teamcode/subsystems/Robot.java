@@ -48,7 +48,9 @@ public abstract class Robot extends LinearOpMode {
     //public OTOSSubsystem otos;
     public PinpointSubsystem pinpoint;
     public CachingVoltageSensor voltage;
+    public SubClearSubsystem subClear;
     public IMU imu;
+    public CameraSubsystem cam;
     public ElapsedTime timer = new ElapsedTime();
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
@@ -67,6 +69,8 @@ public abstract class Robot extends LinearOpMode {
         extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
+        cam = new CameraSubsystem(hardwareMap);
+        subClear = new SubClearSubsystem(hardwareMap);
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
@@ -84,6 +88,10 @@ public abstract class Robot extends LinearOpMode {
         CommandScheduler.getInstance().run();
         telemetry.update();
     }
+    public void end() {
+        cs.reset();
+        subClear.stop();
+    }
 
     public Command intakePos() {
         return new IntakePosCommand(extension, pivot, wrist).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE)));
@@ -100,7 +108,7 @@ public abstract class Robot extends LinearOpMode {
                 new BucketPosReversedCommand(extension, pivot, wrist),
                 BucketPosCommand.newWithWristPos(extension, pivot, wrist),
                 reverseClaw::get
-        ).alongWith(new InstantCommand(() -> setState(FSMStates.OUTTAKE)));
+        );
     }
 
     public void setState(FSMStates state) {

@@ -40,10 +40,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import dev.frozenmilk.sinister.loading.NoUnload;
+//import dev.frozenmilk.sinister.loading.NoUnload;
 
 
-@NoUnload
+//@NoUnload
 @I2cDeviceType
 @DeviceProperties(
         name = "goBILDA® Pinpoint Odometry Computer",

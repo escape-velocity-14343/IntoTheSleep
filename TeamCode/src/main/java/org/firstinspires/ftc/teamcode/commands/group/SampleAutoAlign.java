@@ -8,10 +8,12 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
+import org.firstinspires.ftc.teamcode.vision.ColorSensorProcessor;
 
 public class SampleAutoAlign extends CommandBase {
     CameraSubsystem cam;
@@ -39,7 +41,7 @@ public class SampleAutoAlign extends CommandBase {
     @Override
     public boolean isFinished() {
 
-        if (cam.getYellow()) {
+        if (cam.getYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             if (!seen) {
                 seen = true;
                 time.reset();
@@ -56,6 +58,7 @@ public class SampleAutoAlign extends CommandBase {
     }
     @Override
     public void end (boolean wasInterrupted) {
+        Log.i("autoalign", "autoalign done, color: " + (cam.getYellow() ? "yellow" : "blue"));
         cam.setEnabled(false);
     }
 
