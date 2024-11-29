@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -10,7 +8,6 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Vector2d;
-import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -19,6 +16,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.lib.Localizer;
 import org.firstinspires.ftc.teamcode.lib.drivers.GoBildaPinpoint;
+
+import java.util.LinkedList;
 
 @Config
 
@@ -33,6 +32,7 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
     public static double xEncOffset = 139.7;
     public static double yEncOffset = 88.9;
 
+    private Pose2D lastGoodPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);
 
     public PinpointSubsystem(HardwareMap hMap) {
         pinpoint = hMap.get(GoBildaPinpoint.class, "pinpoint");
@@ -55,7 +55,14 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
     @Override
     public void periodic() {
         pinpoint.update();
-        pose = pinpoint.getPosition();
+        if (Double.isNaN(pinpoint.getPosX())){
+            pose = lastGoodPose;
+        }
+        else{
+            pose = pinpoint.getPosition();
+            lastGoodPose = pose;
+        }
+
         //Log.i("posex", "" + pose.getX(DistanceUnit.INCH));
         if (DriveConstants.drawRobot) {
             TelemetryPacket packet = new TelemetryPacket();
@@ -80,6 +87,7 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
 
     public void reset() {
         pinpoint.resetPosAndIMU();
+        lastGoodPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);
     }
 
     /**
@@ -88,6 +96,7 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
      */
     public void setPosition(double x, double y) {
         pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, pose.getHeading(AngleUnit.DEGREES)));
+        lastGoodPose = new Pose2D(DistanceUnit.INCH, x, y, AngleUnit.DEGREES, pose.getHeading(AngleUnit.DEGREES));
     }
     public boolean isDoneCalibration() {
 

@@ -9,6 +9,8 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
+import com.arcrobotics.ftclib.geometry.Transform2d;
+import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
@@ -73,6 +75,48 @@ public class AutonSubCycle extends SequentialCommandGroup {
 
                 new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
                 new WaitCommand(500));
+    }
+
+    public AutonSubCycle(ExtensionSubsystem extension, PivotSubsystem pivot, WristSubsystem wrist, IntakeSubsystem intake, CameraSubsystem cam, SubClearSubsystem subClear, PinpointSubsystem pinpoint, DefaultGoToPointCommand gtpc, boolean clearSub, Pose2d subIntakePos){
+        addCommands
+                (
+                        new InstantCommand(() -> cam.setEnabled(true)),
+                        new SequentialCommandGroup(
+                                new GoToPointWithDefaultCommand(new Pose2d(-6, 40, Rotation2d.fromDegrees(-90)), gtpc, 20, 20)
+                                        .interruptOn(() -> pinpoint.getPose().getX() > -20),
+                                new ConditionalCommand(
+                                        new GoToPointWithDefaultCommand(subIntakePos, gtpc, 1, 4).withTimeout(500),
+                                        new GoToPointWithDefaultCommand(subIntakePos.transformBy(new Transform2d(new Translation2d(3, 3), new Rotation2d())), gtpc, 1, 4),
+                                        () -> clearSub)
+                        ).alongWith(new SequentialCommandGroup(new IntakeClawCommand(intake, IntakeConstants.foldedPos), new RetractCommand(wrist, pivot, extension))),
+
+                        new ConditionalCommand(
+                                new WaitCommand(300).andThen(new SubClearCommand(subClear)), new InstantCommand(),
+                                () -> clearSub),
+
+                        new GoToPointWithDefaultCommand(subIntakePos.transformBy(new Transform2d(new Translation2d(3, 3), new Rotation2d())), gtpc, 1, 4),
+                        new ExtendCommand(extension, 4),
+                        new WristCommand(wrist, IntakeConstants.groundPos).alongWith(
+                                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos-0.025, 1)),
+                        new WaitCommand(250),
+                        new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
+                                new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
+
+                        new ConditionalCommand(
+                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
+                                new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
+                                () -> cam.getYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)),
+
+                        new SequentialCommandGroup
+                                (new IntakeRetractCommand(wrist, pivot, extension),
+                                        new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
+                                        new PivotCommand(pivot, PivotConstants.topLimit-1),
+                                        new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 30),
+                                        new BucketPosCommand(extension, pivot, wrist))
+                                .alongWith(new GoToPointWithDefaultCommand(scorePos, gtpc)),
+
+                        new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
+                        new WaitCommand(500));
     }
 
 }

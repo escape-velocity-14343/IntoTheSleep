@@ -72,7 +72,7 @@ public class CameraSubsystem extends SubsystemBase {
                 .setRoi(ImageRegion.asImageCoordinates(130,0,230, 160))
                 .setSwatches(PredominantColorProcessor.Swatch.BLUE, PredominantColorProcessor.Swatch.YELLOW, PredominantColorProcessor.Swatch.RED, PredominantColorProcessor.Swatch.WHITE, PredominantColorProcessor.Swatch.BLACK, PredominantColorProcessor.Swatch.GREEN)
                 .build();*/
-        colorSensor = new ColorSensorProcessor(new Rect(new Point(145, 0), new Point(230, 80)));
+        colorSensor = new ColorSensorProcessor(new Rect(new Point(120, 0), new Point(200, 80)));
         CameraName camera = hardwareMap.get(WebcamName.class, "rizz");
 
         portal = new VisionPortal.Builder()

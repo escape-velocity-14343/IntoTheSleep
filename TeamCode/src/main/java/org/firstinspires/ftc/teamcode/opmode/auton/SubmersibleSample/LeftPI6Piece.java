@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode.auton;
+package org.firstinspires.ftc.teamcode.opmode.auton.SubmersibleSample;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.alliance;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
@@ -11,10 +11,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
 import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
@@ -24,9 +22,11 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 
 // 6+0 Pre IL
-@Autonomous(name = "6 Sample 0 Specimen Popeyes' 6 Piece")
-public class PI6Piece extends Robot {
+@Autonomous(name = "LEFT 6 Sample 0 Specimen Popeyes' 6 Piece")
+public class LeftPI6Piece extends Robot {
     private DefaultGoToPointCommand gtpc;
+
+    private Pose2d subIntakePos = new Pose2d(12, 22, new Rotation2d(-90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -58,8 +58,8 @@ public class PI6Piece extends Robot {
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
 
                 // sub cycle 1
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false)
+                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
+                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
         ));
 
         cs.schedule(gtpc);

@@ -43,5 +43,6 @@ public class IntakeConstants {
     public static double autoAlignTol = 10;
 
     // global offset
-    public static double wristOffset = -0.05;
+    // 1 tick of skip = 0.05 position
+    public static double wristOffset = -0.065;
 }

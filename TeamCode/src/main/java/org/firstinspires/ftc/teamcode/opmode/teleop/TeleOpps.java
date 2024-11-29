@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.SubClearCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
@@ -40,23 +41,25 @@ import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReversedCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
+
+import javax.crypto.spec.OAEPParameterSpec;
 
 @TeleOp(group = "0", name = "TeleOpp")
 @Config
 public class TeleOpps extends Robot {
-
-    public static double manualMultiplier = 0.5;
+    public static double manualMultiplier = 0.7;
     public static double robotMovementMultiplier = 0.5;
 
+    protected GamepadEx driverPad;
+    protected GamepadEx operatorPad;
 
     @Override
     public void runOpMode() throws InterruptedException {
-
-
         initialize();
-        GamepadEx driverPad = new GamepadEx(gamepad1);
-        GamepadEx operatorPad = new GamepadEx(gamepad2);
 
+        driverPad = new GamepadEx(gamepad1);
+        operatorPad = new GamepadEx(gamepad2);
 
         if (true) {
             CommandScheduler.getInstance().setDefaultCommand(mecanum, new DefaultDriveCommand(
@@ -75,9 +78,44 @@ public class TeleOpps extends Robot {
                     () -> 0.0);
             CommandScheduler.getInstance().setDefaultCommand(mecanum, drive);
         }
-
         //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
 
+
+        configureDriver();
+        configureOperator();
+        configureDualControl();
+
+        /*new RunCommand(() -> extension.setPower(- gamepad2.left_trigger - gamepad1.left_trigger), extension),
+        () -> extension.getCurrentPosition() / SlideConstants.ticksPerInch < SlideConstants.submersibleIntakeMaxExtension))*/
+
+         // pinpoint.resetYaw()));
+        waitForStart();
+        while (!isStopRequested()) {
+            telemetry.addData("motorpos", extension.getCurrentInches());
+            telemetry.addData("pivotpos", pivot.getCurrentPosition());
+            telemetry.addData("time", timer.milliseconds());
+            telemetry.addData("hi", CommandScheduler.getInstance().getDefaultCommand(mecanum));
+            telemetry.addData("intake flipped?", reverseClaw.get());
+            timer.reset();
+            update();
+        }
+        CommandScheduler.getInstance().reset();
+    }
+
+    public void configureDriver() {
+        // ------- UTILITIES -------
+        // heading reset
+        new Trigger(() -> gamepad1.options).whileActiveOnce(new InstantCommand(pinpoint::resetYaw));
+
+
+        // ------- SPECIMEN --------
+        // specimen scoring
+        driverPad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new SpecimenRaiseCommand(pivot, extension, wrist).alongWith(new InstantCommand(() -> setState(FSMStates.SPECIMEN))));
+        driverPad.getGamepadButton(GamepadKeys.Button.B).whenPressed(new ConditionalCommand(new SpecimenHookCommand(pivot, extension, wrist, intake), new InstantCommand(), () -> getState() == FSMStates.SPECIMEN));
+
+
+        // -------- BUCKET --------
+        // autoscore
         driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new DefaultGoToPointCommand(mecanum, pinpoint, scorePos).interruptOn(
                         () -> (Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX())) > 0.05).alongWith(
@@ -87,29 +125,15 @@ public class TeleOpps extends Robot {
                         )
                 )
         );
+        // bucket pos
+        driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
 
-        driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(subPos())
-                .whenReleased(new SequentialCommandGroup(
-                        new InstantCommand(() -> {setState(FSMStates.FOLD); extension.setManualControl(false);}),
-                        new ConditionalCommand(
-                                new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
-                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
-                                reverseClaw::get),
-                        new ConditionalCommand(
-                                new IntakeRetractReversedCommand(wrist, pivot, extension),
-                                new IntakeRetractCommand(wrist, pivot, extension),
-                                reverseClaw::get))
-                );
-        ;
-
+        // --------- INTAKE --------
+        // backtake/fronttake toggles
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> reverseClaw.set(true)).andThen(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backSinglePos, -1), new InstantCommand(), () -> getState() == FSMStates.INTAKE)));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> reverseClaw.set(false)).andThen(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -1), new InstantCommand(), () -> getState() == FSMStates.INTAKE)));
 
-        //driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whenPressed(new IntakeControlCommand(intake, IntakeConstants.backPos, -1))
-        //driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenReleased(new IntakeSpinCommand(intake, 0));
-
-
+        // claw logic
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
                 .whenPressed(
                         new ConditionalCommand(
@@ -138,7 +162,24 @@ public class TeleOpps extends Robot {
                                 () -> getState() == FSMStates.INTAKE)
                 );
 
-        driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
+        // driver intake logic
+        driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(subPos())
+                .whenReleased(new SequentialCommandGroup(
+                        new InstantCommand(() -> {setState(FSMStates.FOLD); extension.setManualControl(false);}),
+                        new ConditionalCommand(
+                                new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
+                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
+                                reverseClaw::get),
+                        new ConditionalCommand(
+                                new IntakeRetractReversedCommand(wrist, pivot, extension),
+                                new IntakeRetractCommand(wrist, pivot, extension),
+                                reverseClaw::get))
+                );
+
+
+        // -------- ASCENT ---------
+        // ascent up, ascent down
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new SequentialCommandGroup(
                         new InstantCommand(() -> setState(FSMStates.HANG)),
@@ -146,8 +187,21 @@ public class TeleOpps extends Robot {
                 ));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ConditionalCommand(
                 new PivotCommand(pivot, PivotConstants.hangDegrees), new InstantCommand(), () -> getState() == FSMStates.HANG));
+    }
 
+    public void configureOperator() {
+        // --------- UTILITIES ------------
+        // slide reset
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(extension::reset));
+        // sub clear
+        new Trigger(()-> gamepad2.options).whenActive(new SubClearCommand(subClear));
+
+        // ---------- PIVOT -----------
+        // pivot manual control
+        new Trigger(pivot::getManualControl).toggleWhenActive(new RunCommand(() -> pivot.setPower(gamepad2.right_stick_x), pivot));
+
+        // ---------- MANUAL CONTROL TOGGLES -----------
+        // extension manual toggles
         operatorPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(new InstantCommand(() -> extension.setManualControl(false)));
         operatorPad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(() -> {
             extension.setManualControl(true);
@@ -155,44 +209,57 @@ public class TeleOpps extends Robot {
                 setState(FSMStates.NONE);
             }
         }));
+        // pivot manual toggles
         operatorPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(() -> pivot.setManualControl(false)));
         operatorPad.getGamepadButton(GamepadKeys.Button.B).whenPressed(new InstantCommand(() -> {
             pivot.setManualControl(true);
             setState(FSMStates.NONE);
         }));
 
+        // ---------- INTAKE ----------
+        // run intake
         operatorPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER).whenPressed(
                         new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backClosedPos, -1),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1), reverseClaw::get))
                 .whenReleased(new IntakeSpinCommand(intake, 0));
-
+        // claw in all states
         operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
                         new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backPos),
                                 new IntakeClawCommand(intake, IntakeConstants.openPos), reverseClaw::get))
                 .whenReleased(new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backClosedPos),
                         new IntakeClawCommand(intake, IntakeConstants.closedPos), reverseClaw::get));
 
-        operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new ConditionalCommand(
-                SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 15),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 7),
-                reverseClaw::get
-        ));
+        // -------- INTAKE PRESETS ---------
 
+        // short
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 7),
                 SubPosCommand.newWithExtension(extension, wrist, intake, 4),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
+        // medium
+        operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new ConditionalCommand(
+                SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 12),
+                SubPosCommand.newWithExtension(extension, wrist, intake, 7),
+                reverseClaw::get
+        ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
+
+        // lomg
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 15),
                 SubPosCommand.newWithExtension(extension, wrist, intake, 10),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
-        driverPad.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new SpecimenRaiseCommand(pivot, extension, wrist).alongWith(new InstantCommand(() -> setState(FSMStates.SPECIMEN))));
-        driverPad.getGamepadButton(GamepadKeys.Button.B).whenPressed(new ConditionalCommand(new SpecimenHookCommand(pivot, extension, wrist, intake), new InstantCommand(), () -> getState() == FSMStates.SPECIMEN));
+        // ------- BUCKET --------
+        // low bucket toggle
+        operatorPad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whileActiveOnce(new InstantCommand(() -> lowBucket.set(true)));
+        operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whileActiveOnce(new InstantCommand(() -> lowBucket.set(false)));
+    }
 
+    public void configureDualControl() {
+        // slide manual control
         new Trigger(() -> true).whileActiveContinuous(
                 new ConditionalCommand(
                         new InstantCommand(() -> {
@@ -207,23 +274,18 @@ public class TeleOpps extends Robot {
                         new InstantCommand(),
                         extension::getManualControl), true);
 
-                /*new RunCommand(() -> extension.setPower(- gamepad2.left_trigger - gamepad1.left_trigger), extension),
-                () -> extension.getCurrentPosition() / SlideConstants.ticksPerInch < SlideConstants.submersibleIntakeMaxExtension))*/
 
-        new Trigger(pivot::getManualControl).toggleWhenActive(new RunCommand(() -> pivot.setPower(gamepad2.right_stick_x), pivot));
-
-
-        new Trigger(() -> gamepad1.options).whileActiveOnce(new InstantCommand(pinpoint::resetYaw)); // pinpoint.resetYaw()));
-        waitForStart();
-        while (!isStopRequested()) {
-            telemetry.addData("motorpos", extension.getCurrentInches());
-            telemetry.addData("pivotpos", pivot.getCurrentPosition());
-            telemetry.addData("time", timer.milliseconds());
-            telemetry.addData("hi", CommandScheduler.getInstance().getDefaultCommand(mecanum));
-            telemetry.addData("intake flipped?", reverseClaw.get());
-            timer.reset();
-            update();
-        }
-        CommandScheduler.getInstance().reset();
     }
 }
+
+//  ______________
+// ||            ||
+// ||            ||
+// ||            ||
+// ||            ||
+// ||____________||
+// |______________|
+// \\#####EV#####\\
+//  \\############\\
+//   \      ____    \
+//    \_____\___\____\

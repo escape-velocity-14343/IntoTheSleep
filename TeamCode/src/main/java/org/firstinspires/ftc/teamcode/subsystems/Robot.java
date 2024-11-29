@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosReversedCommand;
+import org.firstinspires.ftc.teamcode.commands.group.LowBucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakePosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
@@ -37,6 +38,7 @@ public abstract class Robot extends LinearOpMode {
 
     public FSMStates robotState = FSMStates.NONE;
     public AtomicBoolean reverseClaw = new AtomicBoolean(false);
+    public AtomicBoolean lowBucket = new AtomicBoolean(false);
 
     List<LynxModule> hubs;
     public ExtensionSubsystem extension;
@@ -106,7 +108,7 @@ public abstract class Robot extends LinearOpMode {
     public Command bucketPos() {
         return new ConditionalCommand(
                 new BucketPosReversedCommand(extension, pivot, wrist),
-                BucketPosCommand.newWithWristPos(extension, pivot, wrist),
+                new ConditionalCommand(LowBucketPosCommand.newWithWristPos(extension, pivot, wrist), BucketPosCommand.newWithWristPos(extension, pivot, wrist), lowBucket::get),
                 reverseClaw::get
         );
     }

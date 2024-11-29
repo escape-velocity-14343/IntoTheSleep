@@ -13,6 +13,7 @@ public class SlideConstants {
     public static double maxExtension = 29.5;
 
     public static double bucketPos = 26.5;
+    public static double lowBucketPos = 11.5;
 
     public static double minExtension = 0;
     public static double direction = 1;

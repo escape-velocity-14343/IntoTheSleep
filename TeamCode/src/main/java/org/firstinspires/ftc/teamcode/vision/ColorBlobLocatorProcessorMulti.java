@@ -37,6 +37,7 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private Mat roiMat;
     private Mat roiMat_userColorSpace;
     private final int contourCode;
+    MatOfPoint maskShape;
 
     private Mat mask = new Mat();
 
@@ -59,6 +60,8 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private volatile ArrayList<Blob> userBlobs = new ArrayList<>();
     private ArrayList<ColorRange> colors = new ArrayList<>();
     private Mat temp = new Mat();
+    private Mat roiMask = new Mat();
+
 
     public ColorBlobLocatorProcessorMulti(ColorRange colorRange, ImageRegion roiImg, ContourMode contourMode,
                                    int erodeSize, int dilateSize, boolean drawContours, int blurSize,
@@ -132,6 +135,26 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         frameHeight = height;
 
         roi = roiImg.asOpenCvRect(width, height);
+        roiMask = new Mat(mask.size(),mask.type());
+        Point[] points = {
+                new Point(0,100),
+                new Point(0,160),
+                new Point(160,180),
+                new Point(320, 180),
+                new Point(320, 140),
+                new Point(290,170),
+                new Point(190, 150),
+                new Point(190,0),
+                new Point(130, 0),
+                new Point(130, 150),
+                new Point(90, 180)
+        };
+        maskShape = new MatOfPoint();
+        maskShape.fromArray(points);
+
+        List<MatOfPoint> polygons = new ArrayList<>();
+        polygons.add(maskShape);
+        Imgproc.fillPoly(mask, polygons, new Scalar(255));
     }
 
     @Override
@@ -139,7 +162,9 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     {
         if (roiMat == null)
         {
-            roiMat = frame.submat(roi);
+
+            roiMat = frame.clone();
+            roiMask = frame.clone();
             roiMat_userColorSpace = roiMat.clone();
         }
 
@@ -185,6 +210,8 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         {
             Imgproc.dilate(mask, mask, dilateElement);
         }
+
+        Core.bitwise_and(mask, roiMask, mask);
 
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
