@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.vision;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.util.Log;
 
 import androidx.annotation.ColorInt;
 
@@ -13,6 +14,7 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorSpace;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
@@ -61,6 +63,20 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private ArrayList<ColorRange> colors = new ArrayList<>();
     private Mat temp = new Mat();
     private Mat roiMask = new Mat();
+
+    Point[] points = {
+            new Point(0,100),
+            new Point(0,160),
+            new Point(160,180),
+            new Point(320, 180),
+            new Point(320, 140),
+            new Point(290,170),
+            new Point(190, 150),
+            new Point(190,0),
+            new Point(130, 0),
+            new Point(130, 150),
+            new Point(90, 180)
+    };
 
 
     public ColorBlobLocatorProcessorMulti(ColorRange colorRange, ImageRegion roiImg, ContourMode contourMode,
@@ -131,40 +147,32 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     @Override
     public void init(int width, int height, CameraCalibration calibration)
     {
+        Log.i("cv test", "gotten to init of processor");
         frameWidth = width;
         frameHeight = height;
 
         roi = roiImg.asOpenCvRect(width, height);
-        roiMask = new Mat(mask.size(),mask.type());
-        Point[] points = {
-                new Point(0,100),
-                new Point(0,160),
-                new Point(160,180),
-                new Point(320, 180),
-                new Point(320, 140),
-                new Point(290,170),
-                new Point(190, 150),
-                new Point(190,0),
-                new Point(130, 0),
-                new Point(130, 150),
-                new Point(90, 180)
-        };
+        roiMask = new Mat(height, width, 0);
+        Log.i("cv test", "gotten to creation of roimask of processor");
+
         maskShape = new MatOfPoint();
         maskShape.fromArray(points);
 
         List<MatOfPoint> polygons = new ArrayList<>();
         polygons.add(maskShape);
-        Imgproc.fillPoly(mask, polygons, new Scalar(255));
+        Imgproc.fillPoly(roiMask, polygons, new Scalar(255));
+        Log.i("cv test", "done with init of processor");
     }
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos)
     {
+        Log.i("cv test", "start processframe");
         if (roiMat == null)
         {
 
             roiMat = frame.clone();
-            roiMask = frame.clone();
+            //roiMask = frame.clone();
             roiMat_userColorSpace = roiMat.clone();
         }
 
@@ -210,8 +218,13 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         {
             Imgproc.dilate(mask, mask, dilateElement);
         }
-
+        Log.i("cv test", "before bitwise and processframe");
+        Log.i("cv test", "opencv type of the mask: " + mask.type());
+        Log.i("cv test", "opencv size of the mask: " + mask.size());
+        Log.i("cv test", "opencv type of the roimask: " + roiMask.type());
+        Log.i("cv test", "opencv size of the roimask: " + roiMask.size());
         Core.bitwise_and(mask, roiMask, mask);
+        Log.i("cv test", "after bitwise and processframe");
 
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
@@ -318,11 +331,24 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
                 );
             }
         }
+        Path path = new Path();
 
-        canvas.drawLine(gfxRect.left, gfxRect.top, gfxRect.right, gfxRect.top, roiPaint);
-        canvas.drawLine(gfxRect.right, gfxRect.top, gfxRect.right, gfxRect.bottom, roiPaint);
-        canvas.drawLine(gfxRect.right, gfxRect.bottom, gfxRect.left, gfxRect.bottom, roiPaint);
-        canvas.drawLine(gfxRect.left, gfxRect.bottom, gfxRect.left, gfxRect.top, roiPaint);
+        Point[] contourPts = points;
+
+        path.moveTo((float) (contourPts[0].x) * scaleBmpPxToCanvasPx, (float)(contourPts[0].y) * scaleBmpPxToCanvasPx);
+        for (int i = 1; i < contourPts.length; i++)
+        {
+            path.lineTo((float) (contourPts[i].x) * scaleBmpPxToCanvasPx, (float) (contourPts[i].y) * scaleBmpPxToCanvasPx);
+        }
+        path.close();
+
+        canvas.drawPath(path, contourPaint);
+
+
+        //canvas.drawLine(gfxRect.left, gfxRect.top, gfxRect.right, gfxRect.top, roiPaint);
+        //canvas.drawLine(gfxRect.right, gfxRect.top, gfxRect.right, gfxRect.bottom, roiPaint);
+        //canvas.drawLine(gfxRect.right, gfxRect.bottom, gfxRect.left, gfxRect.bottom, roiPaint);
+        //canvas.drawLine(gfxRect.left, gfxRect.bottom, gfxRect.left, gfxRect.top, roiPaint);
     }
 
     private android.graphics.Rect makeGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx)
