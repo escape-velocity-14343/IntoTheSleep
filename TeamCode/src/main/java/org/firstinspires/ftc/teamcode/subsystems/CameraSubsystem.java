@@ -34,6 +34,12 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class CameraSubsystem extends SubsystemBase {
 
+    public static Scalar minimumBlue = new Scalar(100, 50, 50);
+    public static Scalar maximumBlue = new Scalar(140, 255, 255);
+
+    public static Scalar minimumYellow = new Scalar(13, 60, 100);
+    public static Scalar maximumYellow = new Scalar(50, 255, 255);
+
     ColorBlobLocatorProcessorMulti colorLocator;
     ColorSensorProcessor colorSensor;
     VisionPortal portal;
@@ -66,12 +72,14 @@ public class CameraSubsystem extends SubsystemBase {
                 Color.rgb(3, 227, 252)
         );
         colorLocator.setColors(
-                new ColorRange(ColorSpace.HSV, new Scalar (13, 60, 100), new Scalar(50, 255, 255)),
-                new ColorRange(ColorSpace.HSV, new Scalar (70, 150, 100), new Scalar(120, 255, 255)));
-        /*colorSensor = new PredominantColorProcessor.Builder()
-                .setRoi(ImageRegion.asImageCoordinates(130,0,230, 160))
-                .setSwatches(PredominantColorProcessor.Swatch.BLUE, PredominantColorProcessor.Swatch.YELLOW, PredominantColorProcessor.Swatch.RED, PredominantColorProcessor.Swatch.WHITE, PredominantColorProcessor.Swatch.BLACK, PredominantColorProcessor.Swatch.GREEN)
-                .build();*/
+                new ColorRange(ColorSpace.HSV, minimumYellow, maximumYellow), //Yellow
+                new ColorRange(ColorSpace.HSV, minimumBlue, maximumBlue)); //Blue
+                //new ColorRange(ColorSpace.HSV, new Scalar (70, 150, 100), new Scalar(120, 255, 255)));
+
+        //colorSensor = new PredominantColorProcessor.Builder()
+        //        .setRoi(ImageRegion.asImageCoordinates(130,0,230, 160))
+        //        .setSwatches(PredominantColorProcessor.Swatch.BLUE, PredominantColorProcessor.Swatch.YELLOW, PredominantColorProcessor.Swatch.RED, PredominantColorProcessor.Swatch.WHITE, PredominantColorProcessor.Swatch.BLACK, PredominantColorProcessor.Swatch.GREEN)
+        //        .build();
         colorSensor = new ColorSensorProcessor(new Rect(new Point(120, 0), new Point(200, 80)));
         CameraName camera = hardwareMap.get(WebcamName.class, "rizz");
 
@@ -99,7 +107,7 @@ public class CameraSubsystem extends SubsystemBase {
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
             if (!blobs.isEmpty()) {
-                for (int i = 0; i < Math.min(blobs.size(),10); i++) {
+                for (int i = 0; i < Math.min(blobs.size(),5); i++) {
                     if (Math.abs(160-blobs.get(i).getBoxFit().center.x)<Math.abs(dist)) {
                         dist = (int) (160-blobs.get(i).getBoxFit().center.x);
                     }

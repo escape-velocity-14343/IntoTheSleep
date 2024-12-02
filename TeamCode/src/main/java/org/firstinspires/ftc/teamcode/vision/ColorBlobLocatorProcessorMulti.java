@@ -27,6 +27,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor implements VisionProcessor
@@ -65,17 +66,17 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private Mat roiMask = new Mat();
 
     Point[] points = {
-            new Point(0,100),
             new Point(0,160),
-            new Point(160,180),
-            new Point(320, 180),
-            new Point(320, 140),
-            new Point(290,170),
+            new Point(0,210),
+            new Point(160,225),
+            new Point(320, 235),
+            new Point(320, 220),
+            new Point(250,210),
             new Point(190, 150),
             new Point(190,0),
             new Point(130, 0),
             new Point(130, 150),
-            new Point(90, 180)
+            new Point(90, 210)
     };
 
 
@@ -168,13 +169,14 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     public Object processFrame(Mat frame, long captureTimeNanos)
     {
         Log.i("cv test", "start processframe");
-        if (roiMat == null)
-        {
-
-            roiMat = frame.clone();
-            //roiMask = frame.clone();
-            roiMat_userColorSpace = roiMat.clone();
-        }
+        //if (roiMat == null)
+        //{
+        //    roiMat = frame.clone();
+        //    //roiMask = frame.clone();
+        //    roiMat_userColorSpace = roiMat.clone();
+        //}
+        roiMat = frame.clone();
+        roiMat_userColorSpace = roiMat.clone();
 
         if (colorRange.colorSpace == ColorSpace.YCrCb)
         {
@@ -234,7 +236,6 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         ArrayList<Blob> blobs = new ArrayList<>();
         for (MatOfPoint contour : contours)
         {
-            Core.add(contour, new Scalar(roi.x, roi.y), contour);
             blobs.add(new BlobImpl(contour));
         }
 
@@ -343,7 +344,6 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         path.close();
 
         canvas.drawPath(path, contourPaint);
-
 
         //canvas.drawLine(gfxRect.left, gfxRect.top, gfxRect.right, gfxRect.top, roiPaint);
         //canvas.drawLine(gfxRect.right, gfxRect.top, gfxRect.right, gfxRect.bottom, roiPaint);
