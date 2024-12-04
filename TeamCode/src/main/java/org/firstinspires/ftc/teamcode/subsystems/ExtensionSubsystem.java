@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -19,7 +17,6 @@ import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
 public class ExtensionSubsystem extends SubsystemBase {
-    private AtomicBoolean example;
     private final DcMotorEx motor0;
     private final DcMotorEx motor1;
     private final PivotSubsystem pivotSubsystem;
