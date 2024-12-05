@@ -11,23 +11,23 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
 import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
-import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 
 // 6+0 Pre IL
-@Autonomous(name = "6 Sample 0 Specimen Popeyes' 6 Piece")
-public class PI6Piece extends Robot {
+@Autonomous(name = "LEFT movement")
+public class LeftMovement extends Robot {
     private DefaultGoToPointCommand gtpc;
+
+    private Pose2d subIntakePos = new Pose2d(6, 22, Rotation2d.fromDegrees(-90));
+    //private Pose2d subIntakePos = new Pose2d(-13, 22, Rotation2d.fromDegrees(-90));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -38,39 +38,18 @@ public class PI6Piece extends Robot {
         pinpoint.reset();
         wrist.setWrist(IntakeConstants.foldedPos);
         intake.setClawer(IntakeConstants.closedPos);
-        while (!cam.setExposure());
         waitForStart();
 
         imu.resetYaw();
         extension.reset();
         gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 40, new Rotation2d()));
         pinpoint.setPosition(-65, 40);
-
+        while (!cam.setExposure());
 
         cs.schedule(false, new SequentialCommandGroup(
-
-                new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
-                        new BucketPosCommand(extension, pivot, wrist)
-                ).withTimeout(3000),
-                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
-                new WaitCommand(500),
-                new IntakeSpinCommand(intake, 0),
-                //new IntakeClawCommand(intake, IntakeConstants.closedPos),
-
-                new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
-
                 // sub cycle 1
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
-
-                // park
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20).alongWith(
-                        new RetractCommand(wrist, pivot, extension)
-                ),
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500),
-                new PivotCommand(pivot, PivotConstants.parkDegrees)
-
-
+                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
+                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
         ));
 
         cs.schedule(gtpc);

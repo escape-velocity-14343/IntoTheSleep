@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @Config
 public class CameraSubsystem extends SubsystemBase {
 
-    public static Scalar minimumBlue = new Scalar(100, 50, 50);
+    public static Scalar minimumBlue = new Scalar(100, 125, 50);
     public static Scalar maximumBlue = new Scalar(140, 255, 255);
 
     public static Scalar minimumYellow = new Scalar(13, 60, 100);
@@ -45,7 +45,7 @@ public class CameraSubsystem extends SubsystemBase {
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 60;
+    public static int exposureMillis = 85;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 
@@ -106,8 +106,9 @@ public class CameraSubsystem extends SubsystemBase {
 
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
+
             if (!blobs.isEmpty()) {
-                for (int i = 0; i < Math.min(blobs.size(),5); i++) {
+                for (int i = 0; i < Math.min(blobs.size(),3); i++) {
                     if (Math.abs(160-blobs.get(i).getBoxFit().center.x)<Math.abs(dist)) {
                         dist = (int) (160-blobs.get(i).getBoxFit().center.x);
                     }

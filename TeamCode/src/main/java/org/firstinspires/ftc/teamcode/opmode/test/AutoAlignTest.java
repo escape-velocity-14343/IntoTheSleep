@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlign;
+import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlignAndExtend;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Config
@@ -26,6 +27,7 @@ public class AutoAlignTest extends Robot {
         intake.setClawer(IntakeConstants.singleIntakePos);
         while (!cam.setExposure());
         waitForStart();
+        intake.setIntakeSpeed(1);
 
         imu.resetYaw();
         extension.reset();
@@ -35,8 +37,7 @@ public class AutoAlignTest extends Robot {
         pinpoint.setPosition(0, 0);
 
         cs.schedule(new SequentialCommandGroup(
-            new SampleAutoAlign(cam, gtpc, pinpoint)
-
+            new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension)
         ));
 
         cs.schedule(gtpc);

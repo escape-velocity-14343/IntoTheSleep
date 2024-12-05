@@ -49,7 +49,7 @@ public class AutonSubCycle extends SequentialCommandGroup {
                         ).alongWith(new SequentialCommandGroup(new IntakeClawCommand(intake, IntakeConstants.foldedPos), new RetractCommand(wrist, pivot, extension))),
 
                 new ConditionalCommand(
-                        new WaitCommand(300).andThen(new SubClearCommand(subClear)), new InstantCommand(),
+                        new WaitCommand(300).alongWith(new SubClearCommand(subClear)), new InstantCommand(),
                         () -> clearSub),
 
                 new GoToPointWithDefaultCommand(new Pose2d(-10, 25, Rotation2d.fromDegrees(-90)), gtpc, 1, 4),
@@ -57,8 +57,9 @@ public class AutonSubCycle extends SequentialCommandGroup {
                 new WristCommand(wrist, IntakeConstants.groundPos).alongWith(
                         new IntakeControlCommand(intake, IntakeConstants.singleIntakePos-0.025, 1)),
                 new WaitCommand(250),
-                new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
-                        new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
+                //new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
+                //        new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
+                new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension).withTimeout(2000),
 
                 new ConditionalCommand(
                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
@@ -69,7 +70,7 @@ public class AutonSubCycle extends SequentialCommandGroup {
                         (new IntakeRetractCommand(wrist, pivot, extension),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
                                 new PivotCommand(pivot, PivotConstants.topLimit-1),
-                                new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 30),
+                                new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 48),
                                 new BucketPosCommand(extension, pivot, wrist))
                         .alongWith(new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
@@ -86,15 +87,15 @@ public class AutonSubCycle extends SequentialCommandGroup {
                                         .interruptOn(() -> pinpoint.getPose().getX() > -20),
                                 new ConditionalCommand(
                                         new GoToPointWithDefaultCommand(subIntakePos, gtpc, 1, 4).withTimeout(500),
-                                        new GoToPointWithDefaultCommand(subIntakePos.transformBy(new Transform2d(new Translation2d(3, 3), new Rotation2d())), gtpc, 1, 4),
+                                        new GoToPointWithDefaultCommand(new Pose2d(subIntakePos.getX()+3, subIntakePos.getY()+3, subIntakePos.getRotation()), gtpc, 1, 4),
                                         () -> clearSub)
                         ).alongWith(new SequentialCommandGroup(new IntakeClawCommand(intake, IntakeConstants.foldedPos), new RetractCommand(wrist, pivot, extension))),
 
                         new ConditionalCommand(
-                                new WaitCommand(300).andThen(new SubClearCommand(subClear)), new InstantCommand(),
+                                new WaitCommand(300).alongWith(new SubClearCommand(subClear)), new InstantCommand(),
                                 () -> clearSub),
 
-                        new GoToPointWithDefaultCommand(subIntakePos.transformBy(new Transform2d(new Translation2d(3, 3), new Rotation2d())), gtpc, 1, 4),
+                        new GoToPointWithDefaultCommand(new Pose2d(subIntakePos.getX()+3, subIntakePos.getY()+3, subIntakePos.getRotation()), gtpc, 1, 4),
                         new ExtendCommand(extension, 4),
                         new WristCommand(wrist, IntakeConstants.groundPos).alongWith(
                                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos-0.025, 1)),
@@ -111,7 +112,7 @@ public class AutonSubCycle extends SequentialCommandGroup {
                                 (new IntakeRetractCommand(wrist, pivot, extension),
                                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
                                         new PivotCommand(pivot, PivotConstants.topLimit-1),
-                                        new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 30),
+                                        new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 48),
                                         new BucketPosCommand(extension, pivot, wrist))
                                 .alongWith(new GoToPointWithDefaultCommand(scorePos, gtpc)),
 

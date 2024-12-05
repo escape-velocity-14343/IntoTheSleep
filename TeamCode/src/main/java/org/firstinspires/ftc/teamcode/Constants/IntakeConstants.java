@@ -32,7 +32,7 @@ public class IntakeConstants {
     // sub clear constants
     public static double subClearPos = 0.4;
     public static double subClearRetractPos = 0.98;
-    public static double subClearMillis = 700;
+    public static double subClearMillis = 400;
 
     // auto constants
     public static double autoOuttakeSpeed = -0.15;
@@ -45,4 +45,6 @@ public class IntakeConstants {
     // global offset
     // 1 tick of skip = 0.05 position
     public static double wristOffset = -0.065;
+
+    public static double visionSizeWeight = 1;
 }

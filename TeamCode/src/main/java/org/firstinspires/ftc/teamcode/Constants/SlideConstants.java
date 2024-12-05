@@ -42,4 +42,5 @@ public class SlideConstants {
     public static double specimenHookPosition = 0.0;
 
     public static double millisPerInch = 5 * ticksPerInch;
+    public static double visionP = 1;
 }

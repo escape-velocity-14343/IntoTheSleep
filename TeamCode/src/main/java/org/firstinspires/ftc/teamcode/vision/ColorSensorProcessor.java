@@ -25,6 +25,8 @@ public class ColorSensorProcessor implements VisionProcessor {
     Scalar yellowHigh = new Scalar(50,255,255);
     public static double saturationLow = 150;
     public static double valueLow = 100;
+    public static double saturationLowBlue = 120;
+    public static double valueLowBlue = 70;
     @Deprecated
     public static double redLower = 13;
     public static double colorThreshold = 5;
@@ -73,7 +75,7 @@ public class ColorSensorProcessor implements VisionProcessor {
         yellow = Core.mean(yellowMat).val[0];
 
         // blue
-        Core.inRange(hsv, new Scalar(70, saturationLow, valueLow), new Scalar(120, 255, 255), blueMat);
+        Core.inRange(hsv, new Scalar(70, saturationLowBlue, valueLowBlue), new Scalar(120, 255, 255), blueMat);
         blue = Core.mean(blueMat).val[0];
 
         //Log.i("camera color processor", "RGB %: " + red + ", " + yellow + ", " + blue);

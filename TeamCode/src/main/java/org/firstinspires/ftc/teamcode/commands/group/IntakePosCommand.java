@@ -26,6 +26,6 @@ public class IntakePosCommand extends SequentialCommandGroup {
                                 new WaitUntilCommand(() -> extend.getCurrentInches() < 25).andThen(
                                         new WristCommand(wrist, IntakeConstants.halfFoldPos),
                                         new PivotCommand(pivot, PivotConstants.retractDegrees))),
-                new WristCommand(wrist, IntakeConstants.groundPos).whenFinished(() -> Log.i("4", "intake pos command")));
+                new WristCommand(wrist, IntakeConstants.groundPos).whenFinished(() -> Log.i("intake pos command", "pivot pos: " + pivot.getCurrentPosition())));
     }
 }

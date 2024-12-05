@@ -66,17 +66,17 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private Mat roiMask = new Mat();
 
     Point[] points = {
-            new Point(0,160),
-            new Point(0,210),
-            new Point(160,225),
+            new Point(0,180),
+            new Point(0,225),
+            new Point(160,230),
             new Point(320, 235),
-            new Point(320, 220),
-            new Point(250,210),
+            new Point(320, 215),
+            new Point(232,218),
             new Point(190, 150),
             new Point(190,0),
             new Point(130, 0),
             new Point(130, 150),
-            new Point(90, 210)
+            new Point(113, 213)
     };
 
 
@@ -168,7 +168,6 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos)
     {
-        Log.i("cv test", "start processframe");
         //if (roiMat == null)
         //{
         //    roiMat = frame.clone();
@@ -220,13 +219,13 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         {
             Imgproc.dilate(mask, mask, dilateElement);
         }
-        Log.i("cv test", "before bitwise and processframe");
+        /*Log.i("cv test", "before bitwise and processframe");
         Log.i("cv test", "opencv type of the mask: " + mask.type());
         Log.i("cv test", "opencv size of the mask: " + mask.size());
         Log.i("cv test", "opencv type of the roimask: " + roiMask.type());
-        Log.i("cv test", "opencv size of the roimask: " + roiMask.size());
+        Log.i("cv test", "opencv size of the roimask: " + roiMask.size());*/
         Core.bitwise_and(mask, roiMask, mask);
-        Log.i("cv test", "after bitwise and processframe");
+
 
         ArrayList<MatOfPoint> contours = new ArrayList<>();
         Mat hierarchy = new Mat();
