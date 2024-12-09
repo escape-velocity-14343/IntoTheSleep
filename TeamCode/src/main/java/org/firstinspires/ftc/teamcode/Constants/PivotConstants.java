@@ -5,17 +5,17 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class PivotConstants {
-    public static double kP = 0.01;
+    public static double kP = 0.012;
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
 
     public static double bottomLimit = 0.5;
-    public static double topLimit = 95;
+    public static double topLimit = 99;
     public static double tolerance = 1.5;
     public static double direction = -1;
     public static boolean encoderInvert = true;
-    public static double encoderOffset = -131;
+    public static double encoderOffset = 15;
     public static double outtakeExtendDegrees = 40;
     public static double hangDegrees = -10;
     public static double parkDegrees = 80;

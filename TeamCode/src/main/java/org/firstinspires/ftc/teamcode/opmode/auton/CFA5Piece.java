@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -28,13 +29,16 @@ import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlign;
 import org.firstinspires.ftc.teamcode.commands.group.SubClearSlidesCommand;
+import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.opencv.PredominantColorProcessor;
 
 // 4+1 Sub Auto LM2
 @Config
+@Disabled
 @Autonomous(name = "Chick-fil-a Combo Meal (4 Cows + 1 Pickle)")
 public class CFA5Piece extends Robot {
+    CameraSubsystem cam;
     private DefaultGoToPointCommand gtpc;
     PredominantColorProcessor.Swatch alliance = PredominantColorProcessor.Swatch.YELLOW;
 
@@ -85,7 +89,7 @@ public class CFA5Piece extends Robot {
                 new ConditionalCommand(
                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
                         new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
-                        () -> (cam.getYellow())),
+                        () -> (cam.isYellow())),
                 //new WaitCommand(1000),
                 new IntakeRetractCommand(wrist, pivot, extension).alongWith(new GoToPointWithDefaultCommand(new Pose2d(-42, 5, new Rotation2d()),gtpc,8,20)),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),

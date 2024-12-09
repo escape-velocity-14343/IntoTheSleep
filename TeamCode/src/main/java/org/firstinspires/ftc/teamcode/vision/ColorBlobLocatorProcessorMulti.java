@@ -14,7 +14,6 @@ import org.firstinspires.ftc.vision.VisionProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorBlobLocatorProcessor;
 import org.firstinspires.ftc.vision.opencv.ColorSpace;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfInt;
 import org.opencv.core.MatOfPoint;
@@ -27,7 +26,7 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor implements VisionProcessor
@@ -399,10 +398,8 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         return userBlobs;
     }
 
-    public void setColors(ColorRange... colorRanges) {
-        for (ColorRange colorRange : colorRanges) {
-            colors.add(colorRange);
-        }
+    public void addColors(ColorRange... colorRanges) {
+        Collections.addAll(colors, colorRanges);
     }
 
     class BlobImpl extends Blob

@@ -21,30 +21,32 @@ import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
+import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 
 // 6+0 Pre IL
-@Autonomous(name = "6 Sample 0 Specimen Popeyes' 6 Piece")
-public class PI6Piece extends Robot {
+//@Autonomous(name = "6 Sample 0 Specimen Popeyes' 6 Piece")
+public abstract class PI6Piece extends Robot {
     private DefaultGoToPointCommand gtpc;
+    private CameraSubsystem cam;
 
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
 
-        alliance = AutoConstants.Alliance.BLUE;
+        cam = new CameraSubsystem(hardwareMap, intake::getDSensorSupplier);
 
         pinpoint.reset();
         wrist.setWrist(IntakeConstants.foldedPos);
         intake.setClawer(IntakeConstants.closedPos);
-        while (!cam.setExposure());
+
         waitForStart();
 
         imu.resetYaw();
         extension.reset();
         gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 40, new Rotation2d()));
-        pinpoint.setPosition(-65, 40);
+        pinpoint.setPosition(-65, 41);
 
 
         cs.schedule(false, new SequentialCommandGroup(
@@ -64,11 +66,15 @@ public class PI6Piece extends Robot {
                 new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
 
                 // park
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20).alongWith(
+                new SequentialCommandGroup(new GoToPointWithDefaultCommand(new Pose2d(-6, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20)
+                        .interruptOn(() -> pinpoint.getPose().getX() > -20), new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500)
+
+                )
+                        .alongWith(
                         new RetractCommand(wrist, pivot, extension)
                 ),
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500),
                 new PivotCommand(pivot, PivotConstants.parkDegrees)
+
 
 
         ));

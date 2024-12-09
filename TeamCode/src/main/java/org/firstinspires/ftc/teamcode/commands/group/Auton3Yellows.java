@@ -31,8 +31,9 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
                         new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
                 ).withTimeout(3000),
+                new WristCommand(wrist, IntakeConstants.groundPos),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
-                new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension),
+                new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
@@ -51,7 +52,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
-                new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension),
+                new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
@@ -68,7 +69,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos - 0.02, 1),
-                new AutonExtendCommand(extension, SlideConstants.autonPiece3Extension).withTimeout(1500),
+                new AutonExtendCommand(extension, SlideConstants.autonPiece3Extension).withTimeout(1500).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(

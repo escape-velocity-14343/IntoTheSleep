@@ -88,7 +88,7 @@ public class TeleOpps extends Robot {
         /*new RunCommand(() -> extension.setPower(- gamepad2.left_trigger - gamepad1.left_trigger), extension),
         () -> extension.getCurrentPosition() / SlideConstants.ticksPerInch < SlideConstants.submersibleIntakeMaxExtension))*/
 
-         // pinpoint.resetYaw()));
+        // pinpoint.resetYaw()));
         waitForStart();
         while (!isStopRequested()) {
             telemetry.addData("motorpos", extension.getCurrentInches());
@@ -96,6 +96,11 @@ public class TeleOpps extends Robot {
             telemetry.addData("time", timer.milliseconds());
             telemetry.addData("hi", CommandScheduler.getInstance().getDefaultCommand(mecanum));
             telemetry.addData("intake flipped?", reverseClaw.get());
+            telemetry.addData("intake front voltage", intake.getFrontV());
+            telemetry.addData("intake back voltage", intake.getBackV());
+            //if (intake.getFrontV()>IntakeConstants.intakeSensorVoltageThres) {
+            //    gamepad1.rumble(100);
+            //}
             timer.reset();
             update();
         }
@@ -116,15 +121,15 @@ public class TeleOpps extends Robot {
 
         // -------- BUCKET --------
         // autoscore
-        driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-                new DefaultGoToPointCommand(mecanum, pinpoint, scorePos).interruptOn(
-                        () -> (Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX())) > 0.05).alongWith(
-                        new IntakeRetractCommand(wrist, pivot, extension).andThen(
-                                //new WaitUntilCommand(() -> pinpoint.getPose().getX() < -24 && pinpoint.getPose().getY() > 24),
-                                new BucketPosCommand(extension, pivot, wrist)
-                        )
-                )
-        );
+        //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+        //        new DefaultGoToPointCommand(mecanum, pinpoint, scorePos).interruptOn(
+        //                () -> (Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX())) > 0.05).alongWith(
+        //                new IntakeRetractCommand(wrist, pivot, extension).andThen(
+        //                        //new WaitUntilCommand(() -> pinpoint.getPose().getX() < -24 && pinpoint.getPose().getY() > 24),
+        //                        new BucketPosCommand(extension, pivot, wrist)
+        //                )
+        //        )
+        //);
         // bucket pos
         driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
 
@@ -166,7 +171,10 @@ public class TeleOpps extends Robot {
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(subPos())
                 .whenReleased(new SequentialCommandGroup(
-                        new InstantCommand(() -> {setState(FSMStates.FOLD); extension.setManualControl(false);}),
+                        new InstantCommand(() -> {
+                            setState(FSMStates.FOLD);
+                            extension.setManualControl(false);
+                        }),
                         new ConditionalCommand(
                                 new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
@@ -187,6 +195,8 @@ public class TeleOpps extends Robot {
                 ));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ConditionalCommand(
                 new PivotCommand(pivot, PivotConstants.hangDegrees), new InstantCommand(), () -> getState() == FSMStates.HANG));
+        new Trigger(() -> intake.getFrontV() > IntakeConstants.intakeSensorVoltageThres && getState() == FSMStates.INTAKE)
+                .whileActiveContinuous(new InstantCommand(() -> gamepad1.rumble(0.5, 0.5, 100)));
     }
 
     public void configureOperator() {
@@ -194,7 +204,7 @@ public class TeleOpps extends Robot {
         // slide reset
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(extension::reset));
         // sub clear
-        new Trigger(()-> gamepad2.options).whenActive(new SubClearCommand(subClear));
+        new Trigger(() -> gamepad2.options).whenActive(new SubClearCommand(subClear));
 
         // ---------- PIVOT -----------
         // pivot manual control
@@ -256,6 +266,8 @@ public class TeleOpps extends Robot {
         // low bucket toggle
         operatorPad.getGamepadButton(GamepadKeys.Button.RIGHT_STICK_BUTTON).whileActiveOnce(new InstantCommand(() -> lowBucket.set(true)));
         operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_STICK_BUTTON).whileActiveOnce(new InstantCommand(() -> lowBucket.set(false)));
+
+
     }
 
     public void configureDualControl() {
@@ -279,8 +291,6 @@ public class TeleOpps extends Robot {
 }
 
 //  ______________
-// ||            ||
-// ||            ||
 // ||            ||
 // ||            ||
 // ||____________||

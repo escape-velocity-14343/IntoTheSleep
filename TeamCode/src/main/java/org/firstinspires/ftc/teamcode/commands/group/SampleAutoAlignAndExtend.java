@@ -38,7 +38,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     }
     @Override
     public void execute() {
-        Log.i("autoalign", "yellow is: " + cam.getYellow());
+        Log.i("autoalign", "yellow is: " + cam.isYellow());
         Log.i("autoalign", "timer: " + time.milliseconds());
         gtpc.setTarget(new Pose2d(gtpc.getTargetX(), gtpc.getTargetY(), Rotation2d.fromDegrees(pinpointSubsystem.getPose().getRotation().getDegrees() + cam.getPixelPos() * IntakeConstants.autoAlignP)));
         extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,0.5));
@@ -46,7 +46,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     @Override
     public boolean isFinished() {
 
-        if (cam.getYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
+        if (cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             if (!seen) {
                 seen = true;
                 time.reset();
@@ -63,7 +63,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     }
     @Override
     public void end (boolean wasInterrupted) {
-        Log.i("autoalign", "autoalign done, color: " + (cam.getYellow() ? "yellow" : "blue"));
+        Log.i("autoalign", "autoalign done, color: " + (cam.isYellow() ? "yellow" : "blue"));
         //cam.setEnabled(false);
         extensionSubsystem.setManualControl(false);
     }

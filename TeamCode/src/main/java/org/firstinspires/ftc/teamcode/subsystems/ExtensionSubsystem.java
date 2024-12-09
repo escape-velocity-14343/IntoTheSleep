@@ -69,7 +69,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void setPower(double power) {
 
         if (speedToggle){
-            power = 0.5;
+            power = 0.4; //was 0.5
         }
         if (superSpeedToggle) {
             power = 0.25;

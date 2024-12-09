@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.commands.group;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -9,8 +11,6 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.arcrobotics.ftclib.geometry.Transform2d;
-import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
@@ -49,7 +49,7 @@ public class AutonSubCycle extends SequentialCommandGroup {
                         ).alongWith(new SequentialCommandGroup(new IntakeClawCommand(intake, IntakeConstants.foldedPos), new RetractCommand(wrist, pivot, extension))),
 
                 new ConditionalCommand(
-                        new WaitCommand(300).alongWith(new SubClearCommand(subClear)), new InstantCommand(),
+                        new WaitCommand(300).alongWith(new SubClearCommand(subClear).andThen(new SubClearCommand(subClear))), new InstantCommand(),
                         () -> clearSub),
 
                 new GoToPointWithDefaultCommand(new Pose2d(-10, 25, Rotation2d.fromDegrees(-90)), gtpc, 1, 4),
@@ -58,24 +58,23 @@ public class AutonSubCycle extends SequentialCommandGroup {
                         new IntakeControlCommand(intake, IntakeConstants.singleIntakePos-0.025, 1)),
                 new WaitCommand(250),
                 //new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
-                //        new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
-                new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension).withTimeout(2000),
+                        //        new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
+                        new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension).withTimeout(2000),
 
-                new ConditionalCommand(
-                        new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
-                        new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
-                        () -> cam.getYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)),
+                        new ConditionalCommand(
+                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
+                                new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
+                                () -> cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)),
 
-                new SequentialCommandGroup
-                        (new IntakeRetractCommand(wrist, pivot, extension),
-                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
-                                new PivotCommand(pivot, PivotConstants.topLimit-1),
-                                new WaitUntilCommand(() -> Util.pose2dToDistance(pinpoint.getPose(), scorePos) < 48),
-                                new BucketPosCommand(extension, pivot, wrist))
-                        .alongWith(new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
-                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
-                new WaitCommand(500));
+                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0).alongWith(
+                                    new IntakeRetractCommand(wrist, pivot, extension)),
+                                new GoToPointWithDefaultCommand(new Pose2d(-48, 48, Rotation2d.fromDegrees(-45)), gtpc, 8, 30).interruptOn(()->pinpoint.getPose().getX() < -44),
+                                new BucketPosCommand(extension, pivot, wrist).alongWith(
+                                        new GoToPointWithDefaultCommand(scorePos, gtpc)),
+
+                        new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -1),
+                        new WaitCommand(500));
     }
 
     public AutonSubCycle(ExtensionSubsystem extension, PivotSubsystem pivot, WristSubsystem wrist, IntakeSubsystem intake, CameraSubsystem cam, SubClearSubsystem subClear, PinpointSubsystem pinpoint, DefaultGoToPointCommand gtpc, boolean clearSub, Pose2d subIntakePos){
@@ -106,7 +105,10 @@ public class AutonSubCycle extends SequentialCommandGroup {
                         new ConditionalCommand(
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),
                                 new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5),
-                                () -> cam.getYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)),
+                                () -> cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)),
+
+                        new InstantCommand(() ->
+                                Log.i("cam.isYellow()", "" + cam.isYellow())),
 
                         new SequentialCommandGroup
                                 (new IntakeRetractCommand(wrist, pivot, extension),

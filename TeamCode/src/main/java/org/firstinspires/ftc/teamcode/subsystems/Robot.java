@@ -52,7 +52,7 @@ public abstract class Robot extends LinearOpMode {
     public CachingVoltageSensor voltage;
     public SubClearSubsystem subClear;
     public IMU imu;
-    public CameraSubsystem cam;
+    //public CameraSubsystem cam;
     public ElapsedTime timer = new ElapsedTime();
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
@@ -71,7 +71,6 @@ public abstract class Robot extends LinearOpMode {
         extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
-        cam = new CameraSubsystem(hardwareMap);
         subClear = new SubClearSubsystem(hardwareMap);
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -79,7 +78,6 @@ public abstract class Robot extends LinearOpMode {
 
 
         CommandScheduler.getInstance().registerSubsystem(extension, mecanum, pinpoint);
-
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
     }

@@ -10,16 +10,18 @@ import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlign;
 import org.firstinspires.ftc.teamcode.commands.group.SampleAutoAlignAndExtend;
+import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 @Config
 @Autonomous(name = "Automous Align Testing", group = "Test")
 public class AutoAlignTest extends Robot {
+    CameraSubsystem cam;
     private DefaultGoToPointCommand gtpc;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //CameraSubsystem cam = new CameraSubsystem(hardwareMap);
+        cam = new CameraSubsystem(hardwareMap, ()->false);
         initialize();
 
         pinpoint.reset();

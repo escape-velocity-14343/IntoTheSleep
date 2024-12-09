@@ -19,14 +19,16 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.util.function.BooleanSupplier;
+
 @Config
 public class ColorSensorProcessor implements VisionProcessor {
     Scalar yellowLow = new Scalar(13,60,100);
     Scalar yellowHigh = new Scalar(50,255,255);
     public static double saturationLow = 150;
-    public static double valueLow = 100;
+    public static double valueLow = 50;
     public static double saturationLowBlue = 120;
-    public static double valueLowBlue = 70;
+    public static double valueLowBlue = 50;
     @Deprecated
     public static double redLower = 13;
     public static double colorThreshold = 5;
@@ -41,6 +43,8 @@ public class ColorSensorProcessor implements VisionProcessor {
     private double blue = 0;
     private Mat redMat, redTemp, yellowMat, blueMat;
 
+    private BooleanSupplier hasSample;
+
     {
         redMat = new Mat();
         redTemp = new Mat();
@@ -50,8 +54,9 @@ public class ColorSensorProcessor implements VisionProcessor {
 
 
 
-    public ColorSensorProcessor(Rect area) {
+    public ColorSensorProcessor(Rect area, BooleanSupplier hasSample) {
         rect = area;
+        this.hasSample = hasSample;
     }
 
     @Override
@@ -61,6 +66,7 @@ public class ColorSensorProcessor implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat frame, long captureTimeNanos) {
+        Log.v("Voltage Detection", "Detected: " + hasSample.getAsBoolean());
         subMat = frame.submat(rect);
         Imgproc.cvtColor(subMat,hsv,Imgproc.COLOR_RGB2HSV);
 
@@ -78,14 +84,15 @@ public class ColorSensorProcessor implements VisionProcessor {
         Core.inRange(hsv, new Scalar(70, saturationLowBlue, valueLowBlue), new Scalar(120, 255, 255), blueMat);
         blue = Core.mean(blueMat).val[0];
 
-        //Log.i("camera color processor", "RGB %: " + red + ", " + yellow + ", " + blue);
-        if (red > colorThreshold) {
+        Log.v("camera color processor", "RYB %: " + red + ", " + yellow + ", " + blue);
+        if (red > colorThreshold || (hasSample.getAsBoolean() && red > blue && red > yellow) ) {
             detection = ColorType.RED;
-        } else if (blue > colorThreshold) {
+        } else if (blue > colorThreshold || (hasSample.getAsBoolean() && blue > red && blue > yellow)) {
             detection = ColorType.BLUE;
-        } else if (yellow > colorThreshold) {
+        } else if (yellow > colorThreshold || (hasSample.getAsBoolean() && yellow > blue && yellow > red)) {
             detection = YELLOW;
         } else {
+
             detection = NONE;
         }
 

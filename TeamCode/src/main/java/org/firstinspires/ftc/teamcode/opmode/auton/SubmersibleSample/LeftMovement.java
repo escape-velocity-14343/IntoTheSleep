@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
@@ -18,12 +19,15 @@ import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
+import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
 
 // 6+0 Pre IL
+@Disabled
 @Autonomous(name = "LEFT movement")
 public class LeftMovement extends Robot {
+    CameraSubsystem cam;
     private DefaultGoToPointCommand gtpc;
 
     private Pose2d subIntakePos = new Pose2d(6, 22, Rotation2d.fromDegrees(-90));

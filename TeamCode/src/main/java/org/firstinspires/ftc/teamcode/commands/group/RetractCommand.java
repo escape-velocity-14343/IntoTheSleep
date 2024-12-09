@@ -29,7 +29,10 @@ public class RetractCommand extends SequentialCommandGroup {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new ParallelCommandGroup(
-                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees)),
+                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees).alongWith(
+                                        new WristCommand(wrist, IntakeConstants.foldedPos)
+                                )
+                        ),
                         new ExtendCommand(extend, SlideConstants.minExtension)
                 ),
                 new WristCommand(wrist, IntakeConstants.foldedPos).whenFinished(() -> Log.i("5", "Retract command"))

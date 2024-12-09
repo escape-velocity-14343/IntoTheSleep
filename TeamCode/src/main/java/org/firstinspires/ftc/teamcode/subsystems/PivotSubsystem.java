@@ -60,6 +60,9 @@ public class PivotSubsystem extends SubsystemBase {
         //else if (currentPos < PivotConstants.bottomLimit && power < 0){
         //    power = 0;
         //}
+        if (power <= 0 && isClose(target) && target==PivotConstants.bottomLimit){
+            power = -0.05;
+        }
         setPower(power);
     }
 

@@ -30,7 +30,7 @@ public class SlideConstants {
 
 
     public static double autonPiece1Extension = 10;
-    public static double autonPiece3Extension = 12;
+    public static double autonPiece3Extension = 13.5;
 
     public static double submersibleIntakeMaxExtension = 17.5;
 
