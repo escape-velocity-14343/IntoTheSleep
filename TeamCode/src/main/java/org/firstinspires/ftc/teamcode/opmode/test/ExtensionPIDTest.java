@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.opmode;
+package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -6,20 +6,29 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
 @Config
-@TeleOp
-public class ExtensionPIDTest extends Robot {
+@TeleOp(group="1")
+public class ExtensionPIDTest extends LinearOpMode {
+    public PivotSubsystem pivot;
+    public ExtensionSubsystem extension;
     public static double targetInches = 0;
+    public static double targetDegrees = 0;
     @Override
     public void runOpMode() throws InterruptedException {
+        CachingVoltageSensor voltage = new CachingVoltageSensor(hardwareMap);
+        pivot = new PivotSubsystem(hardwareMap, voltage);
+        extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         waitForStart();
         while (!isStopRequested()) {
             extension.periodic();
+            pivot.periodic();
             extension.extendInches(targetInches);
+            pivot.tiltToPos(targetDegrees);
 
             telemetry.addData("current pos", extension.getCurrentPosition());
             telemetry.addData("target", targetInches);
