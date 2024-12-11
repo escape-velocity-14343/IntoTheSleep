@@ -147,9 +147,9 @@ public class TeleOpps extends Robot {
                                 new ConditionalCommand(
                                         new IntakeControlCommand(intake, IntakeConstants.backPos, -1), new IntakeControlCommand(intake, IntakeConstants.openPos, 1), reverseClaw::get),
 
-                                // eject
+                                // eject for backtake, open claw for fronttake (backtake kept for backwards compatibility)
                                 new ConditionalCommand(
-                                        new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 0.5), new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -0.5), reverseClaw::get),
+                                        new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 0.5), new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5), reverseClaw::get),
 
                                 () -> getState() == FSMStates.INTAKE)
                 )
@@ -233,12 +233,12 @@ public class TeleOpps extends Robot {
                         new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backClosedPos, -1),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1), reverseClaw::get))
                 .whenReleased(new IntakeSpinCommand(intake, 0));
-        // claw in all states
+        // reverse intake in all states
         operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                        new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backPos),
-                                new IntakeClawCommand(intake, IntakeConstants.openPos), reverseClaw::get))
-                .whenReleased(new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backClosedPos),
-                        new IntakeClawCommand(intake, IntakeConstants.closedPos), reverseClaw::get));
+                        new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 1),
+                                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -1), reverseClaw::get))
+                .whenReleased(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
+                        new IntakeControlCommand(intake, IntakeConstants.closedPos, 0), reverseClaw::get));
 
         // -------- INTAKE PRESETS ---------
 
