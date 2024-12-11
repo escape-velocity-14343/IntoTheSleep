@@ -132,7 +132,7 @@ public class TeleOpps extends Robot {
         //        )
         //);
         // bucket pos
-        new Trigger(() -> 
+        new Trigger(() ->
                 // if we have a sample and right trigger is pressed when out of intake
                 (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01)
                         // or if X (square) is pressed

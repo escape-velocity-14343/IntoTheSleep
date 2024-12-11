@@ -22,16 +22,8 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 public class SubPosCommand extends SequentialCommandGroup {
     ExtensionSubsystem extension;
 
-    private SubPosCommand(ExtensionSubsystem extension, Command... commands) {
-        super(commands);
-        this.extension = extension;
-
-    }
-
     public SubPosCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
         addCommands(
-                //new ExtendCommand(extension, 0)
-                //        .withTimeout(extension.getReasonableExtensionMillis(0)),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                         .alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1))
         );
@@ -44,15 +36,5 @@ public class SubPosCommand extends SequentialCommandGroup {
     public void end(boolean interrupted) {
         extension.setManualControl(true);
         Log.i("6", "Sub Pos Command, Interrupted: " + interrupted);
-    }
-
-    @Deprecated
-    public static Command newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, double inches) {
-        return new SubPosCommand(extension,
-                new ExtendCommand(extension, inches)
-                        .withTimeout(extension.getReasonableExtensionMillis(inches)),
-                new WristCommand(wrist, IntakeConstants.groundPos)
-                        .alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1))
-        );
     }
 }
