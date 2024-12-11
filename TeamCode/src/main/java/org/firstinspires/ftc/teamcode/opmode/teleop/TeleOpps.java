@@ -132,7 +132,12 @@ public class TeleOpps extends Robot {
         //        )
         //);
         // bucket pos
-        driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
+        new Trigger(() -> 
+                // if we have a sample and right trigger is pressed when out of intake
+                (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01)
+                        // or if X (square) is pressed
+                        || driverPad.wasJustPressed(GamepadKeys.Button.X))
+                .whileActiveOnce(bucketPos());
 
         // --------- INTAKE --------
         // backtake/fronttake toggles
