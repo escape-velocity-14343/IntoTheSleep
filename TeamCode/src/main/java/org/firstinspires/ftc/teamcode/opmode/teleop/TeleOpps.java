@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.SubPosReadyCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReversedCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
@@ -131,7 +132,12 @@ public class TeleOpps extends Robot {
         //        )
         //);
         // bucket pos
-        driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
+        new Trigger(() ->
+                // if we have a sample and right trigger is pressed when out of intake
+                (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01)
+                        // or if X (square) is pressed
+                        || driverPad.wasJustPressed(GamepadKeys.Button.X))
+                .whileActiveOnce(bucketPos());
 
         // --------- INTAKE --------
         // backtake/fronttake toggles
@@ -146,9 +152,9 @@ public class TeleOpps extends Robot {
                                 new ConditionalCommand(
                                         new IntakeControlCommand(intake, IntakeConstants.backPos, -1), new IntakeControlCommand(intake, IntakeConstants.openPos, 1), reverseClaw::get),
 
-                                // eject
+                                // eject for backtake, open claw for fronttake (backtake kept for backwards compatibility)
                                 new ConditionalCommand(
-                                        new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 0.5), new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -0.5), reverseClaw::get),
+                                        new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 0.5), new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5), reverseClaw::get),
 
                                 () -> getState() == FSMStates.INTAKE)
                 )
@@ -232,33 +238,33 @@ public class TeleOpps extends Robot {
                         new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backClosedPos, -1),
                                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1), reverseClaw::get))
                 .whenReleased(new IntakeSpinCommand(intake, 0));
-        // claw in all states
+        // reverse intake in all states
         operatorPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed(
-                        new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backPos),
-                                new IntakeClawCommand(intake, IntakeConstants.openPos), reverseClaw::get))
-                .whenReleased(new ConditionalCommand(new IntakeClawCommand(intake, IntakeConstants.backClosedPos),
-                        new IntakeClawCommand(intake, IntakeConstants.closedPos), reverseClaw::get));
+                        new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 1),
+                                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -1), reverseClaw::get))
+                .whenReleased(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
+                        new IntakeControlCommand(intake, IntakeConstants.closedPos, 0), reverseClaw::get));
 
         // -------- INTAKE PRESETS ---------
 
         // short
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 7),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 4),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 4),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
         // medium
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 12),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 7),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 10),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
         // lomg
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 15),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 10),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 15),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
