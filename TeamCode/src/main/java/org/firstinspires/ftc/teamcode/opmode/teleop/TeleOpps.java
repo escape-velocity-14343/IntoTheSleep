@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.SubPosReadyCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReversedCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
@@ -244,21 +245,21 @@ public class TeleOpps extends Robot {
         // short
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 7),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 4),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 4),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
         // medium
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 12),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 7),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 10),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 
         // lomg
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 15),
-                SubPosCommand.newWithExtension(extension, wrist, intake, 10),
+                new SubPosReadyCommand(extension, pivot, wrist, intake, 15),
                 reverseClaw::get
         ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
 

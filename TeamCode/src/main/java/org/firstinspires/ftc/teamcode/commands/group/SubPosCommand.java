@@ -16,6 +16,9 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
+/**
+ * Flips the wrist down after a SubPosReadyCommand.
+ */
 public class SubPosCommand extends SequentialCommandGroup {
     ExtensionSubsystem extension;
 
@@ -27,11 +30,13 @@ public class SubPosCommand extends SequentialCommandGroup {
 
     public SubPosCommand(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake) {
         addCommands(
-                new ExtendCommand(extension, 0)
-                        .withTimeout(extension.getReasonableExtensionMillis(0)),
+                //new ExtendCommand(extension, 0)
+                //        .withTimeout(extension.getReasonableExtensionMillis(0)),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                         .alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 1))
         );
+        // must require extension because manual control must use it, so this ensures any other commands using extension get interrupted
+        addRequirements(extension);
         this.extension = extension;
     }
 
@@ -41,6 +46,7 @@ public class SubPosCommand extends SequentialCommandGroup {
         Log.i("6", "Sub Pos Command, Interrupted: " + interrupted);
     }
 
+    @Deprecated
     public static Command newWithExtension(ExtensionSubsystem extension, WristSubsystem wrist, IntakeSubsystem intake, double inches) {
         return new SubPosCommand(extension,
                 new ExtendCommand(extension, inches)
