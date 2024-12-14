@@ -45,6 +45,7 @@ public class VelocityCompensatedSquIDController {
 
         double deltaSeconds = loopTimeAverager.poll();
         double lastVel = (pv - lastPv) / deltaSeconds;
+        lastPv = pv;
 
         // v_i = v_0 + a * deltaT
         double targetAccel = (targetVelocity - lastVel) / deltaSeconds;
