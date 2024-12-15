@@ -43,9 +43,20 @@ public class VelocityCompensatedSquIDController {
         // v_f^2 = v_i^2 + 2ad for v_f = 0, d = error, and a = maxDecel
         double targetVelocity = Math.signum(error) * Math.sqrt(Math.abs(2 * maxDecel * error));
 
+        /**
+         * Expected loop times of the next loop.
+         */
         double deltaSeconds = loopTimeAverager.poll();
         double lastVel = (pv - lastPv) / loopTimeAverager.getLast();
         lastPv = pv;
+
+        // compensate for distance travelled, assume constant accel
+        // d = d_0 + v * deltaTime
+        // subtract targetVelocity because the sign is the wrong way
+        error += deltaSeconds * (lastVel - targetVelocity) / 2;
+
+        // recompute target velocity for the next timestamp instead of this one
+        targetVelocity = Math.signum(error) * Math.sqrt(Math.abs(2 * maxDecel * error));
 
         // v_i = v_0 + a * deltaT
         double targetAccel = (targetVelocity - lastVel) / deltaSeconds;
