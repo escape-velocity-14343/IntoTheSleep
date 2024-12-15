@@ -44,7 +44,7 @@ public class VelocityCompensatedSquIDController {
         double targetVelocity = Math.signum(error) * Math.sqrt(Math.abs(2 * maxDecel * error));
 
         double deltaSeconds = loopTimeAverager.poll();
-        double lastVel = (pv - lastPv) / deltaSeconds;
+        double lastVel = (pv - lastPv) / loopTimeAverager.getLast();
         lastPv = pv;
 
         // v_i = v_0 + a * deltaT
@@ -54,8 +54,6 @@ public class VelocityCompensatedSquIDController {
         // F_motor = ma + F_fric
         return targetAccel * p + frictionGain;
     }
-
-
 
     public class LoopTimeAverager {
 
@@ -95,6 +93,13 @@ public class VelocityCompensatedSquIDController {
             loopTimer.reset();
 
             return sum / times.size();
+        }
+
+        /**
+         * @return The last loop time.
+         */
+        public double getLast() {
+            return times.elementAt(times.size() - 1);
         }
 
     }
