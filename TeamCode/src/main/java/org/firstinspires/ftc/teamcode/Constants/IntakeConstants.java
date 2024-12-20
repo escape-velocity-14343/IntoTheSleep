@@ -15,7 +15,7 @@ public class IntakeConstants {
     public static double parkPos = 0.45;
     public static double bucketRetractPos = 0.05;
     public static double specimenReadyPos = 0.33;
-    public static double intakeReadyPos = 0.65;
+    public static double intakeReadyPos = 0.87;
 
     // wrist command constants
     public static double timeMultiplier = 0.3;
@@ -26,7 +26,7 @@ public class IntakeConstants {
     public static double closedPos = 0.75;
     public static double singleIntakePos = 0.7;
 
-    public static double clawOffset = 0.015;
+    public static double clawOffset = -0.16;
 
 
     // backtake

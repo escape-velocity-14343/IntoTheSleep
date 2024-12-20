@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
@@ -134,10 +135,10 @@ public class TeleOpps extends Robot {
         // bucket pos
         new Trigger(() ->
                 // if we have a sample and right trigger is pressed when out of intake
-                (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01)
-                        // or if X (square) is pressed
-                        || driverPad.wasJustPressed(GamepadKeys.Button.X))
-                .whileActiveOnce(bucketPos());
+                (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01))
+                .whileActiveOnce(new ScheduleCommand(bucketPos()));
+        // or if square is pressed
+        driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
 
         // --------- INTAKE --------
         // backtake/fronttake toggles
@@ -252,21 +253,20 @@ public class TeleOpps extends Robot {
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 7),
                 new SubPosReadyCommand(extension, pivot, wrist, intake, 4),
                 reverseClaw::get
-        ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
+        ));
 
         // medium
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 12),
                 new SubPosReadyCommand(extension, pivot, wrist, intake, 10),
-                reverseClaw::get
-        ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
+                reverseClaw::get));
 
         // lomg
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
                 SubPosReversedCommand.newWithExtension(extension, wrist, intake, pivot, 15),
                 new SubPosReadyCommand(extension, pivot, wrist, intake, 15),
                 reverseClaw::get
-        ).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE))));
+        ));
 
         // ------- BUCKET --------
         // low bucket toggle
