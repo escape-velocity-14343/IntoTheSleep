@@ -130,11 +130,18 @@ public class CameraSubsystem extends SubsystemBase {
 
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
+            int size = 0;
 
             if (!blobs.isEmpty()) {
-                for (int i = 0; i < Math.min(blobs.size(),3); i++) {
-                    if (Math.abs(160-blobs.get(i).getBoxFit().center.x)<Math.abs(dist)) {
-                        dist = (int) (160-blobs.get(i).getBoxFit().center.x);
+                /*for (int i = 0; i < Math.min(blobs.size(), 3); i++) {
+                    if (Math.abs(160 - blobs.get(i).getBoxFit().center.x) < Math.abs(dist)) {
+                        dist = (int) (160 - blobs.get(i).getBoxFit().center.x);
+                    }
+                }*/
+                for (ColorBlobLocatorProcessor.Blob blob : blobs) {
+                    if (blob.getContourArea() > size) {
+                        dist = (int) (160 - blob.getBoxFit().center.x);
+                        size = blob.getContourArea();
                     }
                 }
                 pixelPos = dist;

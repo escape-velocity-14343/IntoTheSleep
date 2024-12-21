@@ -1,25 +1,18 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
+import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -28,22 +21,20 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.SmartIntakeCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SubClearCommand;
-import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
-import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
+import org.firstinspires.ftc.teamcode.commands.group.SubPosReadyCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReversedCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
+import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
-
-import javax.crypto.spec.OAEPParameterSpec;
+import org.firstinspires.ftc.teamcode.vision.ColorSensorProcessor;
 
 @TeleOp(group = "0", name = "TeleOpp")
 @Config
@@ -54,12 +45,15 @@ public class TeleOpps extends Robot {
     protected GamepadEx driverPad;
     protected GamepadEx operatorPad;
 
+    private CameraSubsystem cam;
+
     @Override
     public void runOpMode() throws InterruptedException {
         initialize();
 
         driverPad = new GamepadEx(gamepad1);
         operatorPad = new GamepadEx(gamepad2);
+        cam = new CameraSubsystem(hardwareMap, intake::getDSensorSupplier);
 
         if (true) {
             CommandScheduler.getInstance().setDefaultCommand(mecanum, new DefaultDriveCommand(
@@ -78,6 +72,13 @@ public class TeleOpps extends Robot {
                     () -> 0.0);
             CommandScheduler.getInstance().setDefaultCommand(mecanum, drive);
         }
+
+        //intake.setDefaultCommand(new ConditionalCommand(
+        //        new SmartIntakeCommand(intake, cam),
+        //        new InstantCommand(() -> {}, intake),
+        //        () -> getState() == FSMStates.INTAKE
+        //).perpetually());
+
         //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(new RetractCommand(wrist, pivot, extension));
 
 
@@ -131,6 +132,11 @@ public class TeleOpps extends Robot {
         //        )
         //);
         // bucket pos
+        new Trigger(() ->
+                // if we have a sample and right trigger is pressed when out of intake
+                (getState() != FSMStates.INTAKE && intake.getDSensorSupplier() && gamepad1.right_trigger > 0.01))
+                .whileActiveOnce(new ScheduleCommand(bucketPos()));
+        // or if square is pressed
         driverPad.getGamepadButton(GamepadKeys.Button.X).whenPressed(bucketPos());
 
         // --------- INTAKE --------
@@ -183,6 +189,23 @@ public class TeleOpps extends Robot {
                                 new IntakeRetractReversedCommand(wrist, pivot, extension),
                                 new IntakeRetractCommand(wrist, pivot, extension),
                                 reverseClaw::get))
+                );
+
+        new Trigger(() ->
+            getState() == FSMStates.INTAKE && cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.RED : ColorSensorProcessor.ColorType.BLUE) && intake.getDSensorSupplier())
+                .whileActiveOnce(new SequentialCommandGroup(
+                                new InstantCommand(() -> {
+                                    setState(FSMStates.FOLD);
+                                    extension.setManualControl(false);
+                                }),
+                                new ConditionalCommand(
+                                        new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0),
+                                        new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
+                                        reverseClaw::get),
+                                new ConditionalCommand(
+                                        new IntakeRetractReversedCommand(wrist, pivot, extension),
+                                        new IntakeRetractCommand(wrist, pivot, extension),
+                                        reverseClaw::get))
                 );
 
 
