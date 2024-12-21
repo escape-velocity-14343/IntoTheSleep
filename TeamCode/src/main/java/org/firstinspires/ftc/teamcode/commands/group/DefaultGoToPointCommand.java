@@ -11,6 +11,8 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 
 import org.firstinspires.ftc.teamcode.lib.Localizer;
 import org.firstinspires.ftc.teamcode.lib.Util;
+import org.firstinspires.ftc.teamcode.lib.VelocityCompensatedSquIDController;
+import org.firstinspires.ftc.teamcode.opmode.test.VelocityCompensatedSquIDTest;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
@@ -22,6 +24,8 @@ public class DefaultGoToPointCommand extends CommandBase {
     public PIDController xPID = new PIDController(0,0,0);
     public PIDController yPID = new PIDController(0, 0,0);
     public PIDController headingPID = new PIDController(0,0,0);
+
+    public VelocityCompensatedSquIDController positionSquID = new VelocityCompensatedSquIDController(VelocityCompensatedSquIDTest.maxDecel, VelocityCompensatedSquIDTest.p, VelocityCompensatedSquIDTest.fric);
 
     public static double translationkP = 0.11;
     public static double translationkI = 0;
@@ -93,16 +97,17 @@ public class DefaultGoToPointCommand extends CommandBase {
         double yDist = target.getY() - currentPose.getY();
         Log.v("GTPC", "xDist: " + xDist + ", yDist: " + yDist);
         double angle = Math.atan2(yDist,xDist);
-        double magnitude = Math.pow(Math.hypot(xDist,yDist),0.5);
-        Log.v("GTPC", "Magnitude: " + magnitude);
-        magnitude = magnitude*translationkP;
+        //double magnitude = Math.pow(Math.hypot(xDist,yDist),0.5);
+        //Log.v("GTPC", "Magnitude: " + magnitude);
+        //magnitude = magnitude*translationkP;
+        double magnitude = positionSquID.calculate(0, Math.hypot(xDist, yDist));
         Log.v("GTPC", "Output: " + magnitude);
         double xMove = Math.cos(angle)*magnitude;
         double yMove = Math.sin(angle)*magnitude;
         Log.v("GTPC", "target: (" + getTargetX() + ", " + getTargetY() + ")");
         Log.v("GTPC", "attempted movement: (" + xMove + ", " + yMove + ")");
 
-        drive.driveFieldCentric(-xMove, -yMove*1.2, -rotSpeedSupplier.getAsDouble());
+        drive.driveFieldCentric(-xMove, -yMove/*.12*/, -rotSpeedSupplier.getAsDouble());
     }
 
     @Override

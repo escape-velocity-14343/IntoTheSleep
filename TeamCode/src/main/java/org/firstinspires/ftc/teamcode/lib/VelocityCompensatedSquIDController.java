@@ -90,7 +90,8 @@ public class VelocityCompensatedSquIDController {
          * @return Running average of loop times in seconds.
          */
         public double poll() {
-            times.push(loopTimer.seconds());
+            return 0.02;
+            /*times.push(loopTimer.seconds());
 
             double sum = 0;
             for (double t : times) {
@@ -103,14 +104,18 @@ public class VelocityCompensatedSquIDController {
 
             loopTimer.reset();
 
-            return sum / times.size();
+            return sum / times.size();*/
         }
 
         /**
          * @return The last loop time.
          */
         public double getLast() {
-            return times.elementAt(times.size() - 1);
+            if (times.isEmpty()) {
+                return 0.01;
+            }
+            return 0.02;
+            //return times.elementAt(times.size() - 1);
         }
 
     }
