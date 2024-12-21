@@ -15,10 +15,17 @@ public class SlideConstants {
     public static double bucketPos = 26.5;
     public static double lowBucketPos = 11.5;
 
+    public static double tiltInches = 15;
+
     public static double minExtension = 0;
     public static double direction = 1;
     public static double tolerance = 1;
     public static double alertCurrent = 4;
+
+    /**
+     * The maximum extension, in inches, while pivoting down.
+     */
+    public static double maxPivotExtension = 25;
     /**
      * Constant feedforward for the slides (probably don't need)
      */

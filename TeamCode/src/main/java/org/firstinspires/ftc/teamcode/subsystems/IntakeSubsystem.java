@@ -42,7 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     public void setClawer(double value) {
         clawPos = value;
-        clawer.setPosition(clawPos);
+        clawer.setPosition(clawPos + IntakeConstants.clawOffset);
     }
 
 
