@@ -5,6 +5,7 @@ import android.util.Log;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -25,7 +26,7 @@ public class IntakeRetractCommand extends SequentialCommandGroup {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.foldedPos),
                 new ParallelCommandGroup(
-                        new PivotCommand(pivot, PivotConstants.retractDegrees),
+                        new WaitUntilCommand(() -> extend.getCurrentInches() < SlideConstants.tiltInches).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees)),
                         new ExtendCommand(extend, SlideConstants.minExtension).withTimeout(extend.getReasonableExtensionMillis(0))
                 )
 
