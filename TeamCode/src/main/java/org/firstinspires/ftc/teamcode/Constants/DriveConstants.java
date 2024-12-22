@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.Constants;
 
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
+
 @Config
 public class DriveConstants {
 
@@ -12,5 +14,4 @@ public class DriveConstants {
 
     public static boolean useFieldCentric = false;
     public static boolean drawRobot = false;
-
 }
