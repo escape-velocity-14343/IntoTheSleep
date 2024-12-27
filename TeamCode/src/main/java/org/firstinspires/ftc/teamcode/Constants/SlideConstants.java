@@ -12,7 +12,7 @@ public class SlideConstants {
     public static double ticksPerInch = 31.6;
     public static double maxExtension = 29.5;
 
-    public static double bucketPos = 26.5;
+    public static double bucketPos = 27;
     public static double lowBucketPos = 11.5;
 
     public static double tiltInches = 15;
@@ -44,9 +44,9 @@ public class SlideConstants {
     public static double autonPiecee3ExtensionPower = 0.3;
     public static double autoRetractionPower = 1.0;
 
-    static public double specimenRaisePosition = 7;
+    static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 0.0;
+    public static double specimenHookPosition = 20.0;
 
     public static double millisPerInch = 5 * ticksPerInch;
     public static double visionP = 1;

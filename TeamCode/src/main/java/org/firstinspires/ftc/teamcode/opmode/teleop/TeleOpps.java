@@ -157,7 +157,7 @@ public class TeleOpps extends Robot {
                                 new ConditionalCommand(
                                         new IntakeControlCommand(intake, IntakeConstants.backSinglePos, 0.5), new IntakeControlCommand(intake, IntakeConstants.openPos, -0.5), reverseClaw::get),
 
-                                () -> getState() == FSMStates.INTAKE)
+                                () -> getState() == FSMStates.INTAKE || getState() == FSMStates.SPECIMEN)
                 )
 
                 .whenReleased(
@@ -171,7 +171,7 @@ public class TeleOpps extends Robot {
                                         new IntakeControlCommand(intake, IntakeConstants.backClosedPos, 0), new IntakeControlCommand(intake, IntakeConstants.closedPos, 0), reverseClaw::get
                                 ),
 
-                                () -> getState() == FSMStates.INTAKE)
+                                () -> getState() == FSMStates.INTAKE || getState() == FSMStates.SPECIMEN)
                 );
 
         // driver intake logic
