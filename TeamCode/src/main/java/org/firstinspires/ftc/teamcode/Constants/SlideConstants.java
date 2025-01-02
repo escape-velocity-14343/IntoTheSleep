@@ -12,7 +12,7 @@ public class SlideConstants {
     public static double ticksPerInch = 31.6;
     public static double maxExtension = 29.5;
 
-    public static double bucketPos = 27;
+    public static double bucketPos = 26.5;
     public static double lowBucketPos = 11.5;
 
     public static double tiltInches = 15;

@@ -23,8 +23,8 @@ public class SpecimenHookCommand extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new WristCommand(wrist, IntakeConstants.specimenScoringPos),
                     new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
-                    new PivotCommand(pivot, PivotConstants.specimenTopBarAngle),
-                    new ExtendCommand(extend, SlideConstants.specimenHookPosition)
+                    new PivotCommand(pivot, PivotConstants.specimenTopBarAngle).andThen(
+                    new ExtendCommand(extend, SlideConstants.specimenHookPosition))
                 )
         );
     }

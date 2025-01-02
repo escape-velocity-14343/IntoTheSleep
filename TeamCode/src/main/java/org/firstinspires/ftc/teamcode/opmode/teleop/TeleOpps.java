@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.opmode.teleop;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -19,11 +21,13 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
+import org.firstinspires.ftc.teamcode.commands.custom.BasketAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
@@ -69,9 +73,17 @@ public class TeleOpps extends Robot {
                     () -> Util.halfLinearHalfCubic(Math.abs(driverPad.getLeftY() / driverPad.getLeftX()) < 0.05 ? 0 : driverPad.getLeftY()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
                     () -> Util.halfLinearHalfCubic(Math.abs(driverPad.getLeftX() / driverPad.getLeftY()) < 0.05 ? 0 : driverPad.getLeftX()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
                     () -> Util.halfLinearHalfCubic(driverPad.getRightX()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
-                    //() -> imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)
                     () -> pinpoint.getPose().getRotation().getDegrees()
-            ));
+            ) {
+                //@Override
+                //public double getXModPower() {
+                //    if (getState() != FSMStates.SPECIMEN) {
+                //        return 0.0;
+                //    }
+                //
+                //    return
+                //}
+            });
         } else {
             DefaultDriveCommand drive = new DefaultDriveCommand(mecanum,
                     () -> Util.halfLinearHalfCubic(driverPad.getLeftY() / driverPad.getLeftX() < 0.05 ? 0 : driverPad.getLeftY()) * (getState() == FSMStates.INTAKE || getState() == FSMStates.OUTTAKE ? robotMovementMultiplier : 1),
@@ -123,15 +135,19 @@ public class TeleOpps extends Robot {
 
         // -------- BUCKET --------
         // autoscore
-        //driverPad.getGamepadButton(GamepadKeys.Button.A).whenPressed(
-        //        new DefaultGoToPointCommand(mecanum, pinpoint, scorePos).interruptOn(
-        //                () -> (Math.abs(driverPad.getLeftX()) + Math.abs(driverPad.getLeftY()) + Math.abs(driverPad.getRightX())) > 0.05).alongWith(
-        //                new IntakeRetractCommand(wrist, pivot, extension).andThen(
-        //                        //new WaitUntilCommand(() -> pinpoint.getPose().getX() < -24 && pinpoint.getPose().getY() > 24),
-        //                        new BucketPosCommand(extension, pivot, wrist)
-        //                )
-        //        )
-        //);
+        ElapsedTime bucketTimer = new ElapsedTime();
+        new Trigger(() -> gamepad1.touchpad).whileActiveOnce(new ScheduleCommand(
+                        new BasketAlignCommand(mecanum, basketSensor, pinpoint)
+                                .withXySupplier(() -> gamepad1.touchpad_finger_1_y * 3, () -> gamepad1.touchpad_finger_1_x * 4)
+                                .whenClose(48.0, bucketPos())
+                                .alongWith(new InstantCommand(bucketTimer::reset))
+                                .interruptOn(() -> bucketTimer.seconds() > 0.25
+                                        && (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) > 0.05
+                                        || Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y) > 0.05)
+                                )
+                                .whenFinished(() -> cs.schedule(new WaitCommand(250).andThen(new RetractCommand(wrist, pivot, extension))))
+                )
+        );
         // bucket pos
         new Trigger(() ->
                 // if we have a sample and right trigger is pressed when out of intake

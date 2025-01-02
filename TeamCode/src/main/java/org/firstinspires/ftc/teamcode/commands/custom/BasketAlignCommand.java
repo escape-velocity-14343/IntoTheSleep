@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.commands.custom;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
@@ -50,6 +55,7 @@ public class BasketAlignCommand extends CommandBase {
 
     /**
      * Creates a never ending align command for testing
+     *
      * @param mecanumDriveSubsystem the drive subsystem
      * @param basketSensorSubsystem the sensor subsystem
      */
@@ -59,7 +65,7 @@ public class BasketAlignCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return threshold > 0.0 && Math.abs(error) < threshold;
+        return threshold > 0.0 && error < threshold;
     }
 
     @Override
@@ -73,11 +79,12 @@ public class BasketAlignCommand extends CommandBase {
         translationXController.setPID(translatekP);
         translationYController.setPID(translatekP);
         mecanumDrive.driveFieldCentric(
-                -translationXController.calculate(x, basketSensor.getSensorRight()*Math.cos(targetHeading-pinpoint.getPose().getHeading())),
-                translationYController.calculate(y, basketSensor.getSensorLeft()*Math.cos(targetHeading-pinpoint.getPose().getHeading())),
+                -translationXController.calculate(x, basketSensor.getSensorRight() * Math.cos(targetHeading - pinpoint.getPose().getHeading())),
+                translationYController.calculate(y, basketSensor.getSensorLeft() * Math.cos(targetHeading - pinpoint.getPose().getHeading())),
                 -headingController.calculate(targetHeading, pinpoint.getPose().getHeading())
         );
-        error = Math.hypot(y- basketSensor.getSensorLeft(),x- basketSensor.getSensorRight());
+        error = Math.hypot(y - basketSensor.getSensorLeft(), x - basketSensor.getSensorRight());
+        Log.v("basket error", Double.toString(error));
     }
 
     public BasketAlignCommand withXySupplier(DoubleSupplier xSupplier, DoubleSupplier ySupplier) {
@@ -85,5 +92,9 @@ public class BasketAlignCommand extends CommandBase {
         this.ySupplier = ySupplier;
 
         return this;
+    }
+
+    public Command whenClose(double activationDistance, Command command) {
+        return alongWith(new WaitUntilCommand(() -> error < activationDistance).andThen(command));
     }
 }

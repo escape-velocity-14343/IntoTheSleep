@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.auton.SubmersibleSample;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.alliance;
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -12,13 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
-import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
-import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
-import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
+import org.firstinspires.ftc.teamcode.commands.group.AutoSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
@@ -52,8 +45,8 @@ public class LeftMovement extends Robot {
 
         cs.schedule(false, new SequentialCommandGroup(
                 // sub cycle 1
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
         ));
 
         cs.schedule(gtpc);

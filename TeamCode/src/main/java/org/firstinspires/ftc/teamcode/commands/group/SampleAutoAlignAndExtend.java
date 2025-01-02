@@ -30,6 +30,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
         this.pinpointSubsystem = pinpoint;
         this.extensionSubsystem = extensionSubsystem;
     }
+
     @Override
     public void initialize() {
         cam.setEnabled(true);

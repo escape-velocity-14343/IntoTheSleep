@@ -1,22 +1,19 @@
 package org.firstinspires.ftc.teamcode.opmode.auton.SubmersibleSample;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.alliance;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
-import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
+import org.firstinspires.ftc.teamcode.commands.group.AutoSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
@@ -36,6 +33,7 @@ public abstract class PI6Piece extends Robot {
         initialize();
 
         cam = new CameraSubsystem(hardwareMap, intake::getDSensorSupplier);
+        cam.waitForSetExposure(3000,5000);
 
         pinpoint.reset();
         wrist.setWrist(IntakeConstants.foldedPos);
@@ -47,6 +45,7 @@ public abstract class PI6Piece extends Robot {
         extension.reset();
         gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, 40, new Rotation2d()));
         pinpoint.setPosition(-65, 41);
+
 
 
         cs.schedule(false, new SequentialCommandGroup(
@@ -62,8 +61,13 @@ public abstract class PI6Piece extends Robot {
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
 
                 // sub cycle 1
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
+
 
                 // park
                 new SequentialCommandGroup(new GoToPointWithDefaultCommand(new Pose2d(-6, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20)

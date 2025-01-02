@@ -14,7 +14,7 @@ public class IntakeConstants {
     public static double scoringPosReversed = 0.75;
     public static double parkPos = 0.45;
     public static double bucketRetractPos = 0.05;
-    public static double specimenReadyPos = 0.93;
+    public static double specimenReadyPos = 1.1;
     public static double intakeReadyPos = 0.8;
 
     // wrist command constants
@@ -26,7 +26,7 @@ public class IntakeConstants {
     public static double closedPos = 0.75;
     public static double singleIntakePos = 0.7;
 
-    public static double clawOffset = -0.16;
+    public static double clawOffset = -0.22;
 
 
     // backtake
@@ -49,7 +49,7 @@ public class IntakeConstants {
 
     // global offset
     // 1 tick of skip = 0.05 position
-    public static double wristOffset = 0;
+    public static double wristOffset = -0.05;
 
     public static double visionSizeWeight = 1;
     public static double intakeSensorVoltageThres = 0.25;

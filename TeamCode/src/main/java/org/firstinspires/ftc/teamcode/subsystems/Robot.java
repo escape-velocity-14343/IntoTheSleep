@@ -40,7 +40,7 @@ public abstract class Robot extends LinearOpMode {
     public AtomicBoolean reverseClaw = new AtomicBoolean(false);
     public AtomicBoolean lowBucket = new AtomicBoolean(false);
 
-    List<LynxModule> hubs;
+    public List<LynxModule> hubs;
     public ExtensionSubsystem extension;
     public MecanumDriveSubsystem mecanum;
     public PivotSubsystem pivot;
