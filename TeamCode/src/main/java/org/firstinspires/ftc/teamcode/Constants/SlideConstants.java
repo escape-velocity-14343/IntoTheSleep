@@ -5,14 +5,14 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 
 public class SlideConstants {
-    public static double kP = 0.006;
+    public static double kP = 0.0045;
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
     public static double ticksPerInch = 31.6;
     public static double maxExtension = 29.5;
 
-    public static double bucketPos = 26.5;
+    public static double bucketPos = 28;
     public static double lowBucketPos = 11.5;
 
     public static double tiltInches = 15;
@@ -46,8 +46,11 @@ public class SlideConstants {
 
     static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 20.0;
+    public static double specimenHookPosition = 16.0;
 
     public static double millisPerInch = 5 * ticksPerInch;
-    public static double visionP = 1;
+    public static double visionP = 0.5;
+
+    public static double bucketPosGainScheduleMult = 1.5;
+    public static double bucketPosGainSchedulePos = 25;
 }

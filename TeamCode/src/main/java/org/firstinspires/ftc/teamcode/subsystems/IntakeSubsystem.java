@@ -25,8 +25,9 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(HardwareMap hardwareMap){
         intake = hardwareMap.crservo.get("intake");
         clawer = hardwareMap.servo.get("clawer");
-        front = hardwareMap.analogInput.get("clawSens1");
-        back = hardwareMap.analogInput.get("clawSens2");
+        back = hardwareMap.analogInput.get("clawSens1");
+        front = hardwareMap.analogInput.get("clawSens2");
+        clawer.setDirection(Servo.Direction.REVERSE);
     }
 
 
@@ -55,7 +56,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     @Override
     public void periodic(){
-        intake.setPower(-speed);
+        intake.setPower(speed);
         clawer.setPosition(clawPos + IntakeConstants.clawOffset);
     }
 

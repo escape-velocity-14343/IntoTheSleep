@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode.test;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,7 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 
 @Config
-@TeleOp(group="1")
+@TeleOp(group="Test")
 public class ExtensionPIDTest extends LinearOpMode {
     public PivotSubsystem pivot;
     public ExtensionSubsystem extension;
@@ -36,5 +37,6 @@ public class ExtensionPIDTest extends LinearOpMode {
             telemetry.addData("is there", extension.isClose(targetInches));
             telemetry.update();
         }
+        CommandScheduler.getInstance().reset();
     }
 }

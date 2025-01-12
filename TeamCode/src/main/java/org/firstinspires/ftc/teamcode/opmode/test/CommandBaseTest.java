@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
-@TeleOp(group="1")
+@TeleOp(group="Test")
 public class CommandBaseTest extends CommandOpMode {
 
     private PivotSubsystem pivotSubsystem;

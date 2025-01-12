@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.ScheduleCommand;
@@ -29,6 +30,7 @@ import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.BasketAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.DefaultDriveCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.DrivebasePowerCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
@@ -136,7 +138,7 @@ public class TeleOpps extends Robot {
         // -------- BUCKET --------
         // autoscore
         ElapsedTime bucketTimer = new ElapsedTime();
-        new Trigger(() -> gamepad1.touchpad).whileActiveOnce(new ScheduleCommand(
+        /*new Trigger(() -> gamepad1.touchpad).whileActiveOnce(new ScheduleCommand(
                         new BasketAlignCommand(mecanum, basketSensor, pinpoint)
                                 .withXySupplier(() -> gamepad1.touchpad_finger_1_y * 3, () -> gamepad1.touchpad_finger_1_x * 4)
                                 .whenClose(48.0, bucketPos())
@@ -147,7 +149,7 @@ public class TeleOpps extends Robot {
                                 )
                                 .whenFinished(() -> cs.schedule(new WaitCommand(250).andThen(new RetractCommand(wrist, pivot, extension))))
                 )
-        );
+        );*/
         // bucket pos
         new Trigger(() ->
                 // if we have a sample and right trigger is pressed when out of intake
@@ -217,7 +219,13 @@ public class TeleOpps extends Robot {
                         new PivotCommand(pivot, PivotConstants.topLimit)
                 ));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new ConditionalCommand(
-                new PivotCommand(pivot, PivotConstants.hangDegrees), new InstantCommand(), () -> getState() == FSMStates.HANG));
+                new ParallelCommandGroup(
+                        new DrivebasePowerCommand(mecanum, 0.0, 1.0, 0.0).withTimeout(1000),
+                        new WaitCommand(250).andThen(new PivotCommand(pivot, PivotConstants.hangDegrees))
+                ),
+                new InstantCommand(),
+                () -> getState() == FSMStates.HANG
+        ));
         new Trigger(() -> intake.getFrontV() > IntakeConstants.intakeSensorVoltageThres && getState() == FSMStates.INTAKE)
                 .whileActiveContinuous(new InstantCommand(() -> gamepad1.rumble(0.5, 0.5, 100)));
     }

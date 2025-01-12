@@ -1,6 +1,15 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <Robot type="FirstInspires-FTC">
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
+        <LynxModule name="Expansion Hub 2" port="2">
+            <goBILDA5202SeriesMotor name="slide0" port="0" />
+            <goBILDA5202SeriesMotor name="slide1" port="1" />
+            <goBILDA5202SeriesMotor name="tilt0" port="2" />
+            <goBILDA5202SeriesMotor name="tilt1" port="3" />
+            <AnalogInput name="basketSensorRight" port="0" />
+            <AnalogInput name="basketSensorLeft" port="1" />
+            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+        </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="frontLeft" port="0" />
             <goBILDA5202SeriesMotor name="backRight" port="1" />
@@ -20,13 +29,6 @@
             <DigitalDevice name="led4" port="3" />
             <LynxEmbeddedIMU name="imu" port="0" bus="0" />
             <goBILDAPinpoint name="pinpoint" port="1" bus="1" />
-        </LynxModule>
-        <LynxModule name="Expansion Hub 1" port="1">
-            <goBILDA5202SeriesMotor name="slide0" port="0" />
-            <goBILDA5202SeriesMotor name="slide1" port="1" />
-            <goBILDA5202SeriesMotor name="tilt0" port="2" />
-            <goBILDA5202SeriesMotor name="tilt1" port="3" />
-            <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
         </LynxModule>
     </LynxUsbDevice>
     <Webcam name="rizz" serialNumber="VendorProduct:vendor=0x1e45|product=0x8022|connection=" />

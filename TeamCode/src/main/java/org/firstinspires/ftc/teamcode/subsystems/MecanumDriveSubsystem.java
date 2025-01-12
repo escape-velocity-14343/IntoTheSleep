@@ -47,13 +47,20 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         double backLeftPower = (rotY - rotX + rx) / denominator;
         double frontRightPower = (rotY - rotX - rx) / denominator;
         double backRightPower = (rotY + rotX - rx) / denominator;
-        fl.setPower(frontLeftPower);
-        bl.setPower(backLeftPower);
-        fr.setPower(frontRightPower);
-        br.setPower(backRightPower);
+        if (!(Double.valueOf(frontLeftPower).isNaN() ||
+                Double.valueOf(backLeftPower).isNaN() ||
+                Double.valueOf(frontRightPower).isNaN() ||
+                Double.valueOf(backRightPower).isNaN())) {
 
-        FtcDashboard.getInstance().getTelemetry().addData("fl", frontLeftPower);
-        FtcDashboard.getInstance().getTelemetry().addData("br", backRightPower);
+
+            fl.setPower(frontLeftPower);
+            bl.setPower(backLeftPower);
+            fr.setPower(frontRightPower);
+            br.setPower(backRightPower);
+        }
+
+        //FtcDashboard.getInstance().getTelemetry().addData("fl", frontLeftPower);
+        //FtcDashboard.getInstance().getTelemetry().addData("br", backRightPower);
     }
     public void driveFieldCentric(double x, double y, double rx) {
         driveFieldCentric(x, y, rx, odo.getPose().getRotation().getDegrees());

@@ -5,12 +5,13 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 
+import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
+import org.firstinspires.ftc.teamcode.lib.DrivetrainSquIDController;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.subsystems.BasketSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
@@ -23,15 +24,14 @@ public class BasketAlignCommand extends CommandBase {
     public static double targetXDistance = 8;
     public static double targetYDistance = 8;
     public static double targetHeading = -3.1415 / 4.0;
-    public static double translatekP = 0.008;
+    public static double translationkP = DefaultGoToPointCommand.translationkP;//0.008;
     public static double headingkP = 0.02;
 
     private final MecanumDriveSubsystem mecanumDrive;
     private final BasketSensorSubsystem basketSensor;
     private final PinpointSubsystem pinpoint;
     private final SquIDController headingController;
-    private final SquIDController translationXController;
-    private final SquIDController translationYController;
+    private final DrivetrainSquIDController dtController;
     private final double threshold;
 
     private DoubleSupplier xSupplier;
@@ -45,8 +45,7 @@ public class BasketAlignCommand extends CommandBase {
         this.pinpoint = pinpoint;
         addRequirements(mecanumDrive, basketSensor);
         headingController = new SquIDController();
-        translationXController = new SquIDController();
-        translationYController = new SquIDController();
+        dtController = new DrivetrainSquIDController();
         this.threshold = threshold;
 
         xSupplier = () -> 0.0;
@@ -74,13 +73,18 @@ public class BasketAlignCommand extends CommandBase {
         double x = targetXDistance + pose.getX();
         double y = targetYDistance + pose.getY();
 
-        // todo: once tuned, move this to the constructor or something idk
         headingController.setPID(headingkP);
-        translationXController.setPID(translatekP);
-        translationYController.setPID(translatekP);
+        dtController.setPID(translationkP);
+
+        Pose2d p = dtController.calculate(
+                new Pose2d(x, y, new Rotation2d()),
+                new Pose2d(basketSensor.getSensorRight(), basketSensor.getSensorLeft(), new Rotation2d()),
+                pinpoint.getVelocity()
+        );
+        double dtFactor = Math.cos(targetHeading - pinpoint.getPose().getHeading());
         mecanumDrive.driveFieldCentric(
-                -translationXController.calculate(x, basketSensor.getSensorRight() * Math.cos(targetHeading - pinpoint.getPose().getHeading())),
-                translationYController.calculate(y, basketSensor.getSensorLeft() * Math.cos(targetHeading - pinpoint.getPose().getHeading())),
+                -p.getX() * dtFactor,
+                 p.getY() * dtFactor,
                 -headingController.calculate(targetHeading, pinpoint.getPose().getHeading())
         );
         error = Math.hypot(y - basketSensor.getSensorLeft(), x - basketSensor.getSensorRight());

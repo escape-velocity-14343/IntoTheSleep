@@ -5,10 +5,11 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp(group="1")
+@TeleOp(group="Test")
 @Config
 public class GTPointTest extends Robot {
     public static double x = -65;
@@ -31,11 +32,13 @@ public class GTPointTest extends Robot {
         //                new GoToPointCommand(mecanum, otos, new Pose2d(-54, 48, new Rotation2d(0))).alongWith(new WristCommand(wrist, IntakeConstants.groundPos)),
         //                new IntakePosCommand(extension, pivot, wrist)
         //        ));
-
-        cs.schedule(new GoToPointCommand(mecanum, pinpoint, new Pose2d(x, y, Rotation2d.fromDegrees(rot))));
+        DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(x, y, Rotation2d.fromDegrees(rot)));
+        cs.schedule(gtpc);
 
         while (!isStopRequested()){
             update();
+
+            gtpc.setTarget(new Pose2d(x, y, Rotation2d.fromDegrees(rot)));
 
             telemetry.addData("x", pinpoint.getPose().getX());
             telemetry.addData("y", pinpoint.getPose().getY());

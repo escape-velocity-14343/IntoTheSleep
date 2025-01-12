@@ -65,17 +65,18 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private Mat roiMask = new Mat();
 
     Point[] points = {
-            new Point(0,180),
-            new Point(0,225),
-            new Point(160,230),
-            new Point(320, 235),
-            new Point(320, 215),
-            new Point(232,218),
+            new Point(0,165),
+            new Point(0,215),
+            new Point(160,220),
+            new Point(320, 210),
+            new Point(320, 180),
+            new Point(232,190),
             new Point(190, 150),
             new Point(190,0),
             new Point(130, 0),
-            new Point(130, 150),
-            new Point(113, 213)
+            new Point(130, 160),
+            new Point(85, 170),
+            new Point(85, 190)
     };
 
 

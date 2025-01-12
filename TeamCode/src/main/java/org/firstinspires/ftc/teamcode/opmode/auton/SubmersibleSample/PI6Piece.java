@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
+import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
@@ -52,22 +53,21 @@ public abstract class PI6Piece extends Robot {
 
                 new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                         new BucketPosCommand(extension, pivot, wrist)
-                ).withTimeout(3000),
-                new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
-                new WaitCommand(500),
-                new IntakeSpinCommand(intake, 0),
+                ),//.withTimeout(3000),
+                new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
+                new WaitCommand(250),
+                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
-                new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
+                new Auton3Yellows(extension, pivot, wrist, intake, gtpc, cam, pinpoint),
 
                 // sub cycle 1
                 new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
                 new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
-                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
-                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
-                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
-                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
-
+                //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
+                //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
+                //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
+                //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
 
                 // park
                 new SequentialCommandGroup(new GoToPointWithDefaultCommand(new Pose2d(-6, 40, Rotation2d.fromDegrees(90)), gtpc, 20, 20)
@@ -75,6 +75,7 @@ public abstract class PI6Piece extends Robot {
 
                 )
                         .alongWith(
+                                new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
                         new RetractCommand(wrist, pivot, extension)
                 ),
                 new PivotCommand(pivot, PivotConstants.parkDegrees)

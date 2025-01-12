@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp(name = "reset to 4+0 start pos")
+@TeleOp(group="Fix", name = "reset to sample auton sub pos")
 
 public class ResetEverything extends Robot {
     @Override
