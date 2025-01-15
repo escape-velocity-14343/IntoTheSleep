@@ -42,8 +42,8 @@ public class AutoSubCycle extends SequentialCommandGroup {
                 (
                         new InstantCommand(() -> cam.setEnabled(true)),
                         new SequentialCommandGroup(
-                        new GoToPointWithDefaultCommand(new Pose2d(-15, 30, Rotation2d.fromDegrees(-90)), gtpc, 20, 20)
-                                .interruptOn(() -> pinpoint.getPose().getX() > -20),
+                        new GoToPointWithDefaultCommand(new Pose2d(-15, 47, Rotation2d.fromDegrees(-90)), gtpc, 5, 20)
+                                .interruptOn(() -> pinpoint.getPose().getX() > -17),
                         new ConditionalCommand(
                                 new GoToPointWithDefaultCommand(new Pose2d(-15, 22, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).withTimeout(500),
                                 new GoToPointWithDefaultCommand(new Pose2d(-9, 24, Rotation2d.fromDegrees(-90)), gtpc, 2, 4),
@@ -60,11 +60,11 @@ public class AutoSubCycle extends SequentialCommandGroup {
                 new GoToPointWithDefaultCommand(new Pose2d(-9, 24, Rotation2d.fromDegrees(-90)), gtpc, 3, 4),
                 new AutoSubIntake(extension, wrist, cam, gtpc, intake, pinpoint, pivot),
 
-                new ConditionalCommand(
+                /*new ConditionalCommand(
                         new AutoSubIntake(extension, wrist, cam, gtpc, intake, pinpoint, pivot),
                         new InstantCommand(),
                         () -> !(cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED))
-                ),
+                ),*/
 
                 new GoToPointWithDefaultCommand(new Pose2d(-48, 48, Rotation2d.fromDegrees(-45)), gtpc, 8, 30).interruptOn(()->pinpoint.getPose().getX() < -25),
                 new BucketPosCommand(extension, pivot, wrist).alongWith(

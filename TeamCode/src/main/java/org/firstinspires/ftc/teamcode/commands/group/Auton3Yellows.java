@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands.group;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -132,9 +133,11 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos - 0.02, 1),
+                new InstantCommand(() -> cam.setOnlyYellow(true)),
                 new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension, intake).withTimeout(1500).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
-                //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
+                new InstantCommand(() -> cam.setOnlyYellow(false)),
+                        //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
                 ),

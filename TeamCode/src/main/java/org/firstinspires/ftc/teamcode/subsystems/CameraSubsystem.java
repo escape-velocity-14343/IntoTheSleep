@@ -48,7 +48,7 @@ public class CameraSubsystem extends SubsystemBase {
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 20;
+    public static int exposureMillis = 65;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 
@@ -161,6 +161,10 @@ public class CameraSubsystem extends SubsystemBase {
     }
     public boolean waitForSetExposure(long timeoutMs, int maxAttempts) {
         return waitForSetExposure(timeoutMs, maxAttempts, exposureMillis);
+    }
+
+    public void setOnlyYellow(boolean onlyYellow) {
+        colorLocator.onlyFirstColor = onlyYellow;
     }
 
     public boolean waitForSetExposure(long timeoutMs, int maxAttempts, int exposure) {

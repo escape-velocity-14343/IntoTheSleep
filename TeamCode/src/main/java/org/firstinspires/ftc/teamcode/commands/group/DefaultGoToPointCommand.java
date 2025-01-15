@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.lib.DrivetrainSquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
@@ -39,6 +40,8 @@ public class DefaultGoToPointCommand extends CommandBase {
 
     public static boolean useVelCompensated = true;
     public static boolean usePID = false;
+
+    private ElapsedTime timer = new ElapsedTime();
 
     Pose2d target;
     Pose2d currentPose;
@@ -151,11 +154,12 @@ public class DefaultGoToPointCommand extends CommandBase {
         return shouldLog &&
                 (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
                 (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol)) ||
-                pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity;
+                (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity && timer.seconds()>0.5);
     }
 
     public void setTarget(Pose2d target){
         this.target = target;
+        timer.reset();
     }
 
     public double getTargetHeading() {

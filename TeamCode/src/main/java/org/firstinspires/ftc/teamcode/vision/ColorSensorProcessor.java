@@ -100,6 +100,7 @@ public class ColorSensorProcessor implements VisionProcessor {
 
 
 
+
         /*Log.i("camera color processor", "HSV: " + color.val[0] + ", " + color.val[1] + ", " + color.val[2]);
         if (color.val[1]>saturationLow && color.val[2]>valueLow) {
             double hue = color.val[0];
@@ -145,6 +146,7 @@ public class ColorSensorProcessor implements VisionProcessor {
 
         }
         canvas.drawCircle(Math.round((rect.x+rect.width/2.0)*scaleBmpPxToCanvasPx),Math.round((rect.y+rect.height/2.0)*scaleBmpPxToCanvasPx),scaleCanvasDensity*10, circlePaint);
+
     }
 
     private android.graphics.Rect toGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {

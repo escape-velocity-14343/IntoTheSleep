@@ -27,6 +27,7 @@ public class AutoAlignTest extends Robot {
         pinpoint.reset();
         wrist.setWrist(IntakeConstants.groundPos);
         intake.setClawer(IntakeConstants.singleIntakePos);
+        cam.setOnlyYellow(true);
         waitForStart();
         intake.setIntakeSpeed(1);
 
@@ -36,6 +37,7 @@ public class AutoAlignTest extends Robot {
         DefaultGoToPointCommand gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(0, 0, new Rotation2d()));
 
         pinpoint.setPosition(0, 0);
+
 
         cs.schedule(new SequentialCommandGroup(
                 new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension, intake)

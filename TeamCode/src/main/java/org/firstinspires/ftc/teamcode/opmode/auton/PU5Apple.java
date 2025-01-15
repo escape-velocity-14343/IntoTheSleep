@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.ExtendCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
@@ -42,30 +43,29 @@ public class PU5Apple extends Robot {
 
         wrist.setWrist(IntakeConstants.foldedPos);
         intake.setClawer(IntakeConstants.closedPos);
-        pivot.setTarget(PivotConstants.specimenTopBarAngle);
+        //pivot.setTarget(PivotConstants.specimenTopBarAngle);
 
         sleep(1000);
         pinpoint.setPosition(-65, -8);
-        while (opModeInInit() && !isStopRequested() && !isStarted()) {
+        /*while (opModeInInit() && !isStopRequested() && !isStarted()) {
             pivot.periodic();
             for (LynxModule hub : hubs) {
                 hub.clearBulkCache();
             }
-        }
+        }*/
 
         waitForStart();
 
 
-        gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, pinpoint.getPose());
+        gtpc = new DefaultGoToPointCommand(mecanum, pinpoint, new Pose2d(-65, -8, new Rotation2d()));
 
 
 
         cs.schedule(new SequentialCommandGroup(
-
                 // score initial
                 new SpecimenHookCommand(pivot, extension, wrist, intake),//.withTimeout(1000),
                 new GoToPointWithDefaultCommand(new Pose2d(-30, -12, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33.5),//.withTimeout(1500),
-
+                new WristCommand(wrist, IntakeConstants.foldedPos).alongWith(new IntakeControlCommand(intake, IntakeConstants.openPos,0)),
                 // push first
                 new GoToPointWithDefaultCommand(new Pose2d(-50, -48, new Rotation2d()), gtpc, 5, 10).alongWith(
                         new RetractCommand(wrist, pivot, extension).andThen(
