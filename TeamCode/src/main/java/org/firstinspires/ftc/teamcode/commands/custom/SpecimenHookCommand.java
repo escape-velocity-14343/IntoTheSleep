@@ -15,21 +15,17 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 public class SpecimenHookCommand extends SequentialCommandGroup {
     public SpecimenHookCommand(PivotSubsystem pivot, ExtensionSubsystem extend, WristSubsystem wrist, IntakeSubsystem intake) {
         addCommands(
-                new IntakeControlCommand(intake, 1, 0.5),
-                new WristCommand(wrist, IntakeConstants.scoringPos).alongWith(
-                        new ExtendCommand(extend, SlideConstants.specimenHighRaisePosition).withTimeout(400)
-                ),
-                new WaitCommand(250),
+
+                //new WristCommand(wrist, IntakeConstants.scoringPos).alongWith(
+                //        new ExtendCommand(extend, SlideConstants.specimenHighRaisePosition).withTimeout(400)
+                //),
+                //new WaitCommand(250),
                 new ParallelCommandGroup(
-                    new PivotCommand(pivot, PivotConstants.specimenTopBarAngle),
-                    new ExtendCommand(extend, SlideConstants.specimenHookPosition)
-                ).withTimeout(300),
-                new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
-                new ParallelCommandGroup(
-                        new PivotCommand(pivot, PivotConstants.specimenTopBarAngle),
-                        new ExtendCommand(extend, SlideConstants.specimenHookPosition)
-                ).withTimeout(300),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0)
+                    new WristCommand(wrist, IntakeConstants.specimenScoringPos),
+                    new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
+                    new PivotCommand(pivot, PivotConstants.specimenTopBarAngle).andThen(
+                    new ExtendCommand(extend, SlideConstants.specimenHookPosition))
+                )
         );
     }
 }

@@ -64,18 +64,21 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     private Mat temp = new Mat();
     private Mat roiMask = new Mat();
 
+    public boolean onlyFirstColor = false;
+
     Point[] points = {
-            new Point(0,180),
-            new Point(0,225),
-            new Point(160,230),
-            new Point(320, 235),
-            new Point(320, 215),
-            new Point(232,218),
+            new Point(0,165),
+            new Point(0,215),
+            new Point(160,220),
+            new Point(320, 210),
+            new Point(320, 180),
+            new Point(200,190),
             new Point(190, 150),
             new Point(190,0),
             new Point(130, 0),
-            new Point(130, 150),
-            new Point(113, 213)
+            new Point(130, 160),
+            new Point(100, 205),
+            new Point(80, 205)
     };
 
 
@@ -198,7 +201,7 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
         else {
             mask = new Mat();
             boolean first = true;
-            for (ColorRange color : colors) {
+            for (ColorRange color : onlyFirstColor ? colors.subList(0, 1) : colors) {
                 if (first) {
                     Core.inRange(roiMat_userColorSpace, color.min, color.max, mask);
                     first = false;

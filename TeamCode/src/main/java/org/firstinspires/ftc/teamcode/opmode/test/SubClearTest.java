@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
 
 @Config
-@TeleOp(group="1")
+@TeleOp(group="Test")
 public class SubClearTest extends LinearOpMode {
 
     public static double position = 0;
@@ -21,6 +22,7 @@ public class SubClearTest extends LinearOpMode {
         while (opModeIsActive()) {
             subClear.setPosition(position);
         }
+        CommandScheduler.getInstance().reset();
     }
 
 }

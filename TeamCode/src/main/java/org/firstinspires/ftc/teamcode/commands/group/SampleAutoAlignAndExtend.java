@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 import org.firstinspires.ftc.teamcode.vision.ColorSensorProcessor;
 
@@ -21,15 +22,20 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     DefaultGoToPointCommand gtpc;
     private PinpointSubsystem pinpointSubsystem;
     private ExtensionSubsystem extensionSubsystem;
+    private IntakeSubsystem intake;
     private ElapsedTime time = new ElapsedTime();
+    private ElapsedTime wrongColorTime = new ElapsedTime();
+    private boolean isWrongColor = false;
     private boolean seen = false;
-    public SampleAutoAlignAndExtend(CameraSubsystem camera, DefaultGoToPointCommand gtpc, PinpointSubsystem pinpoint, ExtensionSubsystem extensionSubsystem) {
+    public SampleAutoAlignAndExtend(CameraSubsystem camera, DefaultGoToPointCommand gtpc, PinpointSubsystem pinpoint, ExtensionSubsystem extensionSubsystem, IntakeSubsystem intake) {
         addRequirements(camera);
         cam = camera;
         this.gtpc = gtpc;
         this.pinpointSubsystem = pinpoint;
         this.extensionSubsystem = extensionSubsystem;
+        this.intake = intake;
     }
+
     @Override
     public void initialize() {
         cam.setEnabled(true);
@@ -41,7 +47,19 @@ public class SampleAutoAlignAndExtend extends CommandBase {
         Log.i("autoalign", "yellow is: " + cam.isYellow());
         Log.i("autoalign", "timer: " + time.milliseconds());
         gtpc.setTarget(new Pose2d(gtpc.getTargetX(), gtpc.getTargetY(), Rotation2d.fromDegrees(pinpointSubsystem.getPose().getRotation().getDegrees() + cam.getPixelPos() * IntakeConstants.autoAlignP)));
-        extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,0.5));
+        extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,0.7));
+        if (cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.RED ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
+            intake.setIntakeSpeed(-1);
+            isWrongColor = true;
+            wrongColorTime.reset();
+        } else if (isWrongColor) {
+            if (wrongColorTime.seconds() > 0.75) {
+                isWrongColor = false;
+            }
+            intake.setIntakeSpeed(-1);
+        } else {
+            intake.setIntakeSpeed(1);
+        }
     }
     @Override
     public boolean isFinished() {

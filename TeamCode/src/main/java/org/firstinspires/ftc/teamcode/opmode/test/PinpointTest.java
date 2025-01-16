@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 
-@TeleOp(group="1")
+@TeleOp(group="Test")
 public class PinpointTest extends Robot {
 
 

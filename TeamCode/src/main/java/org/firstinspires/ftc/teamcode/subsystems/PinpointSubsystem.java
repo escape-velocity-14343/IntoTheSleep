@@ -85,6 +85,13 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
                 Rotation2d.fromDegrees(getSDKPose().getHeading(AngleUnit.DEGREES)));
     }
 
+    public Pose2d getVelocity() {
+        Pose2D velocity = pinpoint.getVelocity();
+        return new Pose2d(velocity.getX(DistanceUnit.INCH),
+                velocity.getY(DistanceUnit.INCH),
+                Rotation2d.fromDegrees(velocity.getHeading(AngleUnit.DEGREES)));
+    }
+
     public void reset() {
         pinpoint.resetPosAndIMU();
         lastGoodPose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);

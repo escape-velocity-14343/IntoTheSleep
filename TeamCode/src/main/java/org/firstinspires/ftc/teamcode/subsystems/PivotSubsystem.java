@@ -19,7 +19,6 @@ public class PivotSubsystem extends SubsystemBase {
     private double currentPos = 0;
     private double target = 0;
     private boolean manualControl = false;
-    private PIDController pid = new PIDController(SlideConstants.kP, SlideConstants.kI, SlideConstants.kD);
     private SquIDController squid = new SquIDController();
     AnalogEncoder encoder;
     private CachingVoltageSensor voltage;

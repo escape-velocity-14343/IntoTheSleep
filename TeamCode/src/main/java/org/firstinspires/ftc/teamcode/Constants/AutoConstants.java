@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 @Config
 public class AutoConstants {
 
-    public static Pose2d scorePos = new Pose2d(-57, 55, Rotation2d.fromDegrees(-45));
+    public static Pose2d scorePos = new Pose2d(-58, 56, Rotation2d.fromDegrees(-45));
 
     public enum Alliance {
         RED,

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 @Config
-@TeleOp(group="1")
+@TeleOp(group="Test")
 public class FullIntakeTest extends LinearOpMode {
     public WristSubsystem wrist;
     public IntakeSubsystem intakeSubsystem;
@@ -33,5 +34,6 @@ public class FullIntakeTest extends LinearOpMode {
             intakeSubsystem.setClawer(claw);
 
         }
+        CommandScheduler.getInstance().reset();
     }
 }

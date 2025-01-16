@@ -40,7 +40,7 @@ public abstract class Robot extends LinearOpMode {
     public AtomicBoolean reverseClaw = new AtomicBoolean(false);
     public AtomicBoolean lowBucket = new AtomicBoolean(false);
 
-    List<LynxModule> hubs;
+    public List<LynxModule> hubs;
     public ExtensionSubsystem extension;
     public MecanumDriveSubsystem mecanum;
     public PivotSubsystem pivot;
@@ -50,6 +50,7 @@ public abstract class Robot extends LinearOpMode {
     //public OTOSSubsystem otos;
     public PinpointSubsystem pinpoint;
     public CachingVoltageSensor voltage;
+    public BasketSensorSubsystem basketSensor;
     public SubClearSubsystem subClear;
     public IMU imu;
     //public CameraSubsystem cam;
@@ -63,6 +64,7 @@ public abstract class Robot extends LinearOpMode {
         }
         //otos = new OTOSSubsystem(hardwareMap);
         voltage = new CachingVoltageSensor(hardwareMap);
+        basketSensor = new BasketSensorSubsystem(hardwareMap);
 
         pinpoint = new PinpointSubsystem(hardwareMap);
 

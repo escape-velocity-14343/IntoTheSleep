@@ -13,7 +13,7 @@ public class SpecimenRaiseCommand extends ParallelCommandGroup {
     public SpecimenRaiseCommand(PivotSubsystem pivot, ExtensionSubsystem extension, WristSubsystem wrist) {
         addCommands(
                 new WristCommand(wrist, IntakeConstants.specimenReadyPos),
-                new PivotCommand(pivot, PivotConstants.specimenTopBarAngle),
+                new PivotCommand(pivot, PivotConstants.specimenIntakeAngle),
                 new ExtendCommand(extension, SlideConstants.specimenRaisePosition)
         );
     }

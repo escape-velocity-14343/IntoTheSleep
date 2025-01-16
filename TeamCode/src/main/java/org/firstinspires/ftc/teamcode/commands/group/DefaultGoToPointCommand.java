@@ -4,15 +4,15 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.CommandBase;
-import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.lib.Localizer;
+import org.firstinspires.ftc.teamcode.lib.DrivetrainSquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
+import org.firstinspires.ftc.teamcode.opmode.auton.PU5Apple;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.OTOSSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 
 import java.util.function.DoubleSupplier;
@@ -23,7 +23,9 @@ public class DefaultGoToPointCommand extends CommandBase {
     public PIDController yPID = new PIDController(0, 0,0);
     public PIDController headingPID = new PIDController(0,0,0);
 
-    public static double translationkP = 0.11;
+    public DrivetrainSquIDController drivetrainSquIDController = new DrivetrainSquIDController();
+
+    public static double translationkP = 0.025;
     public static double translationkI = 0;
     public static double translationkD = 0;
     public static double headingkP = 0.002;
@@ -34,7 +36,12 @@ public class DefaultGoToPointCommand extends CommandBase {
     public double hTol = 4;
 
     MecanumDriveSubsystem drive;
-    PinpointSubsystem otos;
+    PinpointSubsystem pinpoint;
+
+    public static boolean useVelCompensated = true;
+    public static boolean usePID = false;
+
+    private ElapsedTime timer = new ElapsedTime();
 
     Pose2d target;
     Pose2d currentPose;
@@ -54,7 +61,7 @@ public class DefaultGoToPointCommand extends CommandBase {
 
     public DefaultGoToPointCommand(MecanumDriveSubsystem driveSubsystem, PinpointSubsystem otosSubsystem, Pose2d targetPose) {
         drive = driveSubsystem;
-        otos = otosSubsystem;
+        pinpoint = otosSubsystem;
         target = targetPose;
 
 
@@ -67,7 +74,7 @@ public class DefaultGoToPointCommand extends CommandBase {
         yPID.setTolerance(tol);
         headingPID.setTolerance(hTol);
 
-        currentPose = otos.getPose();
+        currentPose = pinpoint.getPose();
         if (currentPose == null) {
             Log.i("execute", "currentPose was null (why?????)");
         }
@@ -75,13 +82,14 @@ public class DefaultGoToPointCommand extends CommandBase {
         xPID.setPID(translationkP,translationkI,translationkD);
         yPID.setPID(translationkP,translationkI,translationkD);
         headingPID.setPID(headingkP,headingkI,headingkD);
+        drivetrainSquIDController.setPID(translationkP);
 
         rotSpeedSupplier = () -> Util.signedSqrt(headingPID.calculate(currentPose.getRotation().getDegrees(), target.getRotation().getDegrees()));
     }
 
     @Override
     public void execute() {
-        currentPose = otos.getPose();
+        currentPose = pinpoint.getPose();
         if (currentPose == null) {
             Log.w("execute", "currentPose was null (why?????)");
         } else {
@@ -95,12 +103,25 @@ public class DefaultGoToPointCommand extends CommandBase {
         double angle = Math.atan2(yDist,xDist);
         double magnitude = Math.pow(Math.hypot(xDist,yDist),0.5);
         Log.v("GTPC", "Magnitude: " + magnitude);
-        magnitude = magnitude*translationkP;
+        magnitude = magnitude*0.11;
+        if (usePID) {
+            xPID.setPID(translationkP, translationkI, translationkD);
+            magnitude = xPID.calculate(0,Math.hypot(xDist, yDist));
+        }
         Log.v("GTPC", "Output: " + magnitude);
         double xMove = Math.cos(angle)*magnitude;
         double yMove = Math.sin(angle)*magnitude;
         Log.v("GTPC", "target: (" + getTargetX() + ", " + getTargetY() + ")");
         Log.v("GTPC", "attempted movement: (" + xMove + ", " + yMove + ")");
+        drivetrainSquIDController.setPID(translationkP);
+
+        if (useVelCompensated) {
+            Pose2d xyMove = drivetrainSquIDController.calculate(target, currentPose, pinpoint.getVelocity());
+            xMove = xyMove.getX();
+            yMove = xyMove.getY();
+        }
+
+
 
         drive.driveFieldCentric(-xMove, -yMove*1.2, -rotSpeedSupplier.getAsDouble());
     }
@@ -130,11 +151,15 @@ public class DefaultGoToPointCommand extends CommandBase {
             return false;
         }
 
-        return shouldLog && (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) && (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol));
+        return shouldLog &&
+                (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
+                (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol)) ||
+                (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity && timer.seconds()>0.5);
     }
 
     public void setTarget(Pose2d target){
         this.target = target;
+        timer.reset();
     }
 
     public double getTargetHeading() {

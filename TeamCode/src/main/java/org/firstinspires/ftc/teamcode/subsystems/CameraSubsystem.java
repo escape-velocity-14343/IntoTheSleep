@@ -7,6 +7,7 @@ import android.util.Size;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.SortOrder;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.CameraName;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -24,6 +25,7 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BooleanSupplier;
 
@@ -46,7 +48,7 @@ public class CameraSubsystem extends SubsystemBase {
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 40;
+    public static int exposureMillis = 65;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 
@@ -104,14 +106,16 @@ public class CameraSubsystem extends SubsystemBase {
 
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
+            ColorBlobLocatorProcessor.Util.sortByArea(SortOrder.DESCENDING, blobs);
 
             if (!blobs.isEmpty()) {
-                for (int i = 0; i < Math.min(blobs.size(), 3); i++) {
+                /*for (int i = 0; i < Math.min(blobs.size(), 3); i++) {
                     if (Math.abs(160 - blobs.get(i).getBoxFit().center.x) < Math.abs(dist)) {
                         dist = (int) (160 - blobs.get(i).getBoxFit().center.x);
                     }
                 }
-                pixelPos = dist;
+                pixelPos = dist;*/
+                pixelPos = (int) (160 - blobs.get(0).getBoxFit().center.x);
             }
         }
         if (portal.getProcessorEnabled(colorSensor)) {
@@ -142,7 +146,7 @@ public class CameraSubsystem extends SubsystemBase {
     /**
      * @return whether the set was successful or not
      */
-    public boolean setExposure() {
+    public boolean setExposure(int exposure) {
         if (portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
             return false;
         }
@@ -150,16 +154,26 @@ public class CameraSubsystem extends SubsystemBase {
         ExposureControl control = portal.getCameraControl(ExposureControl.class);
         control.setMode(ExposureControl.Mode.Manual);
         Log.i("camera", "exposure: " + control.getExposure(TimeUnit.MILLISECONDS));
-        return control.setExposure(exposureMillis, TimeUnit.MILLISECONDS);
+        return control.setExposure(exposure, TimeUnit.MILLISECONDS);
+    }
+    public boolean setExposure() {
+        return setExposure(exposureMillis);
+    }
+    public boolean waitForSetExposure(long timeoutMs, int maxAttempts) {
+        return waitForSetExposure(timeoutMs, maxAttempts, exposureMillis);
     }
 
-    public boolean waitForSetExposure(long timeoutMs, int maxAttempts) {
+    public void setOnlyYellow(boolean onlyYellow) {
+        colorLocator.onlyFirstColor = onlyYellow;
+    }
+
+    public boolean waitForSetExposure(long timeoutMs, int maxAttempts, int exposure) {
         long startMs = System.currentTimeMillis();
         int attempts = 0;
         long msAfterStart = 0;
         while (msAfterStart < timeoutMs && attempts++ < maxAttempts) {
             Log.i("camera", String.format("Attempting to set camera exposure, attempt %d, %d ms after start", attempts, msAfterStart));
-            if (setExposure()) {
+            if (setExposure(exposure)) {
                 Log.i("camera", "Set exposure succeeded");
                 return true;
             }
@@ -168,5 +182,8 @@ public class CameraSubsystem extends SubsystemBase {
 
         Log.e("camera", "Set exposure failed");
         return false;
+    }
+    public void saveFrame(String name) {
+        portal.saveNextFrameRaw(name);
     }
 }

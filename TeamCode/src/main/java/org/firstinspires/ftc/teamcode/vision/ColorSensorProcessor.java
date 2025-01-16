@@ -23,15 +23,15 @@ import java.util.function.BooleanSupplier;
 
 @Config
 public class ColorSensorProcessor implements VisionProcessor {
-    Scalar yellowLow = new Scalar(13,60,100);
+    Scalar yellowLow = new Scalar(13,60,60);
     Scalar yellowHigh = new Scalar(50,255,255);
-    public static double saturationLow = 150;
-    public static double valueLow = 50;
+    public static double saturationLow = 100;
+    public static double valueLow = 100;
     public static double saturationLowBlue = 120;
-    public static double valueLowBlue = 50;
+    public static double valueLowBlue = 130;
     @Deprecated
     public static double redLower = 13;
-    public static double colorThreshold = 5;
+    public static double colorThreshold = 100;
     Scalar color = new Scalar(0,0,0);
     Rect rect = new Rect();
     Mat subMat = new Mat();
@@ -85,11 +85,11 @@ public class ColorSensorProcessor implements VisionProcessor {
         blue = Core.mean(blueMat).val[0];
 
         Log.v("camera color processor", "RYB %: " + red + ", " + yellow + ", " + blue);
-        if (red > colorThreshold || (hasSample.getAsBoolean() && red > blue && red > yellow) ) {
+        if ((red > colorThreshold || hasSample.getAsBoolean()) && red > blue && red > yellow) {
             detection = ColorType.RED;
-        } else if (blue > colorThreshold || (hasSample.getAsBoolean() && blue > red && blue > yellow)) {
+        } else if ((blue > colorThreshold || hasSample.getAsBoolean()) && blue > red && blue > yellow) {
             detection = ColorType.BLUE;
-        } else if (yellow > colorThreshold || (hasSample.getAsBoolean() && yellow > blue && yellow > red)) {
+        } else if ((yellow > colorThreshold || hasSample.getAsBoolean()) && yellow > blue && yellow > red) {
             detection = YELLOW;
         } else {
 
@@ -97,6 +97,7 @@ public class ColorSensorProcessor implements VisionProcessor {
         }
 
         color = Core.mean(subMat);
+
 
 
 
@@ -145,6 +146,7 @@ public class ColorSensorProcessor implements VisionProcessor {
 
         }
         canvas.drawCircle(Math.round((rect.x+rect.width/2.0)*scaleBmpPxToCanvasPx),Math.round((rect.y+rect.height/2.0)*scaleBmpPxToCanvasPx),scaleCanvasDensity*10, circlePaint);
+
     }
 
     private android.graphics.Rect toGraphicsRect(Rect rect, float scaleBmpPxToCanvasPx) {

@@ -40,7 +40,7 @@ public class GoToPointWithDefaultCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        gtpc.setTolerances(2, 2);
+        gtpc.setTolerances(3, 4);
         return gtpc.isDone();
     }
 }

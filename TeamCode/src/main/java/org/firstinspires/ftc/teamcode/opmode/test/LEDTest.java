@@ -1,11 +1,14 @@
 package org.firstinspires.ftc.teamcode.opmode.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.subsystems.LEDSubsystem;
 @TeleOp
+
+@Disabled
 public class LEDTest extends LinearOpMode {
     LEDSubsystem ledSubsystem;
 

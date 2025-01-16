@@ -69,18 +69,20 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void setPower(double power) {
 
         if (speedToggle){
-            power = 0.4; //was 0.5
+            power = 0.8; //was 0.5
         }
         if (superSpeedToggle) {
-            power = 0.25;
+            power = 0.5;
         }
         if (manualControl&&getCurrentInches()>SlideConstants.submersibleIntakeMaxExtension&&power>0) {
             motor0.setPower(0);
             motor1.setPower(0);
+            Log.v("Slide Powers",  "" + 0);
         }
         else {
             motor0.setPower(power * SlideConstants.direction);
             motor1.setPower(-power * SlideConstants.direction);
+            Log.v("Slide Powers", "" + power);
         }
         if (getCurrentPosition() < 10 && motor0.isOverCurrent() && motor1.isOverCurrent() && power < 0) {
             // resetOffset = getCurrentPosition();
@@ -116,13 +118,14 @@ public class ExtensionSubsystem extends SubsystemBase {
         // extensionPowerMul only applies to the squid output because the feedforward should stay constant
         double power =
                 + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
+                        * (getCurrentInches() > SlideConstants.bucketPosGainSchedulePos ? SlideConstants.bucketPosGainScheduleMult : 1)
                 + SlideConstants.FEEDFORWARD_STATIC
                 + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
 
         power *= voltage.getVoltageNormalized();
 
-        if (power < -0.5 && pivotSubsystem.getCurrentPosition() > PivotConstants.specimenTopBarAngle + 5) {
-            power = -0.5;
+        if (power < -0.7 && pivotSubsystem.getCurrentPosition() > PivotConstants.specimenTopBarAngle + 5) {
+            power = -0.7;
         }
         else if (power < 0) {
             power *= 0.9;

@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
-import org.firstinspires.ftc.teamcode.commands.group.AutonSubCycle;
+import org.firstinspires.ftc.teamcode.commands.group.AutoSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.GoToPointWithDefaultCommand;
@@ -62,8 +62,8 @@ public class LeftPI6Piece extends Robot {
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc),
 
                 // sub cycle 1
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
-                new AutonSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, subIntakePos),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, subIntakePos)
         ));
 
         cs.schedule(gtpc);
