@@ -28,7 +28,6 @@ public class IntakeConstants {
 
     public static double clawOffset = -0.175;
 
-
     // backtake
     public static double backPos = 0.275;
     public static double backSinglePos = 0.17;
