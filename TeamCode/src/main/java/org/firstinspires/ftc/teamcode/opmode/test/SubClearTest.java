@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
 public class SubClearTest extends LinearOpMode {
 
     public static double position = 0;
+    public static double position2 = 0;
 
     @Override
     public void runOpMode() {
@@ -20,7 +21,7 @@ public class SubClearTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            subClear.setPosition(position);
+            subClear.dualSetPosition(position, position2);
         }
         CommandScheduler.getInstance().reset();
     }

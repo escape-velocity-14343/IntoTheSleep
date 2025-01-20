@@ -35,10 +35,11 @@ public class IntakeConstants {
     public static double backClosedPos = 0.12;
 
     // sub clear constants
-    public static double subClearPos = 0.4;
+    public static double subClearPos = 0.6;
     public static double subClearRetractPos = 0.98;
+    public static double subClear2Pos = 0.65;
+    public static double subClear2RetractPos = 0.24;
     public static double subClearMillis = 400;
-
     // auto constants
     public static double autoOuttakeSpeed = -0.15;
     public static double autoIntakeSpeed = 1;

@@ -9,6 +9,7 @@
             <AnalogInput name="basketSensorRight" port="0" />
             <AnalogInput name="basketSensorLeft" port="1" />
             <LynxEmbeddedIMU name="imu 1" port="0" bus="0" />
+            <Servo name="stick2" port="0" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5202SeriesMotor name="frontLeft" port="0" />

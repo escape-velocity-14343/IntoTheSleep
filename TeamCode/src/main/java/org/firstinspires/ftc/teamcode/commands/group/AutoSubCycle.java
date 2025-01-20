@@ -52,7 +52,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
                                 new SubPosReadyCommand(extension, pivot, wrist, intake, 5))),
 
                 new ConditionalCommand(
-                        new WaitCommand(300).alongWith(new SubClearCommand(subClear).andThen(new SubClearCommand(subClear)),
+                        new WaitCommand(300).alongWith(new SubClearCommand(subClear).withTimeout(10),
                                 new GoToPointWithDefaultCommand(new Pose2d(-15, 19, Rotation2d.fromDegrees(-90)), gtpc, 100, 1000).withTimeout(10)),
                         new InstantCommand(),
                         () -> clearSub),

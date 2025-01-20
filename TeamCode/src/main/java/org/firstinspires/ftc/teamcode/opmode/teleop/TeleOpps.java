@@ -194,7 +194,7 @@ public class TeleOpps extends Robot {
 
         // driver intake logic
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(subPos())
+                .whenPressed(new ConditionalCommand(new RetractCommand(wrist, pivot, extension), new InstantCommand(), () -> pivot.getCurrentPosition() > 10.0).andThen(subPos()))
                 .whenReleased(new SequentialCommandGroup(
                         new InstantCommand(() -> {
                             setState(FSMStates.FOLD);
@@ -235,7 +235,7 @@ public class TeleOpps extends Robot {
         // slide reset
         operatorPad.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(new InstantCommand(extension::reset));
         // sub clear
-        new Trigger(() -> gamepad2.options).whenActive(new SubClearCommand(subClear));
+        new Trigger(() -> gamepad2.options).whileActiveOnce(new SubClearCommand(subClear).interruptOn(() -> !gamepad2.options));
 
         // ---------- PIVOT -----------
         // pivot manual control
