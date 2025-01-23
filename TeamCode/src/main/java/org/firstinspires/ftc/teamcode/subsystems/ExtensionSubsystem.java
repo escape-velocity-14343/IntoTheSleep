@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -24,6 +25,7 @@ public class ExtensionSubsystem extends SubsystemBase {
     private final DcMotorEx motor1;
     private Supplier<Double> angleSupplier;
     private final CachingVoltageSensor voltage;
+    private InterpLUT lookupTable;
     private int currentPos = 0;
     private final SquIDController squid = new SquIDController();
     private double targetInches = 0;
@@ -57,6 +59,10 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
 
         squid.setPID(SlideConstants.kP);
+        lookupTable = new InterpLUT();
+        lookupTable.add(0, SlideConstants.FEEDFORWARD_bottom);
+        lookupTable.add(SlideConstants.bucketPos, SlideConstants.FEEDFORWARD_top);
+        lookupTable.createLUT();
     }
 
     @Override
@@ -128,7 +134,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         // extensionPowerMul only applies to the squid output because the feedforward should stay constant
         double power =
                 + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
-                + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(angleSupplier.get());
+                + lookupTable.get(getCurrentInches()) * Math.sin(angleSupplier.get());
 
         power *= voltage.getVoltageNormalized();
 

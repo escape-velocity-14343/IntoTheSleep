@@ -29,7 +29,8 @@ public class SlideConstants {
     /**
      * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
      */
-    public static double FEEDFORWARD_DYNAMIC = 0.2;
+    public static double FEEDFORWARD_bottom = 0.2;
+    public static double FEEDFORWARD_top = 0.2; //TODO: tune top and bottom feedforward values
 
 
     public static double autonPiece1Extension = 10;
