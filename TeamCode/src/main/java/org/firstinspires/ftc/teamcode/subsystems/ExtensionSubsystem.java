@@ -134,7 +134,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         // extensionPowerMul only applies to the squid output because the feedforward should stay constant
         double power =
                 + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
-                + lookupTable.get(getCurrentInches()) * Math.sin(angleSupplier.get());
+                + lookupTable.get(getCurrentInches()) * Math.sin(Math.toRadians(angleSupplier.get()));
 
         power *= voltage.getVoltageNormalized();
 
