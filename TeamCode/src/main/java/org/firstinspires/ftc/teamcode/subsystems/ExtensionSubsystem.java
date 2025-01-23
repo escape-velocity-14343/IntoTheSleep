@@ -119,7 +119,6 @@ public class ExtensionSubsystem extends SubsystemBase {
         double power =
                 + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
                         * (getCurrentInches() > SlideConstants.bucketPosGainSchedulePos ? SlideConstants.bucketPosGainScheduleMult : 1)
-                + SlideConstants.FEEDFORWARD_STATIC
                 + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
 
         power *= voltage.getVoltageNormalized();
