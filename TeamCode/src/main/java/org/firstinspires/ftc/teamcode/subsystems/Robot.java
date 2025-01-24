@@ -52,6 +52,7 @@ public abstract class Robot extends LinearOpMode {
     public CachingVoltageSensor voltage;
     public BasketSensorSubsystem basketSensor;
     public SubClearSubsystem subClear;
+    public AscentSubsytem pto;
     public IMU imu;
     //public CameraSubsystem cam;
     public ElapsedTime timer = new ElapsedTime();
@@ -68,12 +69,13 @@ public abstract class Robot extends LinearOpMode {
 
         pinpoint = new PinpointSubsystem(hardwareMap);
 
-        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint);
+        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint, voltage);
         pivot = new PivotSubsystem(hardwareMap, voltage);
         extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         subClear = new SubClearSubsystem(hardwareMap);
+        pto = new AscentSubsytem(mecanum, hardwareMap);
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
@@ -96,7 +98,7 @@ public abstract class Robot extends LinearOpMode {
     }
 
     public Command intakePos() {
-        return new IntakePosCommand(extension, pivot, wrist).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE)));
+        return new IntakePosCommand(extension, pivot, wrist, intake).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE)));
     }
     public Command subPos() {
        return new ConditionalCommand(

@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.DrivetrainSquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.opmode.auton.PU5Apple;
@@ -121,9 +122,15 @@ public class DefaultGoToPointCommand extends CommandBase {
             yMove = xyMove.getY();
         }
 
+        double voltageScalar = drive.getAutoVoltageMult();
+
+        xMove *= voltageScalar;
+        yMove *= voltageScalar;
+        double hMove = -rotSpeedSupplier.getAsDouble() * voltageScalar;
 
 
-        drive.driveFieldCentric(-xMove, -yMove*1.2, -rotSpeedSupplier.getAsDouble());
+
+        drive.driveFieldCentric(-xMove, -yMove*1.2, hMove);
     }
 
     @Override

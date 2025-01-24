@@ -39,7 +39,7 @@ public class KFC4Piece extends Robot {
                         new WaitCommand(1500),
                         new IntakeSpinCommand(intake, 0),
                         new GoToPointCommand(mecanum, pinpoint, new Pose2d(-54, 48, new Rotation2d(0))),
-                        new IntakePosCommand(extension, pivot, wrist).alongWith(new GoToPointCommand(mecanum, pinpoint, new Pose2d(-54, 48, new Rotation2d(0)), 0)),
+                        new IntakePosCommand(extension, pivot, wrist, intake).alongWith(new GoToPointCommand(mecanum, pinpoint, new Pose2d(-54, 48, new Rotation2d(0)), 0)),
                         new IntakeSpinCommand(intake, IntakeConstants.autoIntakeSpeed),
                         new WaitCommand(500),
                         new ExtendCommand(extension, SlideConstants.autonPiece1Extension).alongWith((new GoToPointCommand(mecanum, pinpoint, new Pose2d(-54, 48, new Rotation2d(0)), 0))),

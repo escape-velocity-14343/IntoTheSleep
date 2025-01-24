@@ -62,7 +62,7 @@ public class MCD4Piece extends Robot {
 
                 // first sample
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 46.5, Rotation2d.fromDegrees(0)), gtpc).alongWith(
-                        new IntakePosCommand(extension, pivot, wrist)
+                        new IntakePosCommand(extension, pivot, wrist, intake)
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension),

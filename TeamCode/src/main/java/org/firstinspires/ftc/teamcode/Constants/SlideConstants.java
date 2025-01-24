@@ -36,7 +36,7 @@ public class SlideConstants {
     public static double FEEDFORWARD_DYNAMIC = 0.2;
 
 
-    public static double autonPiece1Extension = 10;
+    public static double autonPiece1Extension = 8;
     public static double autonPiece3Extension = 13.5;
 
     public static double submersibleIntakeMaxExtension = 17.5;
@@ -51,6 +51,6 @@ public class SlideConstants {
     public static double millisPerInch = 5 * ticksPerInch;
     public static double visionP = 0.5;
 
-    public static double bucketPosGainScheduleMult = 1.5;
+    public static double bucketPosGainScheduleMult = 1.3;
     public static double bucketPosGainSchedulePos = 25;
 }

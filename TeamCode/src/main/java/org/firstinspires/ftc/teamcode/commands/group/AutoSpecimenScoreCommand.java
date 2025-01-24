@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.opmode.auton.PU5Apple;
 import org.firstinspires.ftc.teamcode.subsystems.ExtensionSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.IntakeSubsystem;
@@ -31,7 +32,8 @@ public class AutoSpecimenScoreCommand extends SequentialCommandGroup {
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
                         new GoToPointWithDefaultCommand(new Pose2d(-50, 0, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -8)).withTimeout(1500),
                 new GoToPointWithDefaultCommand(new Pose2d(-30, scorePos, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -32).withTimeout(1500),
-                new IntakeClawCommand(intake, IntakeConstants.singleIntakePos)
+                new WristCommand(wrist, IntakeConstants.foldedPos).alongWith(new IntakeClawCommand(intake, IntakeConstants.singleIntakePos)),
+                new WaitCommand(250)
         );
     }
 

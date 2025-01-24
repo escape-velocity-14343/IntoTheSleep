@@ -47,18 +47,22 @@ public class SampleAutoAlignAndExtend extends CommandBase {
         Log.i("autoalign", "yellow is: " + cam.isYellow());
         Log.i("autoalign", "timer: " + time.milliseconds());
         gtpc.setTarget(new Pose2d(gtpc.getTargetX(), gtpc.getTargetY(), Rotation2d.fromDegrees(pinpointSubsystem.getPose().getRotation().getDegrees() + cam.getPixelPos() * IntakeConstants.autoAlignP)));
-        extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,0.7));
+
         if (cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.RED ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             intake.setIntakeSpeed(-1);
             isWrongColor = true;
             wrongColorTime.reset();
         } else if (isWrongColor) {
-            if (wrongColorTime.seconds() > 0.75) {
+            if (wrongColorTime.seconds() > 0.5 || extensionSubsystem.getCurrentInches() < 6.0) {
                 isWrongColor = false;
+                intake.setClawer(IntakeConstants.openPos * IntakeConstants.autoIntakeClawLerp + IntakeConstants.singleIntakePos * (1 - IntakeConstants.autoIntakeClawLerp));
             }
+            extensionSubsystem.setPower(-0.4);
+            intake.setClawer(IntakeConstants.openPos);
             intake.setIntakeSpeed(-1);
         } else {
             intake.setIntakeSpeed(1);
+            extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,1));
         }
     }
     @Override
@@ -69,7 +73,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
                 seen = true;
                 time.reset();
             }
-            else if (time.milliseconds()>100) {
+            else if (time.milliseconds()>25) {
                 return true;
             }
         }

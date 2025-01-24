@@ -14,6 +14,7 @@ public class SubClearSubsystem extends SubsystemBase {
 
     public SubClearSubsystem(HardwareMap hwm) {
         this.subClear = (ServoImplEx) hwm.servo.get("stick");
+        close();
     }
 
     public void open() {

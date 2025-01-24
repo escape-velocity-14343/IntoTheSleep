@@ -10,11 +10,6 @@ import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
 public class SubClearCommand extends CommandBase {
 
     private SubClearSubsystem subClear;
-    private ElapsedTime timer;
-
-    {
-        timer = new ElapsedTime();
-    }
 
     public SubClearCommand(SubClearSubsystem subClear) {
         this.subClear = subClear;
@@ -24,14 +19,6 @@ public class SubClearCommand extends CommandBase {
     @Override
     public void initialize() {
         subClear.open();
-        timer.reset();
-    }
-
-    @Override
-    public void execute() {
-        if (timer.milliseconds() > IntakeConstants.subClearMillis) {
-            subClear.close();
-        }
     }
 
     @Override
@@ -40,7 +27,7 @@ public class SubClearCommand extends CommandBase {
     }
 
     public boolean isFinished() {
-        return timer.milliseconds() > IntakeConstants.subClearMillis * 2;
+        return false;
     }
 
 }

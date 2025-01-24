@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.commands.custom.BasketAlignCommand;
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.subsystems.BasketSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
@@ -16,7 +17,7 @@ public class BasketAlignTest extends LinearOpMode {
     public void runOpMode() {
         PinpointSubsystem pinpoint = new PinpointSubsystem(hardwareMap);
         //pinpoint.resetYaw();
-        MecanumDriveSubsystem drive = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint);
+        MecanumDriveSubsystem drive = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint, new CachingVoltageSensor(hardwareMap));
         BasketSensorSubsystem basketSensor = new BasketSensorSubsystem(hardwareMap);
 
         waitForStart();

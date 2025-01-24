@@ -18,7 +18,7 @@ public class IntakeConstants {
     public static double intakeReadyPos = 0.8;
 
     // wrist command constants
-    public static double timeMultiplier = 0.25;
+    public static double timeMultiplier = 0.27;
 
     // claw constants
     // fronttake
@@ -42,6 +42,7 @@ public class IntakeConstants {
     // auto constants
     public static double autoOuttakeSpeed = -0.15;
     public static double autoIntakeSpeed = 1;
+    public static double autoIntakeClawLerp = 0.5;
 
     // auto heading alignment
     public static double autoAlignP = -0.3;
@@ -53,4 +54,6 @@ public class IntakeConstants {
 
     public static double visionSizeWeight = 1;
     public static double intakeSensorVoltageThres = 0.25;
+
+    public static double spitToBackMs = 100;
 }

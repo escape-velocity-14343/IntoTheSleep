@@ -43,12 +43,14 @@ public class CameraSubsystem extends SubsystemBase {
     public static Scalar minimumYellow = new Scalar(13, 60, 60);
     public static Scalar maximumYellow = new Scalar(50, 255, 255);
 
+    public static double widthMultiplier = 0.9;
+
     ColorBlobLocatorProcessorMulti colorLocator;
     ColorSensorProcessor colorSensor;
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 65;
+    public static int exposureMillis = 30;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 
@@ -115,7 +117,7 @@ public class CameraSubsystem extends SubsystemBase {
                     }
                 }
                 pixelPos = dist;*/
-                pixelPos = (int) (160 - blobs.get(0).getBoxFit().center.x);
+                pixelPos = (int) (160 - blobs.get(0).getBoxFit().center.x + (blobs.get(0).getBoxFit().size.width * widthMultiplier / 2.0));
             }
         }
         if (portal.getProcessorEnabled(colorSensor)) {

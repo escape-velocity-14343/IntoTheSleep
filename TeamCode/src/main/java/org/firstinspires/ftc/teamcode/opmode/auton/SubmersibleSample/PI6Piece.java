@@ -55,8 +55,7 @@ public abstract class PI6Piece extends Robot {
                         new BucketPosCommand(extension, pivot, wrist)
                 ),//.withTimeout(3000),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(250),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
+                new WaitCommand(50),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc, cam, pinpoint),
@@ -64,6 +63,7 @@ public abstract class PI6Piece extends Robot {
                 // sub cycle 1
                 new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true),
                 new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false),
+                new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, new Pose2d(-8, 29, Rotation2d.fromDegrees(-90))),
                 //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
                 //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, false, new Pose2d(-4, 24, Rotation2d.fromDegrees(-90))),
                 //new AutoSubCycle(extension, pivot, wrist, intake, cam, subClear, pinpoint, gtpc, true, new Pose2d(2, 22, Rotation2d.fromDegrees(-90))),
@@ -71,7 +71,7 @@ public abstract class PI6Piece extends Robot {
 
                 // park
                 new SequentialCommandGroup(new GoToPointWithDefaultCommand(new Pose2d(-8, 50, Rotation2d.fromDegrees(90)), gtpc, 20, 20)
-                        .interruptOn(() -> pinpoint.getPose().getX() > -20), new GoToPointWithDefaultCommand(new Pose2d(-12, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500)
+                        .interruptOn(() -> pinpoint.getPose().getX() > -20), new GoToPointWithDefaultCommand(new Pose2d(-8, 17.5, Rotation2d.fromDegrees(90)), gtpc).withTimeout(500)
 
                 )
                         .alongWith(

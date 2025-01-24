@@ -7,14 +7,17 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.Localizer;
 
 public class MecanumDriveSubsystem extends SubsystemBase {
     DcMotor fr, fl, br, bl;
     Localizer odo;
-    public MecanumDriveSubsystem(DcMotor fr, DcMotor fl, DcMotor br, DcMotor bl, Localizer localizer) {
+    CachingVoltageSensor voltage;
+    public MecanumDriveSubsystem(DcMotor fr, DcMotor fl, DcMotor br, DcMotor bl, Localizer localizer, CachingVoltageSensor voltage) {
         this.fr = fr;
         this.fl = fl;
         fl.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -22,9 +25,10 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         this.bl = bl;
         bl.setDirection(DcMotorSimple.Direction.REVERSE);
         this.odo = localizer;
+        this.voltage = voltage;
     }
-    public MecanumDriveSubsystem(String fr, String fl, String br, String bl, HardwareMap hMap, Localizer localizer) {
-        this(hMap.dcMotor.get(fr), hMap.dcMotor.get(fl), hMap.dcMotor.get(br), hMap.dcMotor.get(bl), localizer);
+    public MecanumDriveSubsystem(String fr, String fl, String br, String bl, HardwareMap hMap, Localizer localizer, CachingVoltageSensor voltage) {
+        this(hMap.dcMotor.get(fr), hMap.dcMotor.get(fl), hMap.dcMotor.get(br), hMap.dcMotor.get(bl), localizer, voltage);
     }
 
     /**
@@ -66,5 +70,8 @@ public class MecanumDriveSubsystem extends SubsystemBase {
         driveFieldCentric(x, y, rx, odo.getPose().getRotation().getDegrees());
     }
 
+    public double getAutoVoltageMult() {
+        return this.voltage.getVoltageNormalized();
+    }
 
 }

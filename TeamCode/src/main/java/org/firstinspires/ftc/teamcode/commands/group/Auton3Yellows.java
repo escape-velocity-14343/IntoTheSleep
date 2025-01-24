@@ -27,13 +27,18 @@ import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
+import kotlin.internal.DynamicExtension;
+
 public class Auton3Yellows extends SequentialCommandGroup {
+
+    // DO NOT MODIFY - DOES NOT USE CAMERA
+    @Deprecated
     public Auton3Yellows(ExtensionSubsystem extension, PivotSubsystem pivot, WristSubsystem wrist, IntakeSubsystem intake, DefaultGoToPointCommand gtpc) {
         addRequirements(extension, pivot, wrist, intake);
         addCommands(
                 // first sample
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
@@ -52,7 +57,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
 
                 // second sample
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
@@ -69,7 +74,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(29)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos - 0.02, 1),
                 new SlowerAutonExtendCommand(extension, SlideConstants.autonPiece3Extension).withTimeout(1500).interruptOn(intake::getDSensorSupplier),
@@ -92,13 +97,13 @@ public class Auton3Yellows extends SequentialCommandGroup {
         addRequirements(extension, pivot, wrist, intake, cam);
         addCommands(
                 // first sample
-                new GoToPointWithDefaultCommand(new Pose2d(-44, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                new GoToPointWithDefaultCommand(new Pose2d(-42, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                        new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
-                new WristCommand(wrist, IntakeConstants.groundPos),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
+                new WaitCommand(75),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
@@ -106,31 +111,30 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //new WaitCommand(100),
 
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(350),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
+                new WaitCommand(50),
                 //new WristCommand(wrist, IntakeConstants.bucketRetractPos),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 // second sample
-                new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                new GoToPointWithDefaultCommand(new Pose2d(-42, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                        new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
+                new WaitCommand(75),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
                 ),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(350),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
+                new WaitCommand(50),
                 //new WristCommand(wrist, IntakeConstants.bucketRetractPos),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(29)), gtpc).alongWith(
-                        new WristCommand(wrist, IntakeConstants.halfFoldPos).andThen(new IntakePosCommand(extension, pivot, wrist))
+                        new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos - 0.02, 1),
                 new InstantCommand(() -> cam.setOnlyYellow(true)),
@@ -143,8 +147,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 ),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(350),
-                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
+                new WaitCommand(50),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos)
 

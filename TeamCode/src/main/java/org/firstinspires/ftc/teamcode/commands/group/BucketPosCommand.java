@@ -35,9 +35,9 @@ public class BucketPosCommand extends SequentialCommandGroup {
                         new PivotCommand(pivot, PivotConstants.topLimit),
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees),
-                                new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000)
+                                new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000).interruptOn(() -> extension.getCurrentInches() > SlideConstants.bucketPos - 4)
                         ),
-                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-2).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
+                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-4).withTimeout(1000).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
                 ),
 
                 new InstantCommand(() -> Log.i("2", "BucketPos End"))
