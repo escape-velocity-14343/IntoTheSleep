@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.arcrobotics.ftclib.util.InterpLUT;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -16,11 +17,15 @@ import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.SquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+
 public class ExtensionSubsystem extends SubsystemBase {
     private final DcMotorEx motor0;
     private final DcMotorEx motor1;
-    private final PivotSubsystem pivotSubsystem;
+    private Supplier<Double> angleSupplier;
     private final CachingVoltageSensor voltage;
+    private InterpLUT lookupTable;
     private int currentPos = 0;
     private final SquIDController squid = new SquIDController();
     private double targetInches = 0;
@@ -40,8 +45,8 @@ public class ExtensionSubsystem extends SubsystemBase {
         this.extensionPowerMul = extensionPowerMul;
     }
 
-    public ExtensionSubsystem(HardwareMap hMap, PivotSubsystem pivotSubsystem, CachingVoltageSensor voltage) {
-        this.pivotSubsystem = pivotSubsystem;
+    public ExtensionSubsystem(HardwareMap hMap, Supplier<Double> angleSupplier, CachingVoltageSensor voltage) {
+        this.angleSupplier = angleSupplier;
         this.voltage = voltage;
 
         motor0 = (DcMotorEx) hMap.dcMotor.get("slide0");
@@ -52,6 +57,12 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor0.setCurrentAlert(4, CurrentUnit.AMPS);
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
+
+        squid.setPID(SlideConstants.kP);
+        lookupTable = new InterpLUT();
+        lookupTable.add(0, SlideConstants.FEEDFORWARD_bottom);
+        lookupTable.add(SlideConstants.bucketPos, SlideConstants.FEEDFORWARD_top);
+        lookupTable.createLUT();
     }
 
     @Override
@@ -66,6 +77,14 @@ public class ExtensionSubsystem extends SubsystemBase {
         }
     }
 
+        //Gain Scheduling
+        if (getCurrentInches() > SlideConstants.bucketPosGainSchedulePos){
+            squid.setPID(SlideConstants.kP * SlideConstants.bucketPosGainScheduleMult);
+        }
+        else{
+            squid.setPID(SlideConstants.kP);
+        }
+    }
 
     /**
      *
@@ -115,18 +134,14 @@ public class ExtensionSubsystem extends SubsystemBase {
     }
 
     public void extendToPosition(int ticks) {
-        squid.setPID(SlideConstants.kP);
-
         // extensionPowerMul only applies to the squid output because the feedforward should stay constant
         double power =
                 + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
-                        * (getCurrentInches() > SlideConstants.bucketPosGainSchedulePos ? SlideConstants.bucketPosGainScheduleMult : 1)
-                + SlideConstants.FEEDFORWARD_STATIC
-                + SlideConstants.FEEDFORWARD_DYNAMIC * Math.sin(pivotSubsystem.getCurrentPosition());
+                + lookupTable.get(getCurrentInches()) * Math.sin(Math.toRadians(angleSupplier.get()));
 
         power *= voltage.getVoltageNormalized();
 
-        if (power < -0.7 && pivotSubsystem.getCurrentPosition() > PivotConstants.specimenTopBarAngle + 5) {
+        if (power < -0.7 && angleSupplier.get() > PivotConstants.specimenTopBarAngle + 5) {
             power = -0.7;
         }
         else if (power < 0) {

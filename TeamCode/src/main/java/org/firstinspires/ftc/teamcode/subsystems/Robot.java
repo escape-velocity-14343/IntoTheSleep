@@ -71,7 +71,7 @@ public abstract class Robot extends LinearOpMode {
 
         mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint, voltage);
         pivot = new PivotSubsystem(hardwareMap, voltage);
-        extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
+        extension = new ExtensionSubsystem(hardwareMap, pivot::getCurrentPosition, voltage);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         subClear = new SubClearSubsystem(hardwareMap);

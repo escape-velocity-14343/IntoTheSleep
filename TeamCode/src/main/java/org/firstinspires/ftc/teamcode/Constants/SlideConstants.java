@@ -27,13 +27,10 @@ public class SlideConstants {
      */
     public static double maxPivotExtension = 25;
     /**
-     * Constant feedforward for the slides (probably don't need)
-     */
-    public static double FEEDFORWARD_STATIC = 0.0;
-    /**
      * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
      */
-    public static double FEEDFORWARD_DYNAMIC = 0.2;
+    public static double FEEDFORWARD_bottom = 0.2;
+    public static double FEEDFORWARD_top = 0.2; //TODO: tune top and bottom feedforward values
 
 
     public static double autonPiece1Extension = 8;
