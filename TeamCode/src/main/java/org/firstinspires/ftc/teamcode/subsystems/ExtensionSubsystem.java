@@ -60,6 +60,10 @@ public class ExtensionSubsystem extends SubsystemBase {
         if (!manualControl) {
             extendInches(targetInches);
         }
+
+        if (getCurrentPosition()<0) {
+            reset();
+        }
     }
 
 
@@ -87,9 +91,7 @@ public class ExtensionSubsystem extends SubsystemBase {
         if (getCurrentPosition() < 10 && motor0.isOverCurrent() && motor1.isOverCurrent() && power < 0) {
             // resetOffset = getCurrentPosition();
         }
-        if (getCurrentPosition()<0) {
-            reset();
-        }
+
         FtcDashboard.getInstance().getTelemetry().addData("slide position", this.getCurrentInches());
         FtcDashboard.getInstance().getTelemetry().addData("slide motor power", power);
 

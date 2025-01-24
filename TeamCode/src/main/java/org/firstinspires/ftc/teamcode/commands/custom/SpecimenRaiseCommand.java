@@ -24,7 +24,7 @@ public class SpecimenRaiseCommand extends SequentialCommandGroup {
                     new ExtendCommand(extension, SlideConstants.specimenRaisePosition)
                 ),
                 new InstantCommand(() -> extension.setManualControl(true)),
-                new AutonExtendCommand(extension, -5),
+                new InstantCommand(() -> extension.setPower(-0.3)),
                 new InstantCommand(() -> extension.setManualControl(false))
         );
     }
