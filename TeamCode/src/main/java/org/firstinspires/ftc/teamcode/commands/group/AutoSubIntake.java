@@ -28,10 +28,10 @@ public class AutoSubIntake extends SequentialCommandGroup {
                                 IntakeConstants.openPos * IntakeConstants.autoIntakeClawLerp
                                         + IntakeConstants.singleIntakePos * (1 - IntakeConstants.autoIntakeClawLerp),
                                 1)),
-                new WaitCommand(50),
+                new WaitCommand(100),
                 //new SampleAutoAlign(cam, gtpc, pinpoint).deadlineWith(
                 //        new AutonExtendCommand(extension, SlideConstants.submersibleIntakeMaxExtension)).withTimeout(2000),
-                new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension, intake).withTimeout(3000).interruptOn(() -> extension.getCurrentInches() > SlideConstants.submersibleIntakeMaxExtension - 0.5),
+                new SampleAutoAlignAndExtend(cam, gtpc, pinpoint, extension, intake).withTimeout(3000),
 
                 new ConditionalCommand(
                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0.5),

@@ -7,7 +7,7 @@ public class IntakeConstants {
 
     // wrist constants
     public static double foldedPos = 0.86;
-    public static double halfFoldPos = 0.6;
+    public static double halfFoldPos = 0.55;
     public static double groundPos = 0.47;
     public static double scoringPos = 0.625;
     public static double specimenScoringPos = 0.4;
@@ -35,8 +35,13 @@ public class IntakeConstants {
     public static double backClosedPos = 0.12;
 
     // sub clear constants
-    public static double subClearPos = 0.4;
-    public static double subClearRetractPos = 0.98;
+    public static double subClearWipePos = 0.4;
+    public static double subClearLinearPos = 0.42;
+    public static double subClearRetractPos = 0.82;
+
+    public static double subClear2WipePos = 0.9;
+    public static double subClear2LinearPos = 0.78;
+    public static double subClear2RetractPos = 0.41;
     public static double subClearMillis = 400;
 
     // auto constants

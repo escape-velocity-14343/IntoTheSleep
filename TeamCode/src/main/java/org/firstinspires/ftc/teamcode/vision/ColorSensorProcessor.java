@@ -81,7 +81,7 @@ public class ColorSensorProcessor implements VisionProcessor {
         yellow = Core.mean(yellowMat).val[0];
 
         // blue
-        Core.inRange(hsv, new Scalar(70, saturationLowBlue, valueLowBlue), new Scalar(120, 255, 255), blueMat);
+        Core.inRange(hsv, new Scalar(60, saturationLowBlue, valueLowBlue), new Scalar(140, 255, 255), blueMat);
         blue = Core.mean(blueMat).val[0];
 
         Log.v("camera color processor", "RYB %: " + red + ", " + yellow + ", " + blue);

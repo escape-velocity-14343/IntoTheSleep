@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 
 public class SlideConstants {
-    public static double kP = 0.0045;
+    public static double kP = 0.002;
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
@@ -30,10 +30,10 @@ public class SlideConstants {
      * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
      */
     public static double FEEDFORWARD_bottom = 0.2;
-    public static double FEEDFORWARD_top = 0.2; //TODO: tune top and bottom feedforward values
+    public static double FEEDFORWARD_top = 0.25; //TUNED VALUE
 
 
-    public static double autonPiece1Extension = 8;
+    public static double autonPiece1Extension = 10;
     public static double autonPiece3Extension = 13.5;
 
     public static double submersibleIntakeMaxExtension = 17.5;
@@ -43,10 +43,10 @@ public class SlideConstants {
 
     static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 16.0;
+    public static double specimenHookPosition = 16.5;
 
     public static double millisPerInch = 5 * ticksPerInch;
-    public static double visionP = 0.5;
+    public static double visionP = 0.55;
 
     public static double bucketPosGainScheduleMult = 1.3;
     public static double bucketPosGainSchedulePos = 25;

@@ -25,7 +25,6 @@ public class ExtensionSubsystem extends SubsystemBase {
     private final DcMotorEx motor1;
     private Supplier<Double> angleSupplier;
     private final CachingVoltageSensor voltage;
-    private InterpLUT lookupTable;
     private int currentPos = 0;
     private final SquIDController squid = new SquIDController();
     private double targetInches = 0;
@@ -37,13 +36,6 @@ public class ExtensionSubsystem extends SubsystemBase {
 
     private double extensionPowerMul = 1.0;
 
-    public double getExtensionPowerMul() {
-        return extensionPowerMul;
-    }
-
-    public void setExtensionPowerMul(double extensionPowerMul) {
-        this.extensionPowerMul = extensionPowerMul;
-    }
 
     public ExtensionSubsystem(HardwareMap hMap, Supplier<Double> angleSupplier, CachingVoltageSensor voltage) {
         this.angleSupplier = angleSupplier;
@@ -59,10 +51,18 @@ public class ExtensionSubsystem extends SubsystemBase {
         motor1.setCurrentAlert(4, CurrentUnit.AMPS);
 
         squid.setPID(SlideConstants.kP);
-        lookupTable = new InterpLUT();
-        lookupTable.add(0, SlideConstants.FEEDFORWARD_bottom);
-        lookupTable.add(SlideConstants.bucketPos, SlideConstants.FEEDFORWARD_top);
-        lookupTable.createLUT();
+    }
+
+    public double getExtensionPowerMul() {
+        return extensionPowerMul;
+    }
+
+    public double getVoltageMult() {
+        return voltage.getVoltageNormalized();
+    }
+
+    public void setExtensionPowerMul(double extensionPowerMul) {
+        this.extensionPowerMul = extensionPowerMul;
     }
 
     @Override
@@ -72,37 +72,37 @@ public class ExtensionSubsystem extends SubsystemBase {
             extendInches(targetInches);
         }
 
-        if (getCurrentPosition()<0) {
+        if (getCurrentPosition() < 0) {
             reset();
         }
-    }
-
         //Gain Scheduling
-        if (getCurrentInches() > SlideConstants.bucketPosGainSchedulePos){
+        if(getCurrentInches() > SlideConstants.bucketPosGainSchedulePos) {
             squid.setPID(SlideConstants.kP * SlideConstants.bucketPosGainScheduleMult);
         }
-        else{
+        else {
             squid.setPID(SlideConstants.kP);
         }
     }
+
+
+
 
     /**
      *
      */
     public void setPower(double power) {
 
-        if (speedToggle){
+        if (speedToggle) {
             power = 0.8; //was 0.5
         }
         if (superSpeedToggle) {
             power = 0.5;
         }
-        if (manualControl&&getCurrentInches()>SlideConstants.submersibleIntakeMaxExtension&&power>0) {
+        if (manualControl && getCurrentInches() > SlideConstants.submersibleIntakeMaxExtension && power > 0) {
             motor0.setPower(0);
             motor1.setPower(0);
-            Log.v("Slide Powers",  "" + 0);
-        }
-        else {
+            Log.v("Slide Powers", "" + 0);
+        } else {
             motor0.setPower(power * SlideConstants.direction);
             motor1.setPower(-power * SlideConstants.direction);
             Log.v("Slide Powers", "" + power);
@@ -136,22 +136,20 @@ public class ExtensionSubsystem extends SubsystemBase {
     public void extendToPosition(int ticks) {
         // extensionPowerMul only applies to the squid output because the feedforward should stay constant
         double power =
-                + squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
-                + lookupTable.get(getCurrentInches()) * Math.sin(Math.toRadians(angleSupplier.get()));
+                +squid.calculate(ticks, getCurrentPosition()) * extensionPowerMul
+                        + SlideConstants.FEEDFORWARD_top * Math.sin(Math.toRadians(angleSupplier.get()));
 
         power *= voltage.getVoltageNormalized();
 
         if (power < -0.7 && angleSupplier.get() > PivotConstants.specimenTopBarAngle + 5) {
             power = -0.7;
-        }
-        else if (power < 0) {
+        } else if (power < 0) {
             power *= 0.9;
         }
 
         if (ticks >= 0 && !(getCurrentInches() <= 0 && power < 0) && !(getCurrentInches() >= SlideConstants.maxExtension && power > 0)) {
             setPower(power);
-        }
-        else{
+        } else {
             Log.i("A", "Extension limit has been breached");
 
         }
@@ -187,10 +185,12 @@ public class ExtensionSubsystem extends SubsystemBase {
         resetOffset = 0;
     }
 
-    public void setSpeedToggle(boolean b){
+    public void setSpeedToggle(boolean b) {
         speedToggle = b;
     }
+
     public void setSuperSpeedToggle(boolean set) {
         superSpeedToggle = set;
     }
 }
+

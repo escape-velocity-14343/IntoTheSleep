@@ -24,9 +24,11 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     private ExtensionSubsystem extensionSubsystem;
     private IntakeSubsystem intake;
     private ElapsedTime time = new ElapsedTime();
+    private ElapsedTime extensionLimitTime = new ElapsedTime();
     private ElapsedTime wrongColorTime = new ElapsedTime();
     private boolean isWrongColor = false;
     private boolean seen = false;
+    private boolean reachedMaxExtension = false;
     public SampleAutoAlignAndExtend(CameraSubsystem camera, DefaultGoToPointCommand gtpc, PinpointSubsystem pinpoint, ExtensionSubsystem extensionSubsystem, IntakeSubsystem intake) {
         addRequirements(camera);
         cam = camera;
@@ -62,11 +64,24 @@ public class SampleAutoAlignAndExtend extends CommandBase {
             intake.setIntakeSpeed(-1);
         } else {
             intake.setIntakeSpeed(1);
-            extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,1));
+            extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,1) * extensionSubsystem.getVoltageMult());
         }
     }
     @Override
     public boolean isFinished() {
+
+        if (extensionSubsystem.getCurrentInches() > SlideConstants.submersibleIntakeMaxExtension - 0.1) {
+            if (!reachedMaxExtension) {
+                reachedMaxExtension = true;
+                extensionLimitTime.reset();
+            } else if (extensionLimitTime.seconds() > 0.4) {
+                intake.setClawer(IntakeConstants.closedPos);
+            } else if (extensionLimitTime.seconds() > 0.5) {
+                return true;
+            }
+        } else {
+            reachedMaxExtension = false;
+        }
 
         if (cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             if (!seen) {
@@ -76,8 +91,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
             else if (time.milliseconds()>25) {
                 return true;
             }
-        }
-        else {
+        } else {
             seen = false;
             return false;
         }

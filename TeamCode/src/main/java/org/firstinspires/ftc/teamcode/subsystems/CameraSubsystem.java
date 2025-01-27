@@ -50,7 +50,7 @@ public class CameraSubsystem extends SubsystemBase {
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 30;
+    public static int exposureMillis = 50;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 

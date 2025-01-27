@@ -15,7 +15,7 @@ public class PivotConstants {
     public static double tolerance = 1.5;
     public static double direction = -1;
     public static boolean encoderInvert = true;
-    public static double encoderOffset = 50;
+    public static double encoderOffset = 49.75;
     public static double outtakeExtendDegrees = 40;
     public static double hangDegrees = -10;
     public static double parkDegrees = 80;

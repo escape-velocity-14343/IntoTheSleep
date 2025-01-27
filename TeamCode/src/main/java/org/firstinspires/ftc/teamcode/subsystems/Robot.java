@@ -110,7 +110,7 @@ public abstract class Robot extends LinearOpMode {
     public Command bucketPos() {
         return new ConditionalCommand(
                 new BucketPosReversedCommand(extension, pivot, wrist),
-                new ConditionalCommand(LowBucketPosCommand.newWithWristPos(extension, pivot, wrist), BucketPosCommand.newWithWristPos(extension, pivot, wrist), lowBucket::get),
+                new ConditionalCommand(LowBucketPosCommand.newWithWristPos(extension, pivot, wrist), new BucketPosCommand(extension, pivot, wrist), lowBucket::get),
                 reverseClaw::get
         );
     }

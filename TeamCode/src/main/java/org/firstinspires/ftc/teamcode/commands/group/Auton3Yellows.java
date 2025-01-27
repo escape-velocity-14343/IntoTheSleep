@@ -97,7 +97,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
         addRequirements(extension, pivot, wrist, intake, cam);
         addCommands(
                 // first sample
-                new GoToPointWithDefaultCommand(new Pose2d(-42, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-44, 48, Rotation2d.fromDegrees(0)), gtpc).alongWith(
                         new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
@@ -116,7 +116,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 // second sample
-                new GoToPointWithDefaultCommand(new Pose2d(-42, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-44, 58, Rotation2d.fromDegrees(0)), gtpc).alongWith(
                         new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),

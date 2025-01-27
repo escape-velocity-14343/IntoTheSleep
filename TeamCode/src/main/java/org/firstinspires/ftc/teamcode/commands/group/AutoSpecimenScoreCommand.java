@@ -32,8 +32,8 @@ public class AutoSpecimenScoreCommand extends SequentialCommandGroup {
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
                         new GoToPointWithDefaultCommand(new Pose2d(-50, 0, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -8)).withTimeout(1500),
                 new GoToPointWithDefaultCommand(new Pose2d(-30, scorePos, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -32).withTimeout(1500),
-                new WristCommand(wrist, IntakeConstants.foldedPos).alongWith(new IntakeClawCommand(intake, IntakeConstants.singleIntakePos)),
-                new WaitCommand(250)
+                new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
+                new WaitCommand(50)
         );
     }
 

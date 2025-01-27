@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SubClearCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.SubClearWipeCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
@@ -55,13 +56,14 @@ public class AutoSubCycle extends SequentialCommandGroup {
                                 new RetractCommand(wrist, pivot, extension),
                                 new SubPosReadyCommand(extension, pivot, wrist, intake, 6)
                         )
-                ).deadlineWith(
-                        new ConditionalCommand(
-                                new SubClearCommand(subClear).withTimeout(5000),
-                                new InstantCommand(),
-                                () -> clearSub)),
+                ),
 
-                new GoToPointWithDefaultCommand(new Pose2d(-12, 29, Rotation2d.fromDegrees(-60)), gtpc, 3, 4).interruptOn(() -> 27.5 < pinpoint.getPose().getY() && pinpoint.getPose().getY() < 29),
+                new ConditionalCommand(
+                        new SubClearWipeCommand(subClear),
+                        new InstantCommand(),
+                        () -> clearSub),
+
+                new GoToPointWithDefaultCommand(() -> new Pose2d(pinpoint.getPose().getX(), 29, Rotation2d.fromDegrees(-90)), gtpc).interruptOn(() -> 27.5 < pinpoint.getPose().getY() && pinpoint.getPose().getY() < 29),
                 new AutoSubIntake(extension, wrist, cam, gtpc, intake, pinpoint, pivot),
 
                 /*new ConditionalCommand(
@@ -130,7 +132,9 @@ public class AutoSubCycle extends SequentialCommandGroup {
                                         new RetractCommand(wrist, pivot, extension),
                                         new SubPosReadyCommand(extension, pivot, wrist, intake, 6)
                                 )
-                        ).deadlineWith(new SubClearCommand(subClear).withTimeout(5000)),
+                        ),
+
+                        new SubClearWipeCommand(subClear),
 
                         new GoToPointWithDefaultCommand(subIntakePos, gtpc, 3, 4).interruptOn(() -> subIntakePos.getY() - 1.5 < pinpoint.getPose().getY() && pinpoint.getPose().getY() < subIntakePos.getY()),
                         new AutoSubIntake(extension, wrist, cam, gtpc, intake, pinpoint, pivot),

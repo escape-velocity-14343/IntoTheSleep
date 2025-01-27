@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.opmode.auton;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
+import com.arcrobotics.ftclib.command.ParallelRaceGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -16,6 +19,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.TimeoutCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.commands.group.AutoSpecimenScoreCommand;
 import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
@@ -30,7 +34,7 @@ public class PU5Apple extends Robot {
 
 
     private DefaultGoToPointCommand gtpc;
-    public static Pose2d intakePos = new Pose2d(-63, -40, new Rotation2d());
+    public static Pose2d intakePos = new Pose2d(-61, -40, new Rotation2d());
     public static double intakeStallVelocity = 0.1;
 
     @Override
@@ -64,17 +68,21 @@ public class PU5Apple extends Robot {
         cs.schedule(new SequentialCommandGroup(
                 // score initial
                 new SpecimenHookCommand(pivot, extension, wrist, intake),//.withTimeout(1000),
+                new WaitCommand(400),
                 new GoToPointWithDefaultCommand(new Pose2d(-30, -12, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33.5),//.withTimeout(1500),
-                new WristCommand(wrist, IntakeConstants.foldedPos).alongWith(new IntakeControlCommand(intake, IntakeConstants.openPos,0)),
-                new WaitCommand(500),
+                new WristCommand(wrist, IntakeConstants.halfFoldPos).alongWith(new IntakeControlCommand(intake, IntakeConstants.openPos,0)),
+                new WaitCommand(50),
+                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
+
                 // push first
                 new GoToPointWithDefaultCommand(new Pose2d(-50, -48, new Rotation2d()), gtpc, 5, 10).alongWith(
-                        new RetractCommand(wrist, pivot, extension).andThen(
+                        new SequentialCommandGroup(
+                                new TimeoutCommand(RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.foldedPos), 2000),
                                 new ExtendCommand(extension, 2).alongWith(
                                     new WristCommand(wrist, IntakeConstants.groundPos),
                                     new IntakeControlCommand(intake, IntakeConstants.openPos,1)
                                 )
-                        )//.withTimeout(2000)
+                        )
                 ),
                 new GoToPointWithDefaultCommand(new Pose2d(-34, -48, new Rotation2d()), gtpc),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos,0),
@@ -101,11 +109,11 @@ public class PU5Apple extends Robot {
 
 
                 // push third
-                new GoToPointWithDefaultCommand(new Pose2d(-18, -57, new Rotation2d()), gtpc, 5, 10).alongWith(
+                new GoToPointWithDefaultCommand(new Pose2d(-12, -57, new Rotation2d()), gtpc, 5, 10).alongWith(
                         new RetractCommand(wrist, pivot, extension)
                 ),
                 new SpecimenRaiseCommand(pivot, extension, wrist).alongWith(
-                new GoToPointWithDefaultCommand(new Pose2d(-18, -68, new Rotation2d()), gtpc).andThen(
+                new GoToPointWithDefaultCommand(new Pose2d(-12, -68, new Rotation2d()), gtpc).andThen(
                         new GoToPointWithDefaultCommand(new Pose2d(-58, -66, new Rotation2d()), gtpc, 5, 5).interruptOn(() -> pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity)
                         )
                 ),
@@ -119,8 +127,8 @@ public class PU5Apple extends Robot {
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
                         new GoToPointWithDefaultCommand(new Pose2d(-50, -14, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -12)).withTimeout(1500),
                 new GoToPointWithDefaultCommand(new Pose2d(-30, -6, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33).withTimeout(1500),
-                new WristCommand(wrist, IntakeConstants.foldedPos).alongWith(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos,0)),
-                new WaitCommand(250),
+                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos,0),
+                new WaitCommand(50),
 
                 // score second
                 new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, -4),
@@ -130,6 +138,7 @@ public class PU5Apple extends Robot {
                 new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, 4),
                 
                 // park
+                new WristCommand(wrist, IntakeConstants.halfFoldPos),
                 new GoToPointWithDefaultCommand(new Pose2d(-63, -40, Rotation2d.fromDegrees(45)), gtpc)
              )
         );
