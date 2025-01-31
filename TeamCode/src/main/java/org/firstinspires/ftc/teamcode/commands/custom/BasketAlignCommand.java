@@ -41,6 +41,8 @@ public class BasketAlignCommand extends CommandBase {
     private DoubleSupplier xSupplier;
     private DoubleSupplier ySupplier;
 
+    private Translation2d targetPoseOffset = new Translation2d();
+
     public double error;
 
     public BasketAlignCommand(MecanumDriveSubsystem mecanumDrive, BasketSensorSubsystem basketSensor, PinpointSubsystem pinpoint, double threshold) {
@@ -74,6 +76,7 @@ public class BasketAlignCommand extends CommandBase {
     @Override
     public void execute() {
         Translation2d pose = new Translation2d(xSupplier.getAsDouble(), ySupplier.getAsDouble()).rotateBy(new Rotation2d(-targetHeading));
+        targetPoseOffset = pose;
         double x = targetXDistance + pose.getX();
         double y = targetYDistance + pose.getY();
 
@@ -81,7 +84,7 @@ public class BasketAlignCommand extends CommandBase {
         dtController.setPID(translationkP);
 
         Pose2d p = dtController.calculate(
-                AutoConstants.scorePos.plus(new Transform2d(new Translation2d(pose.getX(), pose.getY()), new Rotation2d())),
+                AutoConstants.scorePos,//.plus(new Transform2d(new Translation2d(pose.getX(), pose.getY()), new Rotation2d())),
                 pinpoint.getPose(),// new Pose2d(x, y, new Rotation2d()),
                 //new Pose2d(basketSensor.getSensorRight(), basketSensor.getSensorLeft(), new Rotation2d()),
                 pinpoint.getVelocity()

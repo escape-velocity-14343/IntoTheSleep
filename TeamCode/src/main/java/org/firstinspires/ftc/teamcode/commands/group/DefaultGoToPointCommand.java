@@ -166,8 +166,8 @@ public class DefaultGoToPointCommand extends CommandBase {
         }
 
         return shouldLog &&
-                (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
-                (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol)) ||
+                ((currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
+                (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol))) ||
                 (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity && timer.seconds()>0.5);
     }
 

@@ -103,10 +103,10 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
-                new WaitCommand(50),
+                new WaitCommand(100),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
-                new WaitCommand(50),
+                new WaitCommand(100),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
@@ -124,10 +124,10 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         new WristCommand(wrist, IntakeConstants.groundPos).andThen(new IntakePosCommand(extension, pivot, wrist, intake))
                 ).withTimeout(3000),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
-                new WaitCommand(50),
+                new WaitCommand(100),
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
-                new WaitCommand(50),
+                new WaitCommand(100),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)

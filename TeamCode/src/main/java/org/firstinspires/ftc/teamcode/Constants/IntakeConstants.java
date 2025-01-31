@@ -55,7 +55,7 @@ public class IntakeConstants {
 
     // global offset
     // 1 tick of skip = 0.05 position
-    public static double wristOffset = -0.12;
+    public static double wristOffset = -0.06;
 
     public static double visionSizeWeight = 1;
     public static double intakeSensorVoltageThres = 0.25;

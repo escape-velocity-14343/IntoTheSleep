@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 @TeleOp(group="Fix")
 public class WristOffset extends LinearOpMode {
@@ -14,6 +15,7 @@ public class WristOffset extends LinearOpMode {
     public void runOpMode() {
         boolean lastDpadUp = false;
         boolean lastDpadDown = false;
+        WristSubsystem wrist = new WristSubsystem(hardwareMap);
 
         Gamepad g1clone = new Gamepad();
 
@@ -27,6 +29,8 @@ public class WristOffset extends LinearOpMode {
             if (g1clone.dpad_down && !lastDpadDown) {
                 IntakeConstants.wristOffset -= 0.01;
             }
+            wrist.setWrist(IntakeConstants.groundPos);
+
             lastDpadUp = g1clone.dpad_up;
             lastDpadDown = g1clone.dpad_down;
             telemetry.addData("Wrist Offset", IntakeConstants.wristOffset);

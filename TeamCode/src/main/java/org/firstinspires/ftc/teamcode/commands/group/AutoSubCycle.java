@@ -51,7 +51,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
 
                 new SequentialCommandGroup(
                         new GoToPointWithDefaultCommand(new Pose2d(-12, 37, Rotation2d.fromDegrees(-60)), gtpc, 5, 20)
-                                .interruptOn(() -> pinpoint.getPose().getX() > -20),
+                                .interruptOn(() -> pinpoint.getPose().getX() > -16),
                         new ConditionalCommand(
                                 new GoToPointWithDefaultCommand(new Pose2d(-12, 15, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).withTimeout(750),
                                 new GoToPointWithDefaultCommand(() -> new Pose2d(-15, subBarrierY + subBarrierCycleOffset, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).interruptOn(() -> pinpoint.getPose().getY() < subBarrierY + subBarrierCycleOffset),
@@ -107,13 +107,13 @@ public class AutoSubCycle extends SequentialCommandGroup {
 
                         new SequentialCommandGroup(
                                 new GoToPointWithDefaultCommand(new Pose2d(-12, 37, Rotation2d.fromDegrees(-60)), gtpc, 5, 20)
-                                        .interruptOn(() -> pinpoint.getPose().getX() > -20),
+                                        .interruptOn(() -> pinpoint.getPose().getX() > -16),
                                 new GoToPointWithDefaultCommand(subIntakePos, gtpc, 2, 4).interruptOn(() -> pinpoint.getPose().getY() < subIntakePos.getY())
                         ).alongWith(
                                 new SequentialCommandGroup(
                                         new IntakeClawCommand(intake, IntakeConstants.foldedPos),
                                         new RetractCommand(wrist, pivot, extension),
-                                        new SubPosReadyCommand(extension, pivot, wrist, intake, 6)
+                                        new SubPosReadyCommand(extension, pivot, wrist, intake, 4)
                                 )
                         ),
 
@@ -140,7 +140,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
 
                         new SequentialCommandGroup(
                                 new GoToPointWithDefaultCommand(new Pose2d(-12, 37, Rotation2d.fromDegrees(-60)), gtpc, 5, 20)
-                                        .interruptOn(() -> pinpoint.getPose().getX() > -20),
+                                        .interruptOn(() -> pinpoint.getPose().getX() > -16),
                                 new GoToPointWithDefaultCommand(subClearPos, gtpc, 2, 4).withTimeout(750)
                         ).alongWith(
                                 new SequentialCommandGroup(

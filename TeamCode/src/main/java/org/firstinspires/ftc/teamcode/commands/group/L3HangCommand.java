@@ -29,7 +29,9 @@ public class L3HangCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> pivot.getCurrentPosition() < 1),
                 new HangStateCommand(hang, AscentSubsytem.PTOMode.FREEFLOAT),
                 //new InstantCommand(()->pivot.setPower(-0.7),pivot),
-                new WaitCommand(1500),
+                new WaitCommand(1500).deadlineWith(
+                        new ExtendCommand(extensionSubsystem, 1)
+                ),
                 new HangStateCommand(hang, AscentSubsytem.PTOMode.ENGAGED),
                 new InstantCommand(() -> pivot.setPower(0), pivot),
                 new InstantCommand(() -> pivot.setManualControl(false)),

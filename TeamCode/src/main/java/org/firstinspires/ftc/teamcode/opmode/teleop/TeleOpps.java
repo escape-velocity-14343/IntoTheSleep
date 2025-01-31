@@ -150,20 +150,23 @@ public class TeleOpps extends Robot {
                         new BasketAlignCommand(mecanum, basketSensor, pinpoint)
                                 .withXySupplier(() -> gamepad1.touchpad_finger_1_y * 3, () -> gamepad1.touchpad_finger_1_x * 4)
                                 .whenClose(48.0, bucketPos())
-                                /*.alongWith(new InstantCommand(bucketTimer::reset),
-                                        new WaitUntilCommand(() -> pinpoint.getPose().minus(scorePos).getTranslation().getNorm() < 1.5 && pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel)
-                                                .andThen(
-                                                        new IntakeControlCommand(intake, IntakeConstants.openPos, 0),
-                                                        new WaitCommand(50),
-                                                        new RunCommand(() -> mecanum.driveFieldCentric(1, -0.5, 0), mecanum).withTimeout(500)
-                                                )
-                                )*/
+                                .alongWith(new InstantCommand(bucketTimer::reset))
                                 .interruptOn(() -> bucketTimer.seconds() > 0.25
                                         && (Math.hypot(gamepad1.left_stick_x, gamepad1.left_stick_y) > 0.05
                                         || Math.hypot(gamepad1.right_stick_x, gamepad1.right_stick_y) > 0.05)
                                 )
                                 .whenFinished(() -> cs.schedule(new WaitCommand(250).andThen(new RetractCommand(wrist, pivot, extension))))
                 )
+                /*.alongWith(
+                        new ScheduleCommand(
+                        new WaitUntilCommand(() -> pinpoint.getPose().minus(scorePos).getTranslation().getNorm() < 1.5 && pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel)
+                                .andThen(
+                                        new IntakeControlCommand(intake, IntakeConstants.openPos, 0),
+                                        new WaitCommand(50),
+                                        new RunCommand(() -> mecanum.driveFieldCentric(1, -0.5, 0), mecanum).withTimeout(500)
+                                )
+                        )
+                )*/
         );
         // autoscore pos reset
         new Trigger(() -> gamepad1.share)
@@ -239,11 +242,23 @@ public class TeleOpps extends Robot {
 
         // driver intake logic
         driverPad.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(new ConditionalCommand(
+                .whenPressed(new SequentialCommandGroup(
+
+                        new ConditionalCommand(
+                                new WaitUntilCommand(() -> !gamepad2.options).andThen(
+                                new WaitCommand((long) IntakeConstants.subClearMillis)),
+                                new InstantCommand(),
+                                () -> gamepad2.options
+                        ),
+
+                        new ConditionalCommand(
                         new RetractCommand(wrist, pivot, extension),
                         new InstantCommand(),
                         () -> pivot.getCurrentPosition() > 5)
-                        .andThen(subPos()))
+                        .andThen(
+
+                                subPos()
+                        )))
                 .whenReleased(new SequentialCommandGroup(
                         new InstantCommand(() -> {
                             setState(FSMStates.FOLD);
