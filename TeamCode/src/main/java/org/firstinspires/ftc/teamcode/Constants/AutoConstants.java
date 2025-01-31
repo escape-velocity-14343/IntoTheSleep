@@ -11,7 +11,7 @@ public class AutoConstants {
 
     public static double subBarrierY = 26.5;
 
-    public static double autoscoreMaxVel = 7.5;
+    public static double autoscoreMaxVel = 8.5;
 
     public enum Alliance {
         RED,

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -31,13 +32,20 @@ public class AutoSpecimenScoreCommand extends SequentialCommandGroup {
         ),
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new GoToPointWithDefaultCommand(PU5Apple.intakePos, gtpc).interruptOn(() -> pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity),
+                // reset pinpoint
+                new ConditionalCommand(
+                        new InstantCommand(() -> pinpoint.setPosition(PU5Apple.intakePos.getX() - 2.5, pinpoint.getPose().getY())),
+                        new InstantCommand(),
+                        () -> pinpoint.getPose().getX() > PU5Apple.intakePos.getX() + 2
+                ),
+
                 // move forward slightly while intaking
                 new InstantCommand(() -> gtpc.setToggle(false)),
-                new WaitCommand(1000).alongWith(new IntakeClawCommand(intake, IntakeConstants.closedPos), new RunCommand(() -> mecanum.driveFieldCentric(-0.3, 0, 0)).withTimeout(1000)),
+                new WaitCommand(300).alongWith(new IntakeClawCommand(intake, IntakeConstants.closedPos), new RunCommand(() -> mecanum.driveFieldCentric(-0.3, 0, 0)).withTimeout(300)),
                 new InstantCommand(() -> gtpc.setToggle(true)),
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
                         new GoToPointWithDefaultCommand(new Pose2d(-50, scorePos, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -12)).withTimeout(1500),
-                new GoToPointWithDefaultCommand(new Pose2d(-30, scorePos, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -32).withTimeout(1500),
+                new GoToPointWithDefaultCommand(new Pose2d(-30, scorePos, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -35).withTimeout(1500),
                 new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
                 new WaitCommand(50)
         );

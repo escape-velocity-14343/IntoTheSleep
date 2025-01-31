@@ -95,6 +95,7 @@ public abstract class PI6Piece extends Robot {
             telemetry.addData("x", pinpoint.getPose().getX());
             telemetry.addData("y", pinpoint.getPose().getY());
             telemetry.addData("heading", pinpoint.getPose().getRotation().getDegrees());
+            telemetry.addData("pinpoint velocity", pinpoint.getVelocity().getTranslation().getNorm());
 
         }
         end();

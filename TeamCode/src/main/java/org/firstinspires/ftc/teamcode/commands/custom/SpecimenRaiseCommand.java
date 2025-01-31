@@ -26,7 +26,7 @@ public class SpecimenRaiseCommand extends SequentialCommandGroup {
                 ),
                 new InstantCommand(() -> extension.setManualControl(true)),
                 new InstantCommand(() -> extension.setPower(-1)),
-                new WaitCommand(1000),
+                new WaitCommand(300),
                 new InstantCommand(() -> extension.setPower(0)),
                 new InstantCommand(() -> extension.setManualControl(false))
 

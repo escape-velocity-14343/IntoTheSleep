@@ -33,7 +33,7 @@ public class SlideConstants {
     public static double FEEDFORWARD_top = 0.25; //TUNED VALUE
 
 
-    public static double autonPiece1Extension = 10;
+    public static double autonPiece1Extension = 12;
     public static double autonPiece3Extension = 13.5;
 
     public static double submersibleIntakeMaxExtension = 18.25;
@@ -44,7 +44,7 @@ public class SlideConstants {
 
     static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 17;
+    public static double specimenHookPosition = 16.75;
 
     public static double millisPerInch = 5 * ticksPerInch;
     public static double visionP = 0.55;

@@ -70,7 +70,7 @@ public class PU5Apple extends Robot {
                 // score initial
                 new SpecimenHookCommand(pivot, extension, wrist, intake),//.withTimeout(1000),
                 new WaitCommand(400),
-                new GoToPointWithDefaultCommand(new Pose2d(-30, -12, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33.5),//.withTimeout(1500),
+                new GoToPointWithDefaultCommand(new Pose2d(-30, -12, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -35),//.withTimeout(1500),
                 new WristCommand(wrist, IntakeConstants.halfFoldPos).alongWith(new IntakeControlCommand(intake, IntakeConstants.openPos,0)),
                 new WaitCommand(50),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, 0),
@@ -129,7 +129,7 @@ public class PU5Apple extends Robot {
                 //),
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
                         new GoToPointWithDefaultCommand(new Pose2d(-50, -2, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -12)).withTimeout(1500),
-                new GoToPointWithDefaultCommand(new Pose2d(-30, -2, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33).withTimeout(1500),
+                new GoToPointWithDefaultCommand(new Pose2d(-30, -2, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -35).withTimeout(1500),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos,0),
                 new WaitCommand(50),
 
