@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.auton.SubmersibleSample;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakePause;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakeTimeout;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -57,7 +58,7 @@ public abstract class PI6Piece extends Robot {
 
                 new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                         new BucketPosCommand(extension, pivot, wrist)
-                ).withTimeout(3000),
+                ).withTimeout(outtakeTimeout),
                 new WaitUntilStabilizedCommand(pinpoint),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
                 new WaitCommand(outtakePause),

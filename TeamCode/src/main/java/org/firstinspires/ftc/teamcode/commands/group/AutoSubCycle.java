@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commands.group;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakePause;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakeTimeout;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.subBarrierY;
 
@@ -95,7 +96,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
                 ),
                         new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                                 new BucketPosCommand(extension, pivot, wrist)
-                        ).withTimeout(3000),
+                        ).withTimeout(outtakeTimeout),
 
                         new WaitUntilStabilizedCommand(pinpoint),
 
