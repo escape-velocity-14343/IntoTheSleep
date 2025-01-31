@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelDeadlineGroup;
 import com.arcrobotics.ftclib.command.ParallelRaceGroup;
+import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.geometry.Pose2d;
@@ -34,7 +35,7 @@ public class PU5Apple extends Robot {
 
 
     private DefaultGoToPointCommand gtpc;
-    public static Pose2d intakePos = new Pose2d(-61, -40, new Rotation2d());
+    public static Pose2d intakePos = new Pose2d(-62, -40, new Rotation2d());
     public static double intakeStallVelocity = 0.1;
 
     @Override
@@ -120,22 +121,24 @@ public class PU5Apple extends Robot {
 
                 // score first
                 new GoToPointWithDefaultCommand(new Pose2d(intakePos.getX(), -65, new Rotation2d()), gtpc).alongWith(new IntakeControlCommand(intake, IntakeConstants.openPos, 1)).interruptOn(() -> pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity),
-                new WaitCommand(300).alongWith(new IntakeClawCommand(intake, IntakeConstants.closedPos)),
+                new InstantCommand(() -> gtpc.setToggle(false)),
+                new WaitCommand(1000).alongWith(new IntakeClawCommand(intake, IntakeConstants.closedPos), new RunCommand(() -> mecanum.driveFieldCentric(-0.3, 0, 0)).withTimeout(1000)),
+                new InstantCommand(() -> gtpc.setToggle(true)),
                 //new GoToPointWithDefaultCommand(new Pose2d(-50, -8, new Rotation2d()), gtpc, 5, 10)).alongWith(
                 //        new SpecimenHookCommand(pivot, extension, wrist, intake)
                 //),
                 new SpecimenHookCommand(pivot, extension, wrist, intake).alongWith(
-                        new GoToPointWithDefaultCommand(new Pose2d(-50, -14, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -12)).withTimeout(1500),
-                new GoToPointWithDefaultCommand(new Pose2d(-30, -6, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33).withTimeout(1500),
+                        new GoToPointWithDefaultCommand(new Pose2d(-50, -2, new Rotation2d()), gtpc, 5, 10).interruptOn(() -> pinpoint.getPose().getY() > -12)).withTimeout(1500),
+                new GoToPointWithDefaultCommand(new Pose2d(-30, -2, new Rotation2d()), gtpc).interruptOn(() -> pinpoint.getPose().getX() > -33).withTimeout(1500),
                 new IntakeControlCommand(intake, IntakeConstants.singleIntakePos,0),
                 new WaitCommand(50),
 
                 // score second
-                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, -4),
+                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, mecanum, 2),
                 // score third
-                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, 0),
+                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, mecanum, 6),
                 // score fourth
-                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, 4),
+                new AutoSpecimenScoreCommand(pivot, extension, wrist, intake, gtpc, pinpoint, mecanum, 10),
                 
                 // park
                 new WristCommand(wrist, IntakeConstants.halfFoldPos),

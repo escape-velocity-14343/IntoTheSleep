@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.subBarrierY;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -36,7 +39,10 @@ import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 import org.firstinspires.ftc.teamcode.vision.ColorSensorProcessor;
 
+@Config
 public class AutoSubCycle extends SequentialCommandGroup {
+
+    public static double subBarrierCycleOffset = 2;
 
     public AutoSubCycle(ExtensionSubsystem extension, PivotSubsystem pivot, WristSubsystem wrist, IntakeSubsystem intake, CameraSubsystem cam, SubClearSubsystem subClear, PinpointSubsystem pinpoint, DefaultGoToPointCommand gtpc, boolean clearSub) {
         addCommands
@@ -48,22 +54,28 @@ public class AutoSubCycle extends SequentialCommandGroup {
                                 .interruptOn(() -> pinpoint.getPose().getX() > -20),
                         new ConditionalCommand(
                                 new GoToPointWithDefaultCommand(new Pose2d(-12, 15, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).withTimeout(750),
-                                new GoToPointWithDefaultCommand(new Pose2d(-15, 29, Rotation2d.fromDegrees(-75)), gtpc, 2, 4).interruptOn(() -> pinpoint.getPose().getY() < 29),
+                                new GoToPointWithDefaultCommand(() -> new Pose2d(-15, subBarrierY + subBarrierCycleOffset, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).interruptOn(() -> pinpoint.getPose().getY() < subBarrierY + subBarrierCycleOffset),
                                         () -> clearSub)
                 ).alongWith(
                         new SequentialCommandGroup(
                                 new IntakeClawCommand(intake, IntakeConstants.foldedPos),
                                 new RetractCommand(wrist, pivot, extension),
-                                new SubPosReadyCommand(extension, pivot, wrist, intake, 6)
+                                new SubPosReadyCommand(extension, pivot, wrist, intake, 4)
                         )
                 ),
 
                 new ConditionalCommand(
-                        new SubClearWipeCommand(subClear),
+                        // if first time, set sub barrier y
+                        new InstantCommand(() -> {
+                            if (Math.abs(subBarrierY - pinpoint.getPose().getY()) < 5.0) {
+                                AutoConstants.subBarrierY = pinpoint.getPose().getY();
+                            }
+                        }).alongWith(new SubClearWipeCommand(subClear)),
                         new InstantCommand(),
                         () -> clearSub),
 
-                new GoToPointWithDefaultCommand(() -> new Pose2d(pinpoint.getPose().getX(), 29, Rotation2d.fromDegrees(-90)), gtpc).interruptOn(() -> 27.5 < pinpoint.getPose().getY() && pinpoint.getPose().getY() < 29),
+                new GoToPointWithDefaultCommand(() -> new Pose2d(pinpoint.getPose().getX(), subBarrierY + subBarrierCycleOffset, Rotation2d.fromDegrees(-90)), gtpc)
+                        .interruptOn(() -> subBarrierY + subBarrierCycleOffset - 1.5 < pinpoint.getPose().getY() && pinpoint.getPose().getY() < subBarrierY + subBarrierCycleOffset),
                 new AutoSubIntake(extension, wrist, cam, gtpc, intake, pinpoint, pivot),
 
                 /*new ConditionalCommand(
@@ -81,6 +93,8 @@ public class AutoSubCycle extends SequentialCommandGroup {
                 ),
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)),
+
+                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
 
                 new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
         );
@@ -113,6 +127,8 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new BucketPosCommand(extension, pivot, wrist).alongWith(
                                 new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
+                        new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+
                         new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
                 );
     }
@@ -130,7 +146,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
                                 new SequentialCommandGroup(
                                         new IntakeClawCommand(intake, IntakeConstants.foldedPos),
                                         new RetractCommand(wrist, pivot, extension),
-                                        new SubPosReadyCommand(extension, pivot, wrist, intake, 6)
+                                        new SubPosReadyCommand(extension, pivot, wrist, intake, 4)
                                 )
                         ),
 
@@ -154,6 +170,8 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         ),
                         new BucketPosCommand(extension, pivot, wrist).alongWith(
                                 new GoToPointWithDefaultCommand(scorePos, gtpc)),
+
+                        new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
 
                         new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
                 );

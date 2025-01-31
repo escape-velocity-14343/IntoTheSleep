@@ -126,6 +126,6 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
      * Warning - will completely break position!!
      */
     public void resetYaw() {
-        reset();
+        pinpoint.setPosition(new Pose2D(DistanceUnit.MM, pinpoint.getPosX(), pinpoint.getPosY(), AngleUnit.RADIANS, 0));
     }
 }

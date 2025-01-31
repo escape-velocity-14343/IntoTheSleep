@@ -19,9 +19,9 @@ public class L3HangRetract extends CommandBase {
     }
 
     public void execute() {
-        hang.move(timer.seconds() > PivotConstants.l3hangtime ? -1 : -1);
+        hang.move(timer.seconds() > PivotConstants.l3hangtime ? -0.7 : -1);
     }
     public boolean isFinished() {
-        return timer.seconds() > PivotConstants.l3hangtime+2;
+        return false;
     }
 }

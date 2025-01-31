@@ -34,6 +34,13 @@ public class GoToPointWithDefaultCommand extends CommandBase {
         this.gtpc = gtpc;
     }
 
+    public GoToPointWithDefaultCommand(Supplier<Pose2d> targetSupplier, DefaultGoToPointCommand gtpc, double tol, double hTol) {
+        useTargetSupplier = true;
+        this.targetSupplier = targetSupplier;
+        this.gtpc = gtpc;
+        gtpc.setTolerances(tol, hTol);
+    }
+
     public void initialize(){
         if (useTargetSupplier) {
             target = targetSupplier.get();

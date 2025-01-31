@@ -23,4 +23,6 @@ public class DriveConstants {
     public static double ptoLeftEngagedPos = 0.35;
     public static double ptoLeftDisengagedPos = 0.2;
     public static double ptoLeftFreeFloatPos = 0.27;
+
+    public static boolean highExtend = false;
 }

@@ -43,7 +43,7 @@ public class CameraSubsystem extends SubsystemBase {
     public static Scalar minimumYellow = new Scalar(13, 60, 60);
     public static Scalar maximumYellow = new Scalar(50, 255, 255);
 
-    public static double widthMultiplier = 0.9;
+    public static double widthMultiplier = 0;
 
     ColorBlobLocatorProcessorMulti colorLocator;
     ColorSensorProcessor colorSensor;

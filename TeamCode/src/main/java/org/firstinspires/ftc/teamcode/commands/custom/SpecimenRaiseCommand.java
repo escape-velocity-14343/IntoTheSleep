@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commands.custom;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -21,11 +22,14 @@ public class SpecimenRaiseCommand extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new WristCommand(wrist, IntakeConstants.specimenReadyPos),
                     new PivotCommand(pivot, PivotConstants.specimenIntakeAngle),
-                    new ExtendCommand(extension, SlideConstants.specimenRaisePosition)
+                    new ExtendCommand(extension, SlideConstants.specimenRaisePosition).withTimeout(extension.getReasonableExtensionMillis(SlideConstants.specimenRaisePosition))
                 ),
                 new InstantCommand(() -> extension.setManualControl(true)),
-                new InstantCommand(() -> extension.setPower(-0.2)),
+                new InstantCommand(() -> extension.setPower(-1)),
+                new WaitCommand(1000),
+                new InstantCommand(() -> extension.setPower(0)),
                 new InstantCommand(() -> extension.setManualControl(false))
+
         );
     }
 

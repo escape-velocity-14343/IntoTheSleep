@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.LowBucketPosCommand;
@@ -58,6 +60,8 @@ public abstract class Robot extends LinearOpMode {
     public ElapsedTime timer = new ElapsedTime();
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
+        DriveConstants.highExtend = false;
+        AutoConstants.subBarrierY = 26.5;
         //cs.reset();
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {

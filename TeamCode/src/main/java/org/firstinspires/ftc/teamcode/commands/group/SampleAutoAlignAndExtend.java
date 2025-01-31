@@ -26,6 +26,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     private ElapsedTime time = new ElapsedTime();
     private ElapsedTime extensionLimitTime = new ElapsedTime();
     private ElapsedTime wrongColorTime = new ElapsedTime();
+    private ElapsedTime commandRuntime = new ElapsedTime();
     private boolean isWrongColor = false;
     private boolean seen = false;
     private boolean reachedMaxExtension = false;
@@ -42,6 +43,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     public void initialize() {
         cam.setEnabled(true);
         time.reset();
+        commandRuntime.reset();
         extensionSubsystem.setManualControl(true);
     }
     @Override
@@ -70,6 +72,11 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     @Override
     public boolean isFinished() {
 
+        // guard clause - force command to run for 0.2s
+        if (commandRuntime.milliseconds() < 100) {
+            return false;
+        }
+
         if (extensionSubsystem.getCurrentInches() > SlideConstants.submersibleIntakeMaxExtension - 0.1) {
             if (!reachedMaxExtension) {
                 reachedMaxExtension = true;
@@ -88,7 +95,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
                 seen = true;
                 time.reset();
             }
-            else if (time.milliseconds()>25) {
+            else if (time.milliseconds()>30) {
                 return true;
             }
         } else {

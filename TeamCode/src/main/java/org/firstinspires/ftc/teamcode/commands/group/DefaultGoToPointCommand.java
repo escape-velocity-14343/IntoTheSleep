@@ -42,6 +42,8 @@ public class DefaultGoToPointCommand extends CommandBase {
     public static boolean useVelCompensated = true;
     public static boolean usePID = false;
 
+    private boolean toggle = true;
+
     private ElapsedTime timer = new ElapsedTime();
 
     Pose2d target;
@@ -129,8 +131,13 @@ public class DefaultGoToPointCommand extends CommandBase {
         double hMove = -rotSpeedSupplier.getAsDouble() * voltageScalar;
 
 
+        if (toggle) {
+            drive.driveFieldCentric(-xMove, -yMove * 1.2, hMove);
+        }
+    }
 
-        drive.driveFieldCentric(-xMove, -yMove*1.2, hMove);
+    public void setToggle(boolean toggle) {
+        this.toggle = toggle;
     }
 
     @Override

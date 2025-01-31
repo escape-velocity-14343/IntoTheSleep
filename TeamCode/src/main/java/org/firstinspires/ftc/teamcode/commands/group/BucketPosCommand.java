@@ -11,6 +11,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -35,9 +36,9 @@ public class BucketPosCommand extends SequentialCommandGroup {
                         new PivotCommand(pivot, PivotConstants.topLimit),
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees),
-                                new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000).interruptOn(() -> extension.getCurrentInches() > SlideConstants.bucketPos - 4)
+                                new ExtendCommand(extension, SlideConstants.bucketPos + (DriveConstants.highExtend ? SlideConstants.highExtendInches : 0)).withTimeout(1000).interruptOn(() -> extension.getCurrentInches() > SlideConstants.bucketPos - 4)
                         ),
-                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-4).withTimeout(1000).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
+                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-5).withTimeout(1000).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
                 ),
 
                 new InstantCommand(() -> Log.i("2", "BucketPos End"))

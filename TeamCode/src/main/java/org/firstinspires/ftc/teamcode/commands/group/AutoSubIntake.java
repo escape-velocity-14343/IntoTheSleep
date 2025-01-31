@@ -22,7 +22,7 @@ public class AutoSubIntake extends SequentialCommandGroup {
 
     public AutoSubIntake(ExtensionSubsystem extension, WristSubsystem wrist, CameraSubsystem cam, DefaultGoToPointCommand gtpc, IntakeSubsystem intake, PinpointSubsystem pinpoint, PivotSubsystem pivot) {
         addCommands(
-                new ExtendCommand(extension, 6),
+                new ExtendCommand(extension, 4),
                 new WristCommand(wrist, IntakeConstants.groundPos).alongWith(
                         new IntakeControlCommand(intake,
                                 IntakeConstants.openPos * IntakeConstants.autoIntakeClawLerp

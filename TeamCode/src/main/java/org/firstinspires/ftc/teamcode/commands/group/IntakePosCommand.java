@@ -23,17 +23,17 @@ public class IntakePosCommand extends SequentialCommandGroup {
     public IntakePosCommand(ExtensionSubsystem extend, PivotSubsystem pivot, WristSubsystem wrist, IntakeSubsystem intake) {
         addCommands(
                 //new ParallelCommandGroup(
-                new ExtendCommand(extend,1).interruptOn(()-> extend.getCurrentInches() < 1.5)
+                new ExtendCommand(extend,1).interruptOn(()-> extend.getCurrentInches() < 3)
                         .alongWith(
                                 new WaitUntilCommand(() -> extend.getCurrentInches() < 25).andThen(
                                         new IntakeClawCommand(intake, IntakeConstants.singleIntakePos),
                                         new WristCommand(wrist, IntakeConstants.groundPos),
-                                        new PivotCommand(pivot, PivotConstants.retractDegrees).interruptOn(() -> pivot.getCurrentPosition() < 2))),
+                                        new PivotCommand(pivot, PivotConstants.retractDegrees))),
                 new WristCommand(wrist, IntakeConstants.groundPos).whenFinished(() -> Log.i("intake pos command", "pivot pos: " + pivot.getCurrentPosition())));
     }
 
     @Deprecated
-    // FOR BACKCOMPATIBILITY ONLY DO NOT MODIFY
+    // FOR BACKCOMPAT ONLY DO NOT MODIFY
     public IntakePosCommand(ExtensionSubsystem extend, PivotSubsystem pivot, WristSubsystem wrist) {
         addCommands(
                 //new ParallelCommandGroup(

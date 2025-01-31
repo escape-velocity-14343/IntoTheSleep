@@ -36,18 +36,21 @@ public class SlideConstants {
     public static double autonPiece1Extension = 10;
     public static double autonPiece3Extension = 13.5;
 
-    public static double submersibleIntakeMaxExtension = 17.5;
+    public static double submersibleIntakeMaxExtension = 18.25;
+    public static double submersibleIntakeMaxClawExtension = 17;
 
     public static double autonPiecee3ExtensionPower = 0.3;
     public static double autoRetractionPower = 1.0;
 
     static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 16.5;
+    public static double specimenHookPosition = 17;
 
     public static double millisPerInch = 5 * ticksPerInch;
     public static double visionP = 0.55;
 
-    public static double bucketPosGainScheduleMult = 1.3;
+    public static double bucketPosGainScheduleMult = 1;
     public static double bucketPosGainSchedulePos = 25;
+
+    public static double highExtendInches = 1.5;
 }
