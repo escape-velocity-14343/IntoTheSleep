@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.auton.SubmersibleSample;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakePause;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -15,6 +16,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.WaitUntilStabilizedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.Auton3Yellows;
 import org.firstinspires.ftc.teamcode.commands.group.AutoSubCycle;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
@@ -55,10 +57,10 @@ public abstract class PI6Piece extends Robot {
 
                 new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                         new BucketPosCommand(extension, pivot, wrist)
-                ),//.withTimeout(3000),
-                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                ).withTimeout(3000),
+                new WaitUntilStabilizedCommand(pinpoint),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(50),
+                new WaitCommand(outtakePause),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
                 new Auton3Yellows(extension, pivot, wrist, intake, gtpc, cam, pinpoint),

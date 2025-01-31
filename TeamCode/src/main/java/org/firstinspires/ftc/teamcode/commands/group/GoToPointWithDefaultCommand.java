@@ -55,7 +55,7 @@ public class GoToPointWithDefaultCommand extends CommandBase {
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("1", "gtp finished " + target.getX() + " " + target.getY() + " " + target.getRotation().getDegrees());
+        Log.i("%1", "gtp finished " + target.getX() + " " + target.getY() + " " + target.getRotation().getDegrees());
     }
 
     @Override

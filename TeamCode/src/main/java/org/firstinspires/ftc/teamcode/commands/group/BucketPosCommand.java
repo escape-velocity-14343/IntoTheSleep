@@ -41,7 +41,7 @@ public class BucketPosCommand extends SequentialCommandGroup {
                         new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-2).withTimeout(1000).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
                 ),
 
-                new InstantCommand(() -> Log.i("2", "BucketPos End"))
+                new InstantCommand(() -> Log.i("%2", "BucketPos End"))
         );
     }
 
@@ -56,6 +56,6 @@ public class BucketPosCommand extends SequentialCommandGroup {
                                 new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000)
                         )),
                 new WristCommand(wrist, IntakeConstants.scoringPos),
-                new InstantCommand(() -> Log.i("2", "BucketPos End")));
+                new InstantCommand(() -> Log.i("%2", "BucketPos End")));
     }
 }

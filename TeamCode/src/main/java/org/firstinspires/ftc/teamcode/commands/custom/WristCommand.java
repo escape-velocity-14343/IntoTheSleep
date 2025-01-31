@@ -31,7 +31,7 @@ public class WristCommand extends CommandBase {
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("3", "Wrist set to " + target);
+        Log.i("%3", "Wrist set to " + target);
     }
 
     @Override

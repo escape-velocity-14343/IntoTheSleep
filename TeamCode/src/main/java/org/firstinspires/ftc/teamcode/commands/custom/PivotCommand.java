@@ -28,13 +28,20 @@ public class PivotCommand extends CommandBase {
     }
 
     @Override
+    public void execute() {
+        Log.i("%12", "Pivot Debug Target: " + target);
+        Log.i("%12", "Pivot Debug Position: " + pivotSubsystem.getCurrentPosition());
+        Log.i("%12", "Pivot Debug isClose: " + isFinished());
+    }
+
+    @Override
     public boolean isFinished(){
         return pivotSubsystem.isClose(target);
     }
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("7", "Pivot to " + target);
+        Log.i("%7", "Pivot reached target: " + target);
         pivotSubsystem.stop();
     }
 }

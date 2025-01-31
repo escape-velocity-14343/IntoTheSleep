@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakePause;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SlowerAutonExtendCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.WaitUntilStabilizedCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
@@ -48,7 +50,7 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
                         new BucketPosCommand(extension, pivot, wrist)
-                ),
+                ).withTimeout(3000),
                 //new WaitCommand(100),
 
                 new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
@@ -65,9 +67,9 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 new AutonExtendCommand(extension, SlideConstants.autonPiece1Extension).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
-                new BucketPosCommand(extension, pivot, wrist).alongWith(
-                        new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ),
+                new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
+                        new BucketPosCommand(extension, pivot, wrist)
+                ).withTimeout(3000),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
                 new WaitCommand(500),
@@ -82,9 +84,9 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 new SlowerAutonExtendCommand(extension, SlideConstants.autonPiece3Extension).withTimeout(1500).interruptOn(intake::getDSensorSupplier),
                 new IntakeControlCommand(intake, IntakeConstants.closedPos, 1),
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
-                new BucketPosCommand(extension, pivot, wrist).alongWith(
-                        new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ),
+                new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
+                        new BucketPosCommand(extension, pivot, wrist)
+                ).withTimeout(3000),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.singleIntakePos, -1),
                 new WaitCommand(500),
@@ -110,12 +112,12 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ),
-                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                ).withTimeout(3000),
+                new WaitUntilStabilizedCommand(pinpoint),
                 //new WaitCommand(100),
 
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(50),
+                new WaitCommand(outtakePause),
                 //new WristCommand(wrist, IntakeConstants.bucketRetractPos),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
@@ -131,11 +133,11 @@ public class Auton3Yellows extends SequentialCommandGroup {
                 //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ),
-                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                ).withTimeout(3000),
+                new WaitUntilStabilizedCommand(pinpoint),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(50),
+                new WaitCommand(outtakePause),
                 //new WristCommand(wrist, IntakeConstants.bucketRetractPos),
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos),
 
@@ -150,11 +152,11 @@ public class Auton3Yellows extends SequentialCommandGroup {
                         //RetractCommand.newWithWristPos(wrist, pivot, extension, IntakeConstants.groundPos)
                 new BucketPosCommand(extension, pivot, wrist).alongWith(
                         new GoToPointWithDefaultCommand(scorePos, gtpc)
-                ),
-                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                ).withTimeout(3000),
+                new WaitUntilStabilizedCommand(pinpoint),
                 //new WaitCommand(100),
                 new IntakeControlCommand(intake,IntakeConstants.openPos, -1),
-                new WaitCommand(50),
+                new WaitCommand(outtakePause),
                 new WristCommand(wrist, IntakeConstants.groundPos)
                 //new IntakeClawCommand(intake, IntakeConstants.closedPos)
 

@@ -13,6 +13,9 @@ public class AutoConstants {
 
     public static double autoscoreMaxVel = 8.5;
 
+    // Milliseconds
+    public static long outtakePause = 300;
+
     public enum Alliance {
         RED,
         BLUE

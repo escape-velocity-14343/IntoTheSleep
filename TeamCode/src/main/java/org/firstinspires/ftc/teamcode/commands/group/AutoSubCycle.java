@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commands.group;
 
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
+import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.outtakePause;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.subBarrierY;
 
@@ -28,6 +29,7 @@ import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SubClearCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SubClearWipeCommand;
+import org.firstinspires.ftc.teamcode.commands.custom.WaitUntilStabilizedCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.WristCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.CameraSubsystem;
@@ -91,12 +93,13 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new IntakeControlCommand(intake, IntakeConstants.closedPos, 0),
                         new IntakeRetractCommand(wrist, pivot, extension)
                 ),
-                new BucketPosCommand(extension, pivot, wrist).alongWith(
-                        new GoToPointWithDefaultCommand(scorePos, gtpc)),
+                        new GoToPointWithDefaultCommand(scorePos, gtpc).alongWith(
+                                new BucketPosCommand(extension, pivot, wrist)
+                        ).withTimeout(3000),
 
-                new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                        new WaitUntilStabilizedCommand(pinpoint),
 
-                new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
+                new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(outtakePause)
         );
 }
 
@@ -127,9 +130,9 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new BucketPosCommand(extension, pivot, wrist).alongWith(
                                 new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
-                        new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                        new WaitUntilStabilizedCommand(pinpoint),
 
-                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
+                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(outtakePause)
                 );
     }
 
@@ -171,9 +174,9 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new BucketPosCommand(extension, pivot, wrist).alongWith(
                                 new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
-                        new WaitUntilCommand(() -> pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel),
+                        new WaitUntilStabilizedCommand(pinpoint),
 
-                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
+                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(outtakePause)
                 );
     }
 
@@ -221,7 +224,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new BucketPosCommand(extension, pivot, wrist).alongWith(
                                 new GoToPointWithDefaultCommand(scorePos, gtpc)),
 
-                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(50)
+                        new IntakeControlCommand(intake, IntakeConstants.openPos, -1), new WaitCommand(outtakePause)
                 );
     }
 

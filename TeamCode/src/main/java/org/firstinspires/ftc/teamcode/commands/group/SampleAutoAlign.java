@@ -60,7 +60,7 @@ public class SampleAutoAlign extends CommandBase {
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("autoalign", "autoalign done, color: " + (cam.isYellow() ? "yellow" : "blue"));
+        Log.i("%autoalign", "autoalign done, color: " + (cam.isYellow() ? "yellow" : "blue"));
         //cam.setEnabled(false);
     }
 

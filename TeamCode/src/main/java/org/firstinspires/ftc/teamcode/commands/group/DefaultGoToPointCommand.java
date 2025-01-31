@@ -148,20 +148,20 @@ public class DefaultGoToPointCommand extends CommandBase {
     public void end(boolean wasInterrupted) {
         if (wasInterrupted) {
             drive.driveFieldCentric(0,0,0);
-            Log.w("Commands", "gtpc was interrupted. This should never happen!");
+            Log.w("%Commands", "gtpc was interrupted. This should never happen!");
         } else {
-            Log.w("GTPC", "this ended without interruption somehow???");
+            Log.w("%GTPC", "this ended without interruption somehow???");
         }
     }
 
     public boolean isDone() {
         if (target == null) {
-            Log.i("isDone", "target was null");
+            Log.i("%isDone", "target was null");
             return false;
         }
 
         if (currentPose == null) {
-            Log.i("isDone", "currentPose was null");
+            Log.i("%isDone", "currentPose was null");
             return false;
         }
 

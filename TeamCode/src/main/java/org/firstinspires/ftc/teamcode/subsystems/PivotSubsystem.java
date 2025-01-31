@@ -53,11 +53,8 @@ public class PivotSubsystem extends SubsystemBase {
         manualControl = false;
         setTarget(target);
         double power = squid.calculate(target, getCurrentPosition()) * voltage.getVoltageNormalized();
-        if (currentPos > PivotConstants.topLimit && power > 0) {
-            power = 0;
-        }
-        //else if (currentPos < PivotConstants.bottomLimit && power < 0){
-        //    power = 0;
+        //if (currentPos > PivotConstants.topLimit-1 && power >= 0) {
+        //    power = 0.3;
         //}
         if (power <= 0 && isClose(target) && target==PivotConstants.bottomLimit){
             power = -0.05;
@@ -74,7 +71,7 @@ public class PivotSubsystem extends SubsystemBase {
     * @param target in inches, use the same one as the pid target
     */
     public boolean isClose(double target) {
-        return Util.inRange(target, currentPos, PivotConstants.tolerance) || currentPos < PivotConstants.bottomLimit;
+        return Util.inRange(target, currentPos, PivotConstants.tolerance);// || currentPos < PivotConstants.bottomLimit;
     }
 
     public double getCurrentPosition() {

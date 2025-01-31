@@ -23,6 +23,6 @@ public class IntakeClawCommand extends InstantCommand {
     @Override
     public void initialize() {
         intake.setClawer(position);
-        Log.i("8", "Intake pos: " + position);
+        Log.i("%8", "Intake pos: " + position);
     }
 }

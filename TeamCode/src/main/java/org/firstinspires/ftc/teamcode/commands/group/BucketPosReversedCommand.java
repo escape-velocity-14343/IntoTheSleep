@@ -30,7 +30,7 @@ public class BucketPosReversedCommand extends SequentialCommandGroup {
                                 new ExtendCommand(extension, SlideConstants.maxExtension).withTimeout(1000)
                         )
                 ),
-                new InstantCommand(() -> Log.i("2", "BucketPos End"))
+                new InstantCommand(() -> Log.i("%2", "BucketPos End"))
         );
     }
 }

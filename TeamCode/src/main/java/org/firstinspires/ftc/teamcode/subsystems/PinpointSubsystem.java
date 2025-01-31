@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.bluetooth.BluetoothClass;
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
@@ -18,12 +21,14 @@ import org.firstinspires.ftc.teamcode.lib.Localizer;
 import org.firstinspires.ftc.teamcode.lib.drivers.GoBildaPinpoint;
 
 import java.util.LinkedList;
+import java.util.Optional;
 
 @Config
 
 public class PinpointSubsystem extends SubsystemBase implements Localizer {
     GoBildaPinpoint pinpoint;
     Pose2D pose = new Pose2D(DistanceUnit.INCH, 0, 0, AngleUnit.DEGREES, 0);
+    GoBildaPinpoint.DeviceStatus deviceStatus = GoBildaPinpoint.DeviceStatus.NOT_READY;
 
     @Deprecated
     public static double yawScalar = 1;
@@ -49,14 +54,15 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
         );
         pinpoint.setOffsets(xEncOffset, yEncOffset);
         //reset();
-
+        deviceStatus = pinpoint.getDeviceStatus();
     }
 
     @Override
     public void periodic() {
         pinpoint.update();
-        if (Double.isNaN(pinpoint.getPosX())){
+        if (Double.isNaN(pinpoint.getPosX()) || Double.isNaN(pinpoint.getPosY())){
             pose = lastGoodPose;
+            Log.i("%11", "pinpoint NaN value");
         }
         else{
             pose = pinpoint.getPosition();
@@ -68,6 +74,11 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
             TelemetryPacket packet = new TelemetryPacket();
             drawRobot(packet.field(), getPose());
             FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        }
+
+        if (pinpoint.getDeviceStatus() != deviceStatus){
+            Log.i("%Pinpoint Status Change", pinpoint.getDeviceStatus().toString());
+            deviceStatus = pinpoint.getDeviceStatus();
         }
     }
 

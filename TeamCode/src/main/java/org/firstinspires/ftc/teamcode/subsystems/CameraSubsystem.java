@@ -105,6 +105,10 @@ public class CameraSubsystem extends SubsystemBase {
         if (portal.getProcessorEnabled(colorLocator)) {
 
             List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+            if (blobs.isEmpty()){
+                Log.i("%Empty blob list!!", "Uh oh please dont crash");
+                return;
+            }
 
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
@@ -121,7 +125,7 @@ public class CameraSubsystem extends SubsystemBase {
             }
         }
         if (portal.getProcessorEnabled(colorSensor)) {
-            detection = colorSensor.getDetection();
+            detection = colorSensor.getDetection(); //I don't think this can be null so no crashy crashy?
             yellow = detection == ColorSensorProcessor.ColorType.YELLOW;
             Log.v("camera", "color: " + detection);
             // Log.i("camera", "yellow: " + yellow);

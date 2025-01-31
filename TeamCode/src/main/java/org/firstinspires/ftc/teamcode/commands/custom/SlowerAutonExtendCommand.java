@@ -40,7 +40,7 @@ public class SlowerAutonExtendCommand extends CommandBase {
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("9", "Extension to " + target);
+        Log.i("%9", "Extension to " + target);
         extend.setSuperSpeedToggle(false);
     }
 

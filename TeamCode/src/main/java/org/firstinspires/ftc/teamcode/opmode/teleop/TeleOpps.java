@@ -159,7 +159,7 @@ public class TeleOpps extends Robot {
                 )
                 /*.alongWith(
                         new ScheduleCommand(
-                        new WaitUntilCommand(() -> pinpoint.getPose().minus(scorePos).getTranslation().getNorm() < 1.5 && pinpoint.getVelocity().getTranslation().getNorm() < autoscoreMaxVel)
+                        new WaitUntilStabilizedCommand(pinpoint).setTimeout(1.0)
                                 .andThen(
                                         new IntakeControlCommand(intake, IntakeConstants.openPos, 0),
                                         new WaitCommand(50),

@@ -50,7 +50,7 @@ public class RetractCommand extends SequentialCommandGroup {
                         ),
                         new ExtendCommand(extend, SlideConstants.minExtension)
                 ),
-                new WristCommand(wrist, IntakeConstants.foldedPos).whenFinished(() -> Log.i("5", "Retract command"))
+                new WristCommand(wrist, IntakeConstants.foldedPos).whenFinished(() -> Log.i("%5", "Retract command"))
         );
     }
 }
