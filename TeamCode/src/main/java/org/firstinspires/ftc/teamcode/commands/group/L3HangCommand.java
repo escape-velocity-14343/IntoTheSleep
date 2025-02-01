@@ -23,12 +23,21 @@ public class L3HangCommand extends SequentialCommandGroup {
     public L3HangCommand(AscentSubsytem hang, PivotSubsystem pivot, WristSubsystem wrist, ExtensionSubsystem extensionSubsystem, MecanumDriveSubsystem drive) {
         addRequirements(hang, pivot);
         addCommands(
+                new WristCommand(wrist, IntakeConstants.foldedPos),
+                new InstantCommand(() -> pivot.setManualControl(true)),
+                new InstantCommand(() -> pivot.setPower(-1), pivot),
+                new WaitUntilCommand(() -> pivot.getCurrentPosition() < 1),
+                new HangStateCommand(hang, AscentSubsytem.PTOMode.FREEFLOAT),
+                //new InstantCommand(()->pivot.setPower(-0.7),pivot),
+                new WaitCommand(1500).deadlineWith(
+                        new ExtendCommand(extensionSubsystem, 1)
+                ),
                 new HangStateCommand(hang, AscentSubsytem.PTOMode.ENGAGED),
                 new InstantCommand(() -> pivot.setPower(0), pivot),
                 new InstantCommand(() -> pivot.setManualControl(false)),
                 new PivotCommand(pivot, 0).interruptOn(() -> true),
-                new ExtendCommand(extensionSubsystem, 5),
                 new L3HangRetract(hang, drive)
+
         );
     }
 }
