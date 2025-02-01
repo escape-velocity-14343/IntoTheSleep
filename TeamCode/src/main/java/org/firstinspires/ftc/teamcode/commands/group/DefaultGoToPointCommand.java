@@ -194,6 +194,9 @@ public class DefaultGoToPointCommand extends CommandBase {
 
     public void setTarget(Pose2d target){
         this.target = target;
+        isZeroVelocity = false;
+        zeroVelocityTimer.reset();
+        hasBeenZeroVelocity = false;
         timer.reset();
     }
 

@@ -33,11 +33,11 @@ public class AutoSpecimenScoreCommand extends SequentialCommandGroup {
                 new IntakeControlCommand(intake, IntakeConstants.openPos, 1),
                 new GoToPointWithDefaultCommand(PU5Apple.intakePos, gtpc).interruptOn(() -> pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity),
                 // reset pinpoint
-                new ConditionalCommand(
+                /*new ConditionalCommand(
                         new InstantCommand(() -> pinpoint.setPosition(PU5Apple.intakePos.getX() - 2.5, pinpoint.getPose().getY())),
                         new InstantCommand(),
                         () -> pinpoint.getPose().getX() > PU5Apple.intakePos.getX() + 2
-                ),
+                ),*/
 
                 // move forward slightly while intaking
                 new InstantCommand(() -> gtpc.setToggle(false)),

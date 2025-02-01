@@ -61,7 +61,7 @@ public abstract class Robot extends LinearOpMode {
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
         DriveConstants.highExtend = false;
-        AutoConstants.subBarrierY = 26.5;
+        AutoConstants.subBarrierY = 24.0;
         //cs.reset();
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {

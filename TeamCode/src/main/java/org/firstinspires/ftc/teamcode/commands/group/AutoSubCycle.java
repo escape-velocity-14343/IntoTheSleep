@@ -56,7 +56,7 @@ public class AutoSubCycle extends SequentialCommandGroup {
                         new GoToPointWithDefaultCommand(new Pose2d(-12, 37, Rotation2d.fromDegrees(-60)), gtpc, 5, 20)
                                 .interruptOn(() -> pinpoint.getPose().getX() > -16),
                         new ConditionalCommand(
-                                new GoToPointWithDefaultCommand(new Pose2d(-12, 15, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).withTimeout(750),
+                                new GoToPointWithDefaultCommand(new Pose2d(-12, 15, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).withTimeout(1250),
                                 new GoToPointWithDefaultCommand(() -> new Pose2d(-15, subBarrierY + subBarrierCycleOffset, Rotation2d.fromDegrees(-90)), gtpc, 2, 4).interruptOn(() -> pinpoint.getPose().getY() < subBarrierY + subBarrierCycleOffset),
                                         () -> clearSub)
                 ).alongWith(
@@ -70,9 +70,10 @@ public class AutoSubCycle extends SequentialCommandGroup {
                 new ConditionalCommand(
                         // if first time, set sub barrier y
                         new InstantCommand(() -> {
-                            if (Math.abs(subBarrierY - pinpoint.getPose().getY()) < 5.0) {
+                            if (Math.abs(subBarrierY - pinpoint.getPose().getY()) < 7.5) {
                                 AutoConstants.subBarrierY = pinpoint.getPose().getY();
                             }
+                            Log.v("subBarrierY", "new: " + pinpoint.getPose().getY());
                         }).alongWith(new SubClearWipeCommand(subClear)),
                         new InstantCommand(),
                         () -> clearSub),

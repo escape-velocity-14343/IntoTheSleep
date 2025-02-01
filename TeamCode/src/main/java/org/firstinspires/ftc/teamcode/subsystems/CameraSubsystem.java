@@ -101,6 +101,7 @@ public class CameraSubsystem extends SubsystemBase {
 
         pixelPos = 0;
         yellow = false;
+        detection = ColorSensorProcessor.ColorType.NONE;
 
         if (portal.getProcessorEnabled(colorLocator)) {
 

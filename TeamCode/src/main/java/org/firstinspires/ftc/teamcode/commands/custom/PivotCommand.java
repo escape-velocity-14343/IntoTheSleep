@@ -29,9 +29,9 @@ public class PivotCommand extends CommandBase {
 
     @Override
     public void execute() {
-        Log.v("%12", "Pivot Debug Target: " + target);
-        Log.v("%12", "Pivot Debug Position: " + pivotSubsystem.getCurrentPosition());
-        Log.v("%12", "Pivot Debug isClose: " + isFinished());
+        //Log.v("%12", "Pivot Debug Target: " + target);
+        //Log.v("%12", "Pivot Debug Position: " + pivotSubsystem.getCurrentPosition());
+        //Log.v("%12", "Pivot Debug isClose: " + isFinished());
     }
 
     @Override
