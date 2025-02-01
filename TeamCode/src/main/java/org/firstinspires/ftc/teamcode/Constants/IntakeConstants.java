@@ -35,11 +35,11 @@ public class IntakeConstants {
     public static double backClosedPos = 0.12;
 
     // sub clear constants
-    public static double subClearWipePos = 0.4;
-    public static double subClearLinearPos = 0.4;
-    public static double subClearRetractPos = 0.82;
+    public static double subClearWipePos = 0.5;
+    public static double subClearLinearPos = 0.47;
+    public static double subClearRetractPos = 0.9;
 
-    public static double subClear2WipePos = 0.9;
+    public static double subClear2WipePos = 0.65;
     public static double subClear2LinearPos = 0.6;
     public static double subClear2RetractPos = 0.2;
     public static double subClearMillis = 400;

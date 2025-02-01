@@ -19,8 +19,10 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PivotSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
+import java.util.function.BooleanSupplier;
+
 public class L3HangCommand extends SequentialCommandGroup {
-    public L3HangCommand(AscentSubsytem hang, PivotSubsystem pivot, WristSubsystem wrist, ExtensionSubsystem extensionSubsystem, MecanumDriveSubsystem drive) {
+    public L3HangCommand(AscentSubsytem hang, PivotSubsystem pivot, WristSubsystem wrist, ExtensionSubsystem extensionSubsystem, MecanumDriveSubsystem drive, BooleanSupplier dpad) {
         addRequirements(hang, pivot);
         addCommands(
                 new WristCommand(wrist, IntakeConstants.foldedPos),
@@ -29,10 +31,11 @@ public class L3HangCommand extends SequentialCommandGroup {
                 new WaitUntilCommand(() -> pivot.getCurrentPosition() < 1),
                 new HangStateCommand(hang, AscentSubsytem.PTOMode.FREEFLOAT),
                 //new InstantCommand(()->pivot.setPower(-0.7),pivot),
-                new WaitCommand(1500).deadlineWith(
-                        new ExtendCommand(extensionSubsystem, 1)
+                new WaitCommand(750).deadlineWith(
+                        new ExtendCommand(extensionSubsystem, 3)
                 ),
                 new HangStateCommand(hang, AscentSubsytem.PTOMode.ENGAGED),
+                //new WaitUntilCommand(dpad),
                 new InstantCommand(() -> pivot.setPower(0), pivot),
                 new InstantCommand(() -> pivot.setManualControl(false)),
                 new PivotCommand(pivot, 0).interruptOn(() -> true),

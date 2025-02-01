@@ -291,7 +291,7 @@ public class TeleOpps extends Robot {
                 () -> getState() == FSMStates.HANG
         ));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
-                new L3HangCommand(pto, pivot, wrist, extension, mecanum),
+                new L3HangCommand(pto, pivot, wrist, extension, mecanum, ()->gamepad1.dpad_left),
                 new InstantCommand(),
                 () -> getState() == FSMStates.HANG
         ));
