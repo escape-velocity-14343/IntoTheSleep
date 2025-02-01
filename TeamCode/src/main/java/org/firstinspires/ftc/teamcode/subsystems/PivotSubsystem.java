@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -17,6 +18,8 @@ import org.firstinspires.ftc.teamcode.lib.Util;
 public class PivotSubsystem extends SubsystemBase {
     private DcMotor motor0, motor1;
     private double currentPos = 0;
+    private double pivotVelocity = 0;
+    private ElapsedTime timer = new ElapsedTime();
     private double target = 0;
     private boolean manualControl = false;
     private SquIDController squid = new SquIDController();
@@ -35,13 +38,17 @@ public class PivotSubsystem extends SubsystemBase {
         this.voltage = voltage;
 
         squid.setPID(PivotConstants.kP);
+        timer.reset();
     }
     @Override
     public void periodic() {
+        double lastPos = currentPos;
         currentPos = encoder.getAngle();
+        pivotVelocity = (lastPos - currentPos) / timer.seconds();
         if (!manualControl) {
             tiltToPos(target);
         }
+        timer.reset();
     }
 
     public void setPower(double power) {
@@ -65,6 +72,10 @@ public class PivotSubsystem extends SubsystemBase {
     public void setTarget(double target){
         manualControl = false;
         this.target = target;
+    }
+
+    public double getPivotVelocity() {
+        return pivotVelocity;
     }
 
     /**

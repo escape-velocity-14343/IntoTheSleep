@@ -60,7 +60,11 @@ public class PinpointSubsystem extends SubsystemBase implements Localizer {
     @Override
     public void periodic() {
         pinpoint.update();
-        if (Double.isNaN(pinpoint.getPosX()) || Double.isNaN(pinpoint.getPosY())){
+        if (Double.isNaN(pinpoint.getPosX()) || Double.isNaN(pinpoint.getPosY()) ||
+                (pinpoint.getPosX() == 0.0
+                        && pinpoint.getPosY() == 0.0
+                        && pinpoint.getHeading() == 0.0
+                        && pinpoint.getVelX() == 0.0)){
             pose = lastGoodPose;
             Log.i("%11", "pinpoint NaN value");
         }

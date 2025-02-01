@@ -17,8 +17,8 @@ public class DriveConstants {
 
     // pto
     public static double ptoRightEngagedPos = 0.5;
-    public static double ptoRightDisengagedPos = 0.65;
-    public static double ptoRightFreeFloatPos = 0.585;
+    public static double ptoRightDisengagedPos = 0.63;
+    public static double ptoRightFreeFloatPos = 0.565;
 
     public static double ptoLeftEngagedPos = 0.35;
     public static double ptoLeftDisengagedPos = 0.2;

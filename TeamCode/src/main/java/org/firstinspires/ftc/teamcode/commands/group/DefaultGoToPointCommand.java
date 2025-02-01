@@ -45,6 +45,10 @@ public class DefaultGoToPointCommand extends CommandBase {
     private boolean toggle = true;
 
     private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime zeroVelocityTimer = new ElapsedTime();
+
+    private boolean isZeroVelocity = false;
+    private boolean hasBeenZeroVelocity = false;
 
     Pose2d target;
     Pose2d currentPose;
@@ -134,6 +138,23 @@ public class DefaultGoToPointCommand extends CommandBase {
         if (toggle) {
             drive.driveFieldCentric(-xMove, -yMove * 1.2, hMove);
         }
+
+        // velocity end
+        if (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity) {
+            if (!isZeroVelocity) {
+                zeroVelocityTimer.reset();
+                isZeroVelocity = true;
+                hasBeenZeroVelocity = false;
+            } else if (zeroVelocityTimer.seconds() > 1.0) {
+                hasBeenZeroVelocity = true;
+            } else {
+                hasBeenZeroVelocity = false;
+            }
+        } else {
+            isZeroVelocity = false;
+        }
+
+
     }
 
     public void setToggle(boolean toggle) {
@@ -168,7 +189,7 @@ public class DefaultGoToPointCommand extends CommandBase {
         return shouldLog &&
                 ((currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
                 (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol))) ||
-                (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity && timer.seconds()>0.5);
+                (hasBeenZeroVelocity);
     }
 
     public void setTarget(Pose2d target){
