@@ -35,7 +35,8 @@ public abstract class Robot extends LinearOpMode {
         OUTTAKE,
         SPECIMEN,
         FOLD,
-        NONE
+        NONE,
+        L3
     }
 
     public FSMStates robotState = FSMStates.NONE;

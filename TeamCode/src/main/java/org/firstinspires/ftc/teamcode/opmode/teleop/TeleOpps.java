@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmode.teleop;
 
-import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.autoscoreMaxVel;
 import static org.firstinspires.ftc.teamcode.Constants.AutoConstants.scorePos;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.ParallelCommandGroup;
-import com.arcrobotics.ftclib.command.PerpetualCommand;
 import com.arcrobotics.ftclib.command.RunCommand;
 import com.arcrobotics.ftclib.command.ScheduleCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -20,12 +15,9 @@ import com.arcrobotics.ftclib.command.WaitUntilCommand;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
-import com.arcrobotics.ftclib.geometry.Pose2d;
-import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
@@ -33,29 +25,22 @@ import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.BasketAlignCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.DefaultDriveCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.DrivebasePowerCommand;
-import org.firstinspires.ftc.teamcode.commands.custom.IntakeClawCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeSpinCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.PivotCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenHookCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SpecimenRaiseCommand;
 import org.firstinspires.ftc.teamcode.commands.custom.SubClearCommand;
-import org.firstinspires.ftc.teamcode.commands.group.BucketPosCommand;
-import org.firstinspires.ftc.teamcode.commands.group.DefaultGoToPointCommand;
-import org.firstinspires.ftc.teamcode.commands.group.GoToPointCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractCommand;
 import org.firstinspires.ftc.teamcode.commands.group.IntakeRetractReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.L3HangCommand;
+import org.firstinspires.ftc.teamcode.commands.group.L3ReleaseCommand;
 import org.firstinspires.ftc.teamcode.commands.group.RetractCommand;
-import org.firstinspires.ftc.teamcode.commands.group.SubPosCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReadyCommand;
 import org.firstinspires.ftc.teamcode.commands.group.SubPosReversedCommand;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.subsystems.AscentSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
-import org.firstinspires.ftc.teamcode.subsystems.SubClearSubsystem;
-
-import javax.crypto.spec.OAEPParameterSpec;
 
 @TeleOp(group = "0", name = "TeleOpp")
 @Config
@@ -176,7 +161,7 @@ public class TeleOpps extends Robot {
         // spit thing
         new Trigger(() ->
                 // if right trigger is pressed when out of intake
-                (getState() != FSMStates.INTAKE && gamepad1.right_trigger > 0.01))
+                (getState() != FSMStates.L3 && getState() != FSMStates.INTAKE && gamepad1.right_trigger > 0.01))
                 .whileActiveOnce(
                         new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -0.5)
                                 .andThen(
@@ -195,16 +180,6 @@ public class TeleOpps extends Robot {
         // backtake/fronttake toggles
         //driverPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(new InstantCommand(() -> reverseClaw.set(true)).andThen(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.backSinglePos, -1), new InstantCommand(), () -> getState() == FSMStates.INTAKE)));
         //driverPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new InstantCommand(() -> reverseClaw.set(false)).andThen(new ConditionalCommand(new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -1), new InstantCommand(), () -> getState() == FSMStates.INTAKE)));
-
-        // claw spit to back
-        driverPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
-                        .whenPressed(
-                                new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -0.5)
-                                        .andThen(
-                                                new WaitCommand((long) IntakeConstants.spitToBackMs),
-                                                new IntakeControlCommand(intake, IntakeConstants.closedPos, 0)
-                                        )
-                        );
 
         // claw logic
         driverPad.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
@@ -291,12 +266,31 @@ public class TeleOpps extends Robot {
                 () -> getState() == FSMStates.HANG
         ));
         driverPad.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(new ConditionalCommand(
-                new L3HangCommand(pto, pivot, wrist, extension, mecanum),
+                new SequentialCommandGroup(
+                        new InstantCommand(() -> setState(FSMStates.L3)),
+                        new L3ReleaseCommand(pto, pivot, wrist, extension)
+                ),
                 new InstantCommand(),
                 () -> getState() == FSMStates.HANG
         ));
+        // claw spit to back
+        driverPad.getGamepadButton(GamepadKeys.Button.DPAD_LEFT)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new L3HangCommand(pto, pivot, wrist, extension, mecanum),
+                                new SequentialCommandGroup(
+                                        new IntakeControlCommand(intake, IntakeConstants.singleIntakePos, -0.5),
+                                        new ParallelCommandGroup(
+                                            new WaitCommand((long) IntakeConstants.spitToBackMs),
+                                            new IntakeControlCommand(intake, IntakeConstants.closedPos, 0)
+                                        )
+                                ),
+                                () -> getState() == FSMStates.L3
+                        )
+                );
         new Trigger(() -> intake.getFrontV() > IntakeConstants.intakeSensorVoltageThres && getState() == FSMStates.INTAKE)
                 .whileActiveContinuous(new InstantCommand(() -> gamepad1.rumble(0.5, 0.5, 100)));
+
     }
 
     public void configureOperator() {
@@ -382,7 +376,7 @@ public class TeleOpps extends Robot {
 
     public void configureDualControl() {
         // slide manual control
-        new Trigger(() -> true).whileActiveContinuous(
+        new Trigger(() -> !(getState() == robotState.L3)).whileActiveContinuous(
                 new ConditionalCommand(
                         new InstantCommand(() -> {
                             double power = gamepad2.right_trigger + gamepad1.right_trigger * manualMultiplier - gamepad2.left_trigger - gamepad1.left_trigger * manualMultiplier;
