@@ -13,6 +13,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.commands.custom.IntakeControlCommand;
 import org.firstinspires.ftc.teamcode.commands.group.BucketPosReversedCommand;
 import org.firstinspires.ftc.teamcode.commands.group.LowBucketPosCommand;
@@ -52,11 +54,14 @@ public abstract class Robot extends LinearOpMode {
     public CachingVoltageSensor voltage;
     public BasketSensorSubsystem basketSensor;
     public SubClearSubsystem subClear;
+    public AscentSubsytem pto;
     public IMU imu;
     //public CameraSubsystem cam;
     public ElapsedTime timer = new ElapsedTime();
     public CommandScheduler cs = CommandScheduler.getInstance();
     public void initialize() {
+        DriveConstants.highExtend = false;
+        AutoConstants.subBarrierY = 24.0;
         //cs.reset();
         hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
@@ -68,12 +73,13 @@ public abstract class Robot extends LinearOpMode {
 
         pinpoint = new PinpointSubsystem(hardwareMap);
 
-        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint);
+        mecanum = new MecanumDriveSubsystem("frontRight", "frontLeft", "backRight", "backLeft", hardwareMap, pinpoint, voltage);
         pivot = new PivotSubsystem(hardwareMap, voltage);
-        extension = new ExtensionSubsystem(hardwareMap, pivot, voltage);
+        extension = new ExtensionSubsystem(hardwareMap, pivot::getCurrentPosition, voltage);
         wrist = new WristSubsystem(hardwareMap);
         intake = new IntakeSubsystem(hardwareMap);
         subClear = new SubClearSubsystem(hardwareMap);
+        pto = new AscentSubsytem(mecanum, hardwareMap);
 
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.LEFT, RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD)));
@@ -96,7 +102,7 @@ public abstract class Robot extends LinearOpMode {
     }
 
     public Command intakePos() {
-        return new IntakePosCommand(extension, pivot, wrist).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE)));
+        return new IntakePosCommand(extension, pivot, wrist, intake).alongWith(new InstantCommand(() -> setState(FSMStates.INTAKE)));
     }
     public Command subPos() {
        return new ConditionalCommand(
@@ -108,7 +114,7 @@ public abstract class Robot extends LinearOpMode {
     public Command bucketPos() {
         return new ConditionalCommand(
                 new BucketPosReversedCommand(extension, pivot, wrist),
-                new ConditionalCommand(LowBucketPosCommand.newWithWristPos(extension, pivot, wrist), BucketPosCommand.newWithWristPos(extension, pivot, wrist), lowBucket::get),
+                new ConditionalCommand(LowBucketPosCommand.newWithWristPos(extension, pivot, wrist), new BucketPosCommand(extension, pivot, wrist), lowBucket::get),
                 reverseClaw::get
         );
     }

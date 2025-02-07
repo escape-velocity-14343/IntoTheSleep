@@ -24,9 +24,12 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     private ExtensionSubsystem extensionSubsystem;
     private IntakeSubsystem intake;
     private ElapsedTime time = new ElapsedTime();
+    private ElapsedTime extensionLimitTime = new ElapsedTime();
     private ElapsedTime wrongColorTime = new ElapsedTime();
+    private ElapsedTime commandRuntime = new ElapsedTime();
     private boolean isWrongColor = false;
     private boolean seen = false;
+    private boolean reachedMaxExtension = false;
     public SampleAutoAlignAndExtend(CameraSubsystem camera, DefaultGoToPointCommand gtpc, PinpointSubsystem pinpoint, ExtensionSubsystem extensionSubsystem, IntakeSubsystem intake) {
         addRequirements(camera);
         cam = camera;
@@ -40,6 +43,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     public void initialize() {
         cam.setEnabled(true);
         time.reset();
+        commandRuntime.reset();
         extensionSubsystem.setManualControl(true);
     }
     @Override
@@ -47,33 +51,54 @@ public class SampleAutoAlignAndExtend extends CommandBase {
         Log.i("autoalign", "yellow is: " + cam.isYellow());
         Log.i("autoalign", "timer: " + time.milliseconds());
         gtpc.setTarget(new Pose2d(gtpc.getTargetX(), gtpc.getTargetY(), Rotation2d.fromDegrees(pinpointSubsystem.getPose().getRotation().getDegrees() + cam.getPixelPos() * IntakeConstants.autoAlignP)));
-        extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,0.7));
+
         if (cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.RED ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             intake.setIntakeSpeed(-1);
             isWrongColor = true;
             wrongColorTime.reset();
         } else if (isWrongColor) {
-            if (wrongColorTime.seconds() > 0.75) {
+            if (wrongColorTime.seconds() > 0.5 || extensionSubsystem.getCurrentInches() < 6.0) {
                 isWrongColor = false;
+                intake.setClawer(IntakeConstants.openPos * IntakeConstants.autoIntakeClawLerp + IntakeConstants.singleIntakePos * (1 - IntakeConstants.autoIntakeClawLerp));
             }
+            extensionSubsystem.setPower(-0.4);
+            intake.setClawer(IntakeConstants.openPos);
             intake.setIntakeSpeed(-1);
         } else {
             intake.setIntakeSpeed(1);
+            extensionSubsystem.setPower(Range.clip(Math.cos((cam.getPixelPos())*0.01)*SlideConstants.visionP, 0,1) * extensionSubsystem.getVoltageMult());
         }
     }
     @Override
     public boolean isFinished() {
+
+        // guard clause - force command to run for 0.2s
+        if (commandRuntime.milliseconds() < 100) {
+            return false;
+        }
+
+        if (extensionSubsystem.getCurrentInches() > SlideConstants.submersibleIntakeMaxExtension - 0.1) {
+            if (!reachedMaxExtension) {
+                reachedMaxExtension = true;
+                extensionLimitTime.reset();
+            } else if (extensionLimitTime.seconds() > 0.4) {
+                intake.setClawer(IntakeConstants.closedPos);
+            } else if (extensionLimitTime.seconds() > 0.5) {
+                return true;
+            }
+        } else {
+            reachedMaxExtension = false;
+        }
 
         if (cam.isYellow() || cam.getColor() == (AutoConstants.alliance == AutoConstants.Alliance.BLUE ? ColorSensorProcessor.ColorType.BLUE : ColorSensorProcessor.ColorType.RED)) {
             if (!seen) {
                 seen = true;
                 time.reset();
             }
-            else if (time.milliseconds()>100) {
+            else if (time.milliseconds()>30) {
                 return true;
             }
-        }
-        else {
+        } else {
             seen = false;
             return false;
         }
@@ -81,7 +106,7 @@ public class SampleAutoAlignAndExtend extends CommandBase {
     }
     @Override
     public void end (boolean wasInterrupted) {
-        Log.i("autoalign", "autoalign done, color: " + (cam.isYellow() ? "yellow" : "blue"));
+        Log.i("%autoalign", "autoalign done, color: " + (cam.isYellow() ? "yellow" : "blue"));
         //cam.setEnabled(false);
         extensionSubsystem.setManualControl(false);
     }

@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 
 public class SlideConstants {
-    public static double kP = 0.0045;
+    public static double kP = 0.002;
     public static double kI = 0;
     public static double kD = 0;
     public static double kS = 0;
@@ -27,30 +27,30 @@ public class SlideConstants {
      */
     public static double maxPivotExtension = 25;
     /**
-     * Constant feedforward for the slides (probably don't need)
-     */
-    public static double FEEDFORWARD_STATIC = 0.0;
-    /**
      * Feedforward value that is multiplied by <code>Math.cos(slideAngle)</code>
      */
-    public static double FEEDFORWARD_DYNAMIC = 0.2;
+    public static double FEEDFORWARD_bottom = 0.2;
+    public static double FEEDFORWARD_top = 0.25; //TUNED VALUE
 
 
-    public static double autonPiece1Extension = 10;
+    public static double autonPiece1Extension = 12;
     public static double autonPiece3Extension = 13.5;
 
-    public static double submersibleIntakeMaxExtension = 17.5;
+    public static double submersibleIntakeMaxExtension = 18.25;
+    public static double submersibleIntakeMaxClawExtension = 17;
 
     public static double autonPiecee3ExtensionPower = 0.3;
     public static double autoRetractionPower = 1.0;
 
     static public double specimenRaisePosition = 0;
     public static double specimenHighRaisePosition = 13;
-    public static double specimenHookPosition = 16.0;
+    public static double specimenHookPosition = 16.75;
 
     public static double millisPerInch = 5 * ticksPerInch;
-    public static double visionP = 0.5;
+    public static double visionP = 0.55;
 
-    public static double bucketPosGainScheduleMult = 1.5;
+    public static double bucketPosGainScheduleMult = 1;
     public static double bucketPosGainSchedulePos = 25;
+
+    public static double highExtendInches = 1.5;
 }

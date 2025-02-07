@@ -5,8 +5,12 @@ import android.util.Log;
 import com.arcrobotics.ftclib.command.CommandBase;
 import com.arcrobotics.ftclib.geometry.Pose2d;
 
+import java.util.function.Supplier;
+
 public class GoToPointWithDefaultCommand extends CommandBase {
     private Pose2d target;
+    private Supplier<Pose2d> targetSupplier;
+    private boolean useTargetSupplier = false;
     private DefaultGoToPointCommand gtpc;
 
     /**
@@ -24,7 +28,23 @@ public class GoToPointWithDefaultCommand extends CommandBase {
         gtpc.setTolerances(tol, hTol);
     }
 
+    public GoToPointWithDefaultCommand(Supplier<Pose2d> targetSupplier, DefaultGoToPointCommand gtpc) {
+        useTargetSupplier = true;
+        this.targetSupplier = targetSupplier;
+        this.gtpc = gtpc;
+    }
+
+    public GoToPointWithDefaultCommand(Supplier<Pose2d> targetSupplier, DefaultGoToPointCommand gtpc, double tol, double hTol) {
+        useTargetSupplier = true;
+        this.targetSupplier = targetSupplier;
+        this.gtpc = gtpc;
+        gtpc.setTolerances(tol, hTol);
+    }
+
     public void initialize(){
+        if (useTargetSupplier) {
+            target = targetSupplier.get();
+        }
         gtpc.setTarget(target);
     }
 
@@ -35,7 +55,7 @@ public class GoToPointWithDefaultCommand extends CommandBase {
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("1", "gtp finished " + target.getX() + " " + target.getY() + " " + target.getRotation().getDegrees());
+        Log.i("%1", "gtp finished " + target.getX() + " " + target.getY() + " " + target.getRotation().getDegrees());
     }
 
     @Override

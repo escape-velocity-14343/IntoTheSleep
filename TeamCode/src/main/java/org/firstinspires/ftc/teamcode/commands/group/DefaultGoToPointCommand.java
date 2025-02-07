@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.lib.CachingVoltageSensor;
 import org.firstinspires.ftc.teamcode.lib.DrivetrainSquIDController;
 import org.firstinspires.ftc.teamcode.lib.Util;
 import org.firstinspires.ftc.teamcode.opmode.auton.PU5Apple;
@@ -41,7 +42,13 @@ public class DefaultGoToPointCommand extends CommandBase {
     public static boolean useVelCompensated = true;
     public static boolean usePID = false;
 
+    private boolean toggle = true;
+
     private ElapsedTime timer = new ElapsedTime();
+    private ElapsedTime zeroVelocityTimer = new ElapsedTime();
+
+    private boolean isZeroVelocity = false;
+    private boolean hasBeenZeroVelocity = false;
 
     Pose2d target;
     Pose2d currentPose;
@@ -121,9 +128,37 @@ public class DefaultGoToPointCommand extends CommandBase {
             yMove = xyMove.getY();
         }
 
+        double voltageScalar = drive.getAutoVoltageMult();
+
+        xMove *= voltageScalar;
+        yMove *= voltageScalar;
+        double hMove = -rotSpeedSupplier.getAsDouble() * voltageScalar;
 
 
-        drive.driveFieldCentric(-xMove, -yMove*1.2, -rotSpeedSupplier.getAsDouble());
+        if (toggle) {
+            drive.driveFieldCentric(-xMove, -yMove * 1.2, hMove);
+        }
+
+        // velocity end
+        if (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity) {
+            if (!isZeroVelocity) {
+                zeroVelocityTimer.reset();
+                isZeroVelocity = true;
+                hasBeenZeroVelocity = false;
+            } else if (zeroVelocityTimer.seconds() > 1.0) {
+                hasBeenZeroVelocity = true;
+            } else {
+                hasBeenZeroVelocity = false;
+            }
+        } else {
+            isZeroVelocity = false;
+        }
+
+
+    }
+
+    public void setToggle(boolean toggle) {
+        this.toggle = toggle;
     }
 
     @Override
@@ -134,31 +169,34 @@ public class DefaultGoToPointCommand extends CommandBase {
     public void end(boolean wasInterrupted) {
         if (wasInterrupted) {
             drive.driveFieldCentric(0,0,0);
-            Log.w("Commands", "gtpc was interrupted. This should never happen!");
+            Log.w("%Commands", "gtpc was interrupted. This should never happen!");
         } else {
-            Log.w("GTPC", "this ended without interruption somehow???");
+            Log.w("%GTPC", "this ended without interruption somehow???");
         }
     }
 
     public boolean isDone() {
         if (target == null) {
-            Log.i("isDone", "target was null");
+            Log.i("%isDone", "target was null");
             return false;
         }
 
         if (currentPose == null) {
-            Log.i("isDone", "currentPose was null");
+            Log.i("%isDone", "currentPose was null");
             return false;
         }
 
         return shouldLog &&
-                (currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
-                (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol)) ||
-                (pinpoint.getVelocity().getTranslation().getNorm() < PU5Apple.intakeStallVelocity && timer.seconds()>0.5);
+                ((currentPose.getTranslation().getDistance(target.getTranslation()) < tol) &&
+                (Util.inRange(target.getRotation().getDegrees(), currentPose.getRotation().getDegrees(), hTol))) ||
+                (hasBeenZeroVelocity);
     }
 
     public void setTarget(Pose2d target){
         this.target = target;
+        isZeroVelocity = false;
+        zeroVelocityTimer.reset();
+        hasBeenZeroVelocity = false;
         timer.reset();
     }
 

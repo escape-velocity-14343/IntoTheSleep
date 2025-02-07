@@ -56,6 +56,6 @@ public class ExtendCommand extends CommandBase {
         if (powerMul != null) {
             extend.setExtensionPowerMul(oldExtensionPowerMul);
         }
-        Log.i("9", "Extension to " + target);
+        Log.i("%9", "Extension to " + target);
     }
 }

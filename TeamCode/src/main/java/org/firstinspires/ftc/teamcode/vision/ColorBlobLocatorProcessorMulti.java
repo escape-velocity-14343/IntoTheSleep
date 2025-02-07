@@ -67,7 +67,7 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
     public boolean onlyFirstColor = false;
 
     Point[] points = {
-            new Point(0,165),
+            new Point(0,145),
             new Point(0,215),
             new Point(160,220),
             new Point(320, 210),
@@ -76,9 +76,9 @@ public class ColorBlobLocatorProcessorMulti extends ColorBlobLocatorProcessor im
             new Point(190, 150),
             new Point(190,0),
             new Point(130, 0),
-            new Point(130, 160),
+            new Point(130, 150),
             new Point(100, 205),
-            new Point(80, 205)
+            new Point(80, 175)
     };
 
 

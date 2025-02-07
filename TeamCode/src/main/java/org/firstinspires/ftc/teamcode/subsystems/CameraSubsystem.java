@@ -43,12 +43,14 @@ public class CameraSubsystem extends SubsystemBase {
     public static Scalar minimumYellow = new Scalar(13, 60, 60);
     public static Scalar maximumYellow = new Scalar(50, 255, 255);
 
+    public static double widthMultiplier = 0;
+
     ColorBlobLocatorProcessorMulti colorLocator;
     ColorSensorProcessor colorSensor;
     VisionPortal portal;
     private double pixelPos = 0;
     private boolean yellow = false;
-    public static int exposureMillis = 65;
+    public static int exposureMillis = 50;
     public static int minContourArea = 200;
     ColorSensorProcessor.ColorType detection = ColorSensorProcessor.ColorType.NONE;
 
@@ -99,10 +101,15 @@ public class CameraSubsystem extends SubsystemBase {
 
         pixelPos = 0;
         yellow = false;
+        detection = ColorSensorProcessor.ColorType.NONE;
 
         if (portal.getProcessorEnabled(colorLocator)) {
 
             List<ColorBlobLocatorProcessor.Blob> blobs = colorLocator.getBlobs();
+            if (blobs.isEmpty()){
+                Log.i("%Empty blob list!!", "Uh oh please dont crash");
+                return;
+            }
 
             ColorBlobLocatorProcessor.Util.filterByArea(minContourArea, 20000, blobs);
             int dist = 10000;
@@ -115,11 +122,11 @@ public class CameraSubsystem extends SubsystemBase {
                     }
                 }
                 pixelPos = dist;*/
-                pixelPos = (int) (160 - blobs.get(0).getBoxFit().center.x);
+                pixelPos = (int) (160 - blobs.get(0).getBoxFit().center.x + (blobs.get(0).getBoxFit().size.width * widthMultiplier / 2.0));
             }
         }
         if (portal.getProcessorEnabled(colorSensor)) {
-            detection = colorSensor.getDetection();
+            detection = colorSensor.getDetection(); //I don't think this can be null so no crashy crashy?
             yellow = detection == ColorSensorProcessor.ColorType.YELLOW;
             Log.v("camera", "color: " + detection);
             // Log.i("camera", "yellow: " + yellow);

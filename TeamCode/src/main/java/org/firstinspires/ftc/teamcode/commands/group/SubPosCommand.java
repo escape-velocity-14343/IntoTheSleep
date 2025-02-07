@@ -35,6 +35,6 @@ public class SubPosCommand extends SequentialCommandGroup {
     @Override
     public void end(boolean interrupted) {
         extension.setManualControl(true);
-        Log.i("6", "Sub Pos Command, Interrupted: " + interrupted);
+        Log.i("%6", "Sub Pos Command, Interrupted: " + interrupted);
     }
 }

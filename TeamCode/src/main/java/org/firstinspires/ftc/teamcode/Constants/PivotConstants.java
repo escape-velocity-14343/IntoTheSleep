@@ -11,12 +11,12 @@ public class PivotConstants {
     public static double kS = 0;
 
     public static double bottomLimit = 0.5;
-    public static double topLimit = 93.3;
+    public static double topLimit = 96;
     public static double tolerance = 1.5;
     public static double direction = -1;
     public static boolean encoderInvert = true;
-    public static double encoderOffset = 47.7 ;
-    public static double outtakeExtendDegrees = 40;
+    public static double encoderOffset = 112;
+    public static double outtakeExtendDegrees = 45;
     public static double hangDegrees = -10;
     public static double parkDegrees = 80;
     public static double retractDegrees = bottomLimit;
@@ -27,4 +27,5 @@ public class PivotConstants {
 
     public static double specimenIntakeAngle = topLimit;
     public static double specimenTopBarAngle = 63;
+    public static double l3hangtime = 5;
 }

@@ -23,6 +23,6 @@ public class IntakeSpinCommand extends InstantCommand {
     @Override
     public void initialize() {
         intake.setIntakeSpeed(power);
-        Log.i("8", "Intake spin: " + power);
+        Log.i("%8", "Intake spin: " + power);
     }
 }

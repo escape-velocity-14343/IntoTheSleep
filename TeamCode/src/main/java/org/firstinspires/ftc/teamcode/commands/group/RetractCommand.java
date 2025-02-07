@@ -42,11 +42,15 @@ public class RetractCommand extends SequentialCommandGroup {
 
     public static RetractCommand newWithWristPos(WristSubsystem wrist, PivotSubsystem pivot, ExtensionSubsystem extend, double wristPos) {
         return new RetractCommand(
+                new WristCommand(wrist, wristPos),
                 new ParallelCommandGroup(
-                        new PivotCommand(pivot, PivotConstants.retractDegrees),
+                        new WaitUntilCommand(() -> extend.getCurrentInches() < 10).andThen(new PivotCommand(pivot, PivotConstants.retractDegrees).alongWith(
+                                        new WristCommand(wrist, IntakeConstants.foldedPos)
+                                )
+                        ),
                         new ExtendCommand(extend, SlideConstants.minExtension)
                 ),
-                new WristCommand(wrist, wristPos).whenFinished(() -> Log.i("5", "Retract command"))
+                new WristCommand(wrist, IntakeConstants.foldedPos).whenFinished(() -> Log.i("%5", "Retract command"))
         );
     }
 }

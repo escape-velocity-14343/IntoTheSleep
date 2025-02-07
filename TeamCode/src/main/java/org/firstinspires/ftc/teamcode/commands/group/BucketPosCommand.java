@@ -11,6 +11,8 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.teamcode.Constants.AutoConstants;
+import org.firstinspires.ftc.teamcode.Constants.DriveConstants;
 import org.firstinspires.ftc.teamcode.Constants.IntakeConstants;
 import org.firstinspires.ftc.teamcode.Constants.PivotConstants;
 import org.firstinspires.ftc.teamcode.Constants.SlideConstants;
@@ -32,15 +34,15 @@ public class BucketPosCommand extends SequentialCommandGroup {
                 new WristCommand(wrist, IntakeConstants.groundPos),
                 new ParallelCommandGroup(
                         // minus two to prevent it from overshooting
-                        new PivotCommand(pivot, PivotConstants.topLimit),
+                        new PivotCommand(pivot, PivotConstants.topLimit).interruptOn(() -> pivot.getPivotVelocity() < AutoConstants.autoscoreMaxPivotVel && pivot.getCurrentPosition() > PivotConstants.topLimit - 4),
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> pivot.getCurrentPosition() > PivotConstants.outtakeExtendDegrees),
-                                new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000)
+                                new ExtendCommand(extension, SlideConstants.bucketPos + (DriveConstants.highExtend ? SlideConstants.highExtendInches : 0)).withTimeout(1000).interruptOn(() -> extension.getCurrentInches() > SlideConstants.bucketPos - 2)
                         ),
-                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-2).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
+                        new WaitUntilCommand(()->extension.getCurrentInches() > SlideConstants.bucketPos-2).withTimeout(1000).andThen(new WristCommand(wrist, IntakeConstants.scoringPos))
                 ),
 
-                new InstantCommand(() -> Log.i("2", "BucketPos End"))
+                new InstantCommand(() -> Log.i("%2", "BucketPos End"))
         );
     }
 
@@ -55,6 +57,6 @@ public class BucketPosCommand extends SequentialCommandGroup {
                                 new ExtendCommand(extension, SlideConstants.bucketPos).withTimeout(1000)
                         )),
                 new WristCommand(wrist, IntakeConstants.scoringPos),
-                new InstantCommand(() -> Log.i("2", "BucketPos End")));
+                new InstantCommand(() -> Log.i("%2", "BucketPos End")));
     }
 }

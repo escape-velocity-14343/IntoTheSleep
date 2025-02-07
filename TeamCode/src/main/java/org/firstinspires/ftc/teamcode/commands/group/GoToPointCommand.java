@@ -92,7 +92,7 @@ public class GoToPointCommand extends CommandBase {
     @Override
     public void end(boolean wasInterrupted) {
         //drive.driveFieldCentric(0,0,0,0);
-        Log.i("1", "gtp finished");
+        Log.i("%1", "gtp finished");
     }
 
     @Override

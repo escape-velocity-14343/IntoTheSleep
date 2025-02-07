@@ -26,6 +26,6 @@ public class IntakeControlCommand extends InstantCommand {
     public void initialize() {
         intake.setClawer(position);
         intake.setIntakeSpeed(speed);
-        Log.i("8", "Intake pos: " + position);
+        Log.i("%8", "Intake pos: " + position);
     }
 }

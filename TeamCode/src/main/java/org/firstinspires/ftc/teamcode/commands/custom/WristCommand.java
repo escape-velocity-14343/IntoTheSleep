@@ -24,18 +24,18 @@ public class WristCommand extends CommandBase {
     @Override
     public void initialize() {
         timer.reset();
-        timeNeeded = IntakeConstants.timeMultiplier * Math.abs(wrist.getPosition() - target) + 0.1;
+        timeNeeded = IntakeConstants.timeMultiplier * Math.abs(wrist.getPosition() - target);
         wrist.setWrist(target);
 
     }
 
     @Override
     public void end(boolean wasInterrupted) {
-        Log.i("3", "Wrist set to " + target);
+        Log.i("%3", "Wrist set to " + target);
     }
 
     @Override
     public boolean isFinished() {
-        return timer.seconds() > timeNeeded;
+        return timer.seconds() >= timeNeeded;
     }
 }
