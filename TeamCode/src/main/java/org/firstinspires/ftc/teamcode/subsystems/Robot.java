@@ -35,6 +35,7 @@ public abstract class Robot extends LinearOpMode {
         OUTTAKE,
         SPECIMEN,
         FOLD,
+        AUTOSCORE,
         NONE
     }
 

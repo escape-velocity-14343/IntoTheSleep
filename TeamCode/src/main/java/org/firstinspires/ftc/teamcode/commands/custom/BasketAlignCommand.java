@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.subsystems.BasketSensorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.PinpointSubsystem;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 @Config
@@ -40,6 +41,8 @@ public class BasketAlignCommand extends CommandBase {
 
     private DoubleSupplier xSupplier;
     private DoubleSupplier ySupplier;
+
+    private BooleanSupplier interruptSupplier = () -> false;
 
     private Translation2d targetPoseOffset = new Translation2d();
 
@@ -70,7 +73,8 @@ public class BasketAlignCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return threshold > 0.0 && error < threshold;
+        Log.i("%Autoscore", "Bucket align done");
+        return (threshold > 0.0 && error < threshold) || interruptSupplier.getAsBoolean();
     }
 
     @Override
@@ -109,7 +113,7 @@ public class BasketAlignCommand extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if (!interrupted) {
+        if (!interrupted && !interruptSupplier.getAsBoolean()) {
             if (Math.abs(pinpoint.getPose().getRotation().getDegrees() - AutoConstants.scorePos.getRotation().getDegrees()) < 2.5) {
                 Pose2d newPose = new Pose2d(AutoConstants.scorePos.getX() - basketSensor.getSensorRight() + xOffset, AutoConstants.scorePos.getY() - basketSensor.getSensorLeft() + yOffset, new Rotation2d());
                 double distance = AutoConstants.scorePos.minus(newPose).getTranslation().getNorm();
@@ -118,6 +122,10 @@ public class BasketAlignCommand extends CommandBase {
                 }
             }
         }
+    }
+    public Command setInterrupt(BooleanSupplier booleanSupplier) {
+        this.interruptSupplier = booleanSupplier;
+        return this;
     }
 
     public Command whenClose(double activationDistance, Command command) {
